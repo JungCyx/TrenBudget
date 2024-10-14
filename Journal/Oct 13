@@ -1,0 +1,26 @@
+In tody's meeting we went over how we are going to retrieve the banking information and categorize it.
+In out backlog we are including:
+
+1)Log-in and authenticate user
+2)Create categories
+3)Create a budget
+4)Calculate income
+5)Notifications
+6)Add income
+7)Account Summary
+8)Set financial goals
+
+For the first sprint we are going to start off creating the log-in page and 
+authenticating the user by using a database.
+
+First we want the software to work with out the API and we will implement it at the end. Maunual inputs
+
+We are using paired-programming
+1)log-in page
+2)Create budget 
+
+Meeting time: 5pm
+End time: 6pm
+Attendance: All attended
+
+
