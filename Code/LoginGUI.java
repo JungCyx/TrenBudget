@@ -5,7 +5,6 @@ public class LoginGUI extends JFrame {
     public LoginGUI() {
 
         setTitle("TrenBudget");
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 250);
         setLocationRelativeTo(null); // Center the window
