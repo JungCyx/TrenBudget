@@ -1,14 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class LoginGUI extends JFrame {
+public class LoginGUI extends JPanel {
     public LoginGUI() {
-
-        setTitle("TrenBudget");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 250);
-        setLocationRelativeTo(null); // Center the window
-        setLayout(new BorderLayout());
 
         // Title label
         JLabel titleLabel = new JLabel("Welcome to TrenBudget", JLabel.CENTER);
@@ -30,6 +26,16 @@ public class LoginGUI extends JFrame {
 
         // Login button
         JButton loginButton = new JButton("Login");
+
+        // Action Listener login button
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Direct user to Login page
+                // User needs to be authenticated
+                Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
+            }
+        });
 
         // was expanding the text fields so had to control the size
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -64,19 +70,12 @@ public class LoginGUI extends JFrame {
 
         // Logo on the left side
         JLabel logoLabel = new JLabel();
-        ImageIcon logoIcon = new ImageIcon("trenimage.png");
+        ImageIcon logoIcon = new ImageIcon("Images/trenimage.png");
         logoLabel.setIcon(logoIcon);
         logoLabel.setPreferredSize(new Dimension(1000, 1000));
 
         // Add the logo to the left side
         add(logoLabel, BorderLayout.WEST);
 
-        // Make frame visible
-        setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        // Create and display the login GUI
-        new LoginGUI();
-    }
+        }
 }
