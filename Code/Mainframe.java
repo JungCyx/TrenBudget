@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class MainFream extends JFrame {
+public class Mainframe extends JFrame {
     public static CardLayout cardLayout;
     public static JPanel mainPanel;
 
-    public MainFream() {
+    public Mainframe() {
         setTitle("TrenBudget");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 250);

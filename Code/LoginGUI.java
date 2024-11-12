@@ -33,7 +33,7 @@ public class LoginGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Direct user to Login page
                 // User needs to be authenticated
-                MainFream.cardLayout.show(MainFream.mainPanel, "Dashboard");
+                Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
             }
         });
 
@@ -76,8 +76,6 @@ public class LoginGUI extends JPanel {
 
         // Add the logo to the left side
         add(logoLabel, BorderLayout.WEST);
-
-        setVisible(true);
 
         }
 }
