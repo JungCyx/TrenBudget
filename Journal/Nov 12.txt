@@ -1,0 +1,14 @@
+Date: 11/12/2024
+Attendance: All attended 
+Time of meeting: 15min
+
+
+we talked about the Dashboard page and adding the Pie Chart, 
+we Clarified some requierments on the pie chart and the saving, bugdet page.
+
+1) saving page: inprogress 
+2) Dashboard page: Pie Charts needs to be added
+
+
+
+
