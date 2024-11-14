@@ -16,6 +16,7 @@ public class Mainframe extends JFrame {
 
         mainPanel.add(new LoginGUI(), "Login");
         mainPanel.add(new DashboardGUI(), "Dashboard");
+        //TODO: add savingsButton and page
 
         cardLayout.show(mainPanel, "Login");
 
