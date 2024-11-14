@@ -1,4 +1,4 @@
-Where to put any notes to be shared among the team
+git Where to put any notes to be shared among the team
 
 
 <h1> Mainframe </h1>
