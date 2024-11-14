@@ -5,5 +5,9 @@ public class Main {
         // display the App
        Mainframe mainframe = new Mainframe();
 
+
+       //savngs code
+       SavingsGUI savingsPage = new SavingsGUI();
+
     }
 }
