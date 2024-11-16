@@ -31,12 +31,37 @@ public class LoginGUI extends JPanel {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Direct user to Login page
-                // User needs to be authenticated
-                Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
+                String username = userField.getText();// get the user name
+                String password = new String (passField.getPassword());// get the password
+
+                //authenticate the user's info
+                if(authenticateInput(username, password)){
+                    SwingUtilities.getWindowAncestor(LoginGUI.this).dispose();// this will close the log-in window
+                    new DashboardGUI().setVisible(true); // this will open the dashboard page
+                }
+
+                else{
+                    //error message if the user inputs wrong credentials
+                    JOptionPane.showMessageDialog(null, "Incorrect credential", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                 
             }
+
+            //Authenticate function which checks the user's inputs and compares them to the database info
+            boolean authenticateInput(String username, String password) {
+            if("user".equals(username) && "pass".equals(password)){
+                return true;
+    
+            }
+            else{
+                return false;
+            }  
+        }
+
         });
 
+        
+    
         // was expanding the text fields so had to control the size
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
