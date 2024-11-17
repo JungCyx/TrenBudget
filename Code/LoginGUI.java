@@ -36,12 +36,21 @@ public class LoginGUI extends JPanel {
 
                 //authenticate the user's info
                 if(authenticateInput(username, password)){
-                    Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
+                    SwingUtilities.getWindowAncestor(LoginGUI.this).dispose(); //close log-in window
+
+                    //open dahsboard frame with GUI
+                    JFrame dashboardFrame = new JFrame("Dashboard");
+                    dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    dashboardFrame.setSize(400,400);
+                    dashboardFrame.add(new DashboardGUI());
+                    dashboardFrame.setLocationRelativeTo(null);
+                    dashboardFrame.setVisible(true);
+
                 }
 
                 else{
                     //error message if the user inputs wrong credentials
-                    JOptionPane.showMessageDialog(null, "Incorrect credential", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Incorrect credentials", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                  
             }

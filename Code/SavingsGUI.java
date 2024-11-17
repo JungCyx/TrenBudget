@@ -10,10 +10,6 @@ public class SavingsGUI extends JPanel implements ActionListener{
     
     //constructor for SavingsGUI
     SavingsGUI(){
-        //create button in frame
-        savingButton.setBounds(100,160,200,40); //button dimensions 
-        savingButton.setFocusable(false); //ensures button is not highlighted
-        savingButton.addActionListener(this);  
 
         //create frame and properties 
         savingFrame.add(savingButton);

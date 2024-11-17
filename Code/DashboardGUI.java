@@ -1,14 +1,48 @@
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
-public class DashboardGUI extends JPanel {
-    public DashboardGUI() {
-        setLayout(new BorderLayout());
-        JLabel dashboardLabel = new JLabel("DashBoard", JLabel.CENTER);
-        dashboardLabel.setFont(new Font("Ariel", Font.BOLD, 20));
-        add(dashboardLabel, BorderLayout.CENTER);
+public class DashboardGUI extends JPanel implements ActionListener{
+    private JButton savingsButton;
+    private JButton  budgetButton;
 
+    public DashboardGUI() {
+        //layout for buttons
+        setLayout(new FlowLayout(FlowLayout.CENTER, 20,20));
+
+        //create button in frame
+        savingsButton = new JButton("Savings Goal");
+        savingsButton.setFocusable(false); //ensures button is not highlighted
+        savingsButton.addActionListener(this);  
+
+        budgetButton = new JButton("Budget");
+        budgetButton.setFocusable(false); //ensures button is not highlighted
+        budgetButton.addActionListener(this);  
+
+        //add buttons
+        add(savingsButton);
+        add(budgetButton);
+        
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+        if (e.getSource() == savingsButton){
+            JOptionPane.showMessageDialog(this, "Opening Savings");
+
+
+        }
+        else if (e.getSource() == budgetButton){
+            JOptionPane.showMessageDialog(this, "Opening Budget");
+
+        }
     }
 }
