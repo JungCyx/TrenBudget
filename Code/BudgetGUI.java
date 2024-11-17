@@ -3,27 +3,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class BudgetGUI extends JPanel implements ActionListener{
+public class BudgetGUI extends JPanel{
      
-    JButton budgetButton = new JButton("Budget");
-    
-    //constructor for BudgetGUI
+
+
+    //constructor for SavingsGUI
     BudgetGUI(){
-        //create button in frame
-        setLayout(new BorderLayout());
-        budgetButton.setFocusable(false); //ensures button is not highlighted
-        budgetButton.addActionListener(this);  
+        JLabel titleLabel = new JLabel("Welcome to Budget", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        add(titleLabel, BorderLayout.NORTH);
 
-        //add button to the panel
-        add(budgetButton, BorderLayout.CENTER);
+       
+
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // create instance when savings button is pushed 
-        if(e.getSource() == budgetButton){
-            JOptionPane.showMessageDialog(this, "Opening Budget Window"); 
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "Budget");
-        }
-    }
+    
 }

@@ -36,12 +36,28 @@ public class DashboardGUI extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e){
         if (e.getSource() == savingsButton){
-            JOptionPane.showMessageDialog(this, "Opening Savings");
 
+            SwingUtilities.getWindowAncestor(DashboardGUI.this).dispose(); //close dashboard window
+
+                    //open savings goal frame with GUI
+                    JFrame dashboardFrame = new JFrame("Savings Goal");
+                    dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    dashboardFrame.setSize(400,400);
+                    dashboardFrame.add(new SavingsGUI());
+                    dashboardFrame.setLocationRelativeTo(null);
+                    dashboardFrame.setVisible(true);
 
         }
         else if (e.getSource() == budgetButton){
-            JOptionPane.showMessageDialog(this, "Opening Budget");
+            SwingUtilities.getWindowAncestor(DashboardGUI.this).dispose(); //close dashboard window
+
+            //open budget frame with GUI
+            JFrame dashboardFrame = new JFrame("Budget");
+            dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            dashboardFrame.setSize(400,400);
+            dashboardFrame.add(new BudgetGUI());
+            dashboardFrame.setLocationRelativeTo(null);
+            dashboardFrame.setVisible(true);
 
         }
     }
