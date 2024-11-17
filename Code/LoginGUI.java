@@ -36,7 +36,6 @@ public class LoginGUI extends JPanel {
 
                 //authenticate the user's info
                 if(authenticateInput(username, password)){
-                    SwingUtilities.getWindowAncestor(LoginGUI.this).dispose();// this will close the log-in window
                     Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
                 }
 

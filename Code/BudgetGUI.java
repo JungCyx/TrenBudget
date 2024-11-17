@@ -5,34 +5,25 @@ import java.awt.event.ActionListener;
 
 public class BudgetGUI extends JPanel implements ActionListener{
      
-    JFrame budgetFrame = new JFrame();
     JButton budgetButton = new JButton("Budget");
     
     //constructor for BudgetGUI
     BudgetGUI(){
         //create button in frame
-        budgetButton.setBounds(100,160,200,40); //button dimensions 
+        setLayout(new BorderLayout());
         budgetButton.setFocusable(false); //ensures button is not highlighted
         budgetButton.addActionListener(this);  
 
-        //create frame and properties 
-        budgetFrame.add(budgetButton);
-        budgetFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        budgetFrame.setSize(420,420);
-        budgetFrame.setLayout(null);
-        budgetFrame.setVisible(true);
-
+        //add button to the panel
+        add(budgetButton, BorderLayout.CENTER);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         // create instance when savings button is pushed 
         if(e.getSource() == budgetButton){
-            budgetFrame.dispose(); //removes the button page after it has been clicked (may need to use singleton instead)
-            BudgetWindow myBudgetWindow = new BudgetWindow(); 
+            JOptionPane.showMessageDialog(this, "Opening Budget Window"); 
+            Mainframe.cardLayout.show(Mainframe.mainPanel, "Budget");
         }
-        throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
-
-    
 }
