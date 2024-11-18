@@ -36,16 +36,8 @@ public class LoginGUI extends JPanel {
 
                 //authenticate the user's info
                 if(authenticateInput(username, password)){
-                    SwingUtilities.getWindowAncestor(LoginGUI.this).dispose(); //close log-in window
-
-                    //open dahsboard frame with GUI
-                    JFrame dashboardFrame = new JFrame("Dashboard");
-                    dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    dashboardFrame.setSize(400,400);
-                    dashboardFrame.add(new DashboardGUI());
-                    dashboardFrame.setLocationRelativeTo(null);
-                    dashboardFrame.setVisible(true);
-
+                    // Redirect the user to the Dashboard page if authenticated
+                    Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
                 }
 
                 else{
