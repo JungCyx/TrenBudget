@@ -1,7 +1,6 @@
-package model;
-import Swing.Mainframe;
+package Main;
+import View.Mainframe;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +13,7 @@ public class Main {
         System.setProperty("java.awt.headless", "false"); //Disables headless
 
         // display the App
-        SpringApplication.run(Main.class, args);
-
+//        SpringApplication.run(Main.class, args);
         Mainframe mainframe = new Mainframe();
 
     }

@@ -1,4 +1,4 @@
-package Swing;
+package View;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,12 +17,15 @@ public class Mainframe extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         mainPanel.add(new LoginGUI(), "Login");
+        mainPanel.add(new CreateAccountGUI(), "Register");
         mainPanel.add(new DashboardGUI(), "Dashboard");
+        mainPanel.add(new BudgetGUI(), "BudgetWindow");
+        mainPanel.add(new SavingsGUI(), "Savings");
         //TODO: add savingsButton and page
-
         cardLayout.show(mainPanel, "Login");
 
         add(mainPanel);
         setVisible(true);
     }
 }
+ 

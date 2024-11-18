@@ -1,10 +1,12 @@
-package model.AppModel;
+package Main.Model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table
-public class BudgetUser{
+@Table(name = "UserModel")
+public class UserModel{
     @Id
     @SequenceGenerator(
             name = "BudgetUser_sequence",
@@ -20,22 +22,20 @@ public class BudgetUser{
     private String lastName;
     private String email;
     private String password;
-    private float savingGoal;
-    private float totalIncome;
-    private float totalSpending;
 
-    public BudgetUser(int id, String firstName, String lastName, String email, String password, float savingGoal, float totalIncome, float totalSpending) {
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavingModel> savingGoals;
+
+
+    public UserModel(int id, String firstName, String lastName, String email, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.savingGoal = savingGoal;
-        this.totalIncome = totalIncome;
-        this.totalSpending = totalSpending;
     }
 
-    public BudgetUser() {
+    public UserModel() {
 
     }
 
@@ -60,18 +60,6 @@ public class BudgetUser{
         return password;
     }
 
-    public float getSavingGoal() {
-        return savingGoal;
-    }
-
-    public float getTotalIncome() {
-        return totalIncome;
-    }
-
-    public float getTotalSpending() {
-        return totalSpending;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -92,29 +80,14 @@ public class BudgetUser{
         this.password = password;
     }
 
-    public void setSavingGoal(float savingGoal) {
-        this.savingGoal = savingGoal;
-    }
-
-    public void setTotalIncome(float totalIncome) {
-        this.totalIncome = totalIncome;
-    }
-
-    public void setTotalSpending(float totalSpending) {
-        this.totalSpending = totalSpending;
-    }
-
     @Override
     public String toString() {
-        return "User{" +
+        return "UserModel{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", savingGoal=" + savingGoal +
-                ", totalIncome=" + totalIncome +
-                ", totalSpending=" + totalSpending +
                 '}';
     }
 }

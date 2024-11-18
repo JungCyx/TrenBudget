@@ -1,24 +1,26 @@
-package model.AppModel;
+package Main.Model;
 import jakarta.persistence.*;
 
 
 @Entity
 @Table
-public class SavingUser {
+public class SavingModel {
     @Id
     private Long id;
-    double SavingGoal;
-    double currentGoal;
+    private double SavingGoal;
+    private double currentGoal;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Foreign key referencing UserModel
+    private UserModel user;
 
-
-    public SavingUser(Long id, double savingGoal, double currentGoal) {
+    public SavingModel(Long id, double savingGoal, double currentGoal) {
         this.id = id;
         this.SavingGoal = savingGoal;
         this.currentGoal = currentGoal;
     }
 
-    public SavingUser() {
+    public SavingModel() {
 
     }
 
