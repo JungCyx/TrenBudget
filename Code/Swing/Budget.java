@@ -1,5 +1,6 @@
-import java.util.Scanner;
+package Swing;
 
+import java.util.Scanner;
 
 public class Budget {
 
