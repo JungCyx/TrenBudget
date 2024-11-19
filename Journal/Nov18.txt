@@ -1,0 +1,22 @@
+Daily Stand Up Meeting/Retrospective 
+
+start time: 8:40pm 
+end time: 9:50pm
+
+In this meeting we sought to catch up on the current functionality of the code. The login interface has been slightly updated and improved to take a basic username and password with
+invalid credentials message otherwise. Two buttons thus far have been added to the dashboard GUI that take the user to a new savings or budget page. The pages have been updated with 
+a back button that takes you back to the dashboard. In addition, example information is displayed at the top of the dashboard icnluding budget, savings, and current amount in account.
+Lastly, the structure of the code has been changed to match the ideas demonstrated in the lab (i.e MVC pattern). 
+
+We want to carry on adding details for each core function of our application by the end of the week. On a side note our group decided to go with an SQL database after we did some tinkering 
+with springboot. The team has updated their requirements in JIRA and have selected new tasks, with some emphasis on user stories pertaining to inputing information into required fields and 
+displaying real data on to charts in the dashboard with a database in mind. 
+
+Going forward we think it is a essential to meet more often over discord every week (3x per week, every monday, wednesday, and friday) so that we may reflect upon our work and deligate
+tasks more efficiently. Also, this helps the team stay on the same page and increases productivity as we learned by implemeting it during this sprint. We found that we can handle more
+tasks if they are similar fashinon to the ones assigned in the previous week (aka higher velocity). Somethings we felt we did well were work fast and effectively while maintaining a good
+work life balance. Somethings we felt like we could improve on besides more meetings is to do more paired programming. 
+
+
+
+Attendance: All Attended 
