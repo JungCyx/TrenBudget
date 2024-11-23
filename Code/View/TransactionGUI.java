@@ -34,4 +34,3 @@ public class TransactionGUI extends JPanel {
     }
 }
 
-

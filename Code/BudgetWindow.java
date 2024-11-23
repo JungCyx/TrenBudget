@@ -3,6 +3,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 
+
 public class BudgetWindow extends JFrame {
 
     JFrame budgetFrame = new JFrame ();
