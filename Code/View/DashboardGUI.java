@@ -9,6 +9,7 @@ import javax.swing.*;
 public class DashboardGUI extends JPanel implements ActionListener{
     private final JButton savingsButton;
     private final JButton  budgetButton;
+    private final JButton transactionButton;
 
     public DashboardGUI() {
         //layout for buttons
@@ -23,19 +24,27 @@ public class DashboardGUI extends JPanel implements ActionListener{
         budgetButton.setFocusable(false); //ensures button is not highlighted
         budgetButton.addActionListener(this);
 
+        transactionButton = new JButton("Transaction");
+        transactionButton.setFocusable(false); //ensures button is not highlighted
+        transactionButton.addActionListener(this);
+
+
         // Display Current user Budget, SavingGoal and current Spending
         JLabel budget = new JLabel("your current Budget is: " + 10345);
         JLabel saving = new JLabel("your current Saving is: " + 500);
         JLabel spending = new JLabel("your current Spending is: " + 469);
+        JLabel transaction = new JLabel("your current Monthly Spending is: " + 1000);
 
         // Add labels
         add(budget);
         add(saving);
         add(spending);
+        add(transaction);
 
         //Add buttons
         add(savingsButton);
         add(budgetButton);
+        add(transactionButton);
 
 
     }
@@ -47,5 +56,10 @@ public class DashboardGUI extends JPanel implements ActionListener{
             Mainframe.cardLayout.show(Mainframe.mainPanel, "BudgetWindow");
 
         }
+        else if (e.getSource() == transactionButton){
+            Mainframe.cardLayout.show(Mainframe.mainPanel, "TransactionWindow");
+
+        }
+
     }
 }
