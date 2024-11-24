@@ -35,7 +35,7 @@ public class TransactionGUI extends JPanel {
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
 
         //Name field
