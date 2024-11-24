@@ -116,13 +116,34 @@ public class TransactionGUI extends JPanel {
     //Handel the user's inputs
     private void handelTransaction(){
         String name = nameField.getText();
+        String category = categoryField.getText();
+        String amount = amountField.getText();
+        boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
-        //Check if name field is empty
-        if (name.isEmpty()){
+        //Check if any field is empty
+        if (name.isEmpty() || category.isEmpty() || amount.isEmpty() ){
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        //check the amount they inputed
+        try{
+        
+            JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            //clear everything after it is added
+            nameField.setText("");
+            categoryField.setText("");
+            amountField.setText("");
+            notificationCheckBox.setSelected(false);
+        }
+
+        catch (NumberFormatException ex){
+            JOptionPane.showMessageDialog(this, "Please enter a number bewtween 1 - 1000000", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+        }
+
     }
 }
 
