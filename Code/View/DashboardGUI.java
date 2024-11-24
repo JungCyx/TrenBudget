@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 public class DashboardGUI extends JPanel implements ActionListener{
-    
+
     private final JButton savingsButton;
     private final JButton  budgetButton;
     private final JButton transactionButton;
@@ -52,11 +52,11 @@ public class DashboardGUI extends JPanel implements ActionListener{
             Mainframe.cardLayout.show(Mainframe.mainPanel, "Savings");
         }
         if (e.getSource() == budgetButton){
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "BudgetWindow");
+            Mainframe.cardLayout.show(Mainframe.mainPanel, "Budget");
 
         }
         if (e.getSource() == transactionButton){
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "TransactionWindow");
+            Mainframe.cardLayout.show(Mainframe.mainPanel, "Transaction");
 
         }
 
