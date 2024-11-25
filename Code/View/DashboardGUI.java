@@ -1,64 +1,81 @@
 package View;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class DashboardGUI extends JPanel implements ActionListener{
+public class DashboardGUI extends JPanel implements ActionListener {
 
     private final JButton savingsButton;
-    private final JButton  budgetButton;
+    private final JButton budgetButton;
     private final JButton transactionButton;
 
     public DashboardGUI() {
-        //layout for buttons
-        setLayout(new FlowLayout(FlowLayout.CENTER, 20,20));
+        // Set layout for the main panel
+        setLayout(new BorderLayout());
 
-        //create button in frame
-        savingsButton = new JButton("Savings Goal");
-        savingsButton.setFocusable(false); //ensures button is not highlighted
-        savingsButton.addActionListener(this);
+        // Navigation bar panel
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        navBar.setBackground(new Color(60, 63, 65)); // Modern dark gray
 
-        budgetButton = new JButton("Budget");
-        budgetButton.setFocusable(false); //ensures button is not highlighted
-        budgetButton.addActionListener(this);
+        // Create styled buttons
+        savingsButton = createNavButton("Savings Goal");
+        budgetButton = createNavButton("Budget");
+        transactionButton = createNavButton("Transaction");
 
-        transactionButton = new JButton("Transaction");
-        transactionButton.setFocusable(false); //ensures button is not highlighted
-        transactionButton.addActionListener(this);
+        // Add buttons to the navigation bar
+        navBar.add(savingsButton);
+        navBar.add(budgetButton);
+        navBar.add(transactionButton);
 
+        // Add navigation bar to the top
+        add(navBar, BorderLayout.NORTH);
 
-        // Display Current user Budget, SavingGoal and current Spending
-        JLabel budget = new JLabel("your current Budget is: " + 10345);
-        JLabel saving = new JLabel("your current Saving is: " + 500);
-        JLabel transaction = new JLabel("your current Monthly Spending is: " + 1000);
+        // Content panel for the budget, savings, and transaction details
+        JPanel contentPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        contentPanel.setBackground(Color.WHITE);
 
-        // Add labels
-        add(budget);
-        add(saving);
-        add(transaction);
+        // Create labels for displaying data
+        JLabel budgetLabel = new JLabel("Your current budget is: $" + 10345);
+        JLabel savingLabel = new JLabel("Your current saving is: $" + 500);
+        JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
 
-        //Add buttons
-        add(savingsButton);
-        add(budgetButton);
-        add(transactionButton);
+        // Set font for labels
+        Font labelFont = new Font("Arial", Font.PLAIN, 16);
+        budgetLabel.setFont(labelFont);
+        savingLabel.setFont(labelFont);
+        transactionLabel.setFont(labelFont);
 
+        // Add labels to the content panel
+        contentPanel.add(budgetLabel);
+        contentPanel.add(savingLabel);
+        contentPanel.add(transactionLabel);
 
+        // Add the content panel to the center
+        add(contentPanel, BorderLayout.CENTER);
     }
-    public void actionPerformed(ActionEvent e){
-        if (e.getSource() == savingsButton){
+
+    private JButton createNavButton(String text) {
+        JButton button = new JButton(text);
+        button.setFocusable(false);
+        button.setBackground(new Color(38, 120, 190)); // Modern blue
+        button.setForeground(Color.WHITE); // White text
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Padding
+        button.addActionListener(this);
+        return button;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == savingsButton) {
             Mainframe.cardLayout.show(Mainframe.mainPanel, "Savings");
-        }
-        if (e.getSource() == budgetButton){
+        } else if (e.getSource() == budgetButton) {
             Mainframe.cardLayout.show(Mainframe.mainPanel, "Budget");
-
-        }
-        if (e.getSource() == transactionButton){
+        } else if (e.getSource() == transactionButton) {
             Mainframe.cardLayout.show(Mainframe.mainPanel, "Transaction");
-
         }
-
     }
 }
