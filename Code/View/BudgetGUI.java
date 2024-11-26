@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BudgetGUI extends JPanel{
-    private JTextField categoryField;// this will be chancged to a drop dowmn menu later
+    private JComboBox<String> categoryField;
     private JTextField amountField;
     private JTextField durationField;
     private JCheckBox notificationCheckBox;
@@ -31,16 +31,37 @@ public class BudgetGUI extends JPanel{
          GridBagConstraints gbc = new GridBagConstraints();
          gbc.insets = new Insets(10, 10, 10, 10);
 
-         //Category field
+         // Dropdown for Categories
         JLabel categoryLabel = new JLabel("Category:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(categoryLabel, gbc);
-        categoryField = new JTextField(20);
+
+            // possiblilites
+        categoryField = new JComboBox<>(new String[]{
+            "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
+            "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
+            "Car Maintenance", "Parking Fees", "Car Repairs",
+            "DMV Fees", "Groceries", "Restaurants",
+            "Pet Food", "Electricity", "Water", "Garbage",
+            "Phones", "Cable", "Internet", "Apperal",
+            "Healthcare", "Dental Care", "Health Insurance", "Homeowner’s Insurance",
+            "Auto Insurance",  "Life Insurance", "Household Items/Supplies",
+            "Gym Memberships","Salon Services", "Cosmetics", "Babysitter",
+            "Subscriptions", "Personal Loans", "Student Loans",
+            "Credit Cards", "Retirement Fund", "Investing",
+            "Emergency Fund", "Big Purchases",
+            "Gifts/Donations", "Special Occasion", "Entertainment",
+            "Vacations", "Subscriptions"
+        });
+
+        categoryField.setPreferredSize(new Dimension(200, 25));
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(categoryField, gbc);
+
+        
 
         //Amount Field
         JLabel amountLabel = new JLabel("Amount:");
@@ -110,7 +131,7 @@ public class BudgetGUI extends JPanel{
 
     //Handel the user's inputs
     private void handelBudget(){
-        String category = categoryField.getText();
+        String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
         String duration = durationField.getText();
         boolean notificationsEnabled = notificationCheckBox.isSelected();
@@ -129,7 +150,7 @@ public class BudgetGUI extends JPanel{
 
             //clear everything after it is added
             durationField.setText("");
-            categoryField.setText("");
+            categoryField.setSelectedIndex(0);
             amountField.setText("");
             notificationCheckBox.setSelected(false);
         }

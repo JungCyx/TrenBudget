@@ -10,7 +10,7 @@ public class TransactionGUI extends JPanel {
     //all the fields user will be using
     //private because it is used once everytime a transaction is created 
     private JTextField nameField;
-    private JTextField categoryField;// this will be chancged to a drop dowmn menu later
+    private JComboBox<String> categoryField; 
     private JTextField amountField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
@@ -38,6 +38,7 @@ public class TransactionGUI extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
 
 
+
         //Name field
         JLabel nameLabel = new JLabel("Transaction Name:");
         gbc.gridx = 0;
@@ -49,16 +50,38 @@ public class TransactionGUI extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(nameField, gbc);
 
-        //Category field
+        // Dropdown for Categories
         JLabel categoryLabel = new JLabel("Category:");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(categoryLabel, gbc);
-        categoryField = new JTextField(20);
+
+
+        // possiblilites
+        categoryField = new JComboBox<>(new String[]{
+            "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
+            "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
+            "Car Maintenance", "Parking Fees", "Car Repairs",
+            "DMV Fees", "Groceries", "Restaurants",
+            "Pet Food", "Electricity", "Water", "Garbage",
+            "Phones", "Cable", "Internet", "Apperal",
+            "Healthcare", "Dental Care", "Health Insurance", "Homeowner’s Insurance",
+            "Auto Insurance",  "Life Insurance", "Household Items/Supplies",
+            "Gym Memberships","Salon Services", "Cosmetics", "Babysitter",
+            "Subscriptions", "Personal Loans", "Student Loans",
+            "Credit Cards", "Retirement Fund", "Investing",
+            "Emergency Fund", "Big Purchases",
+            "Gifts/Donations", "Special Occasion", "Entertainment",
+            "Vacations", "Subscriptions"
+        });
+
+        categoryField.setPreferredSize(new Dimension(200, 25));
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(categoryField, gbc);
+
+        
 
         //Amount Field
         JLabel amountLabel = new JLabel("Amount:");
@@ -116,7 +139,7 @@ public class TransactionGUI extends JPanel {
     //Handel the user's inputs
     private void handelTransaction(){
         String name = nameField.getText();
-        String category = categoryField.getText();
+        String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
         boolean notificationsEnabled = notificationCheckBox.isSelected();
 
@@ -134,7 +157,7 @@ public class TransactionGUI extends JPanel {
 
             //clear everything after it is added
             nameField.setText("");
-            categoryField.setText("");
+            categoryField.setSelectedIndex(0);
             amountField.setText("");
             notificationCheckBox.setSelected(false);
         }
