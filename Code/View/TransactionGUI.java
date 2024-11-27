@@ -5,40 +5,60 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class BudgetGUI extends JPanel{
-    private JComboBox<String> categoryField;
+public class TransactionGUI extends JPanel {
+
+    //all the fields user will be using
+    //private because it is used once everytime a transaction is created 
+    private JTextField nameField;
+    private JComboBox<String> categoryField; 
     private JTextField amountField;
-    private JTextField durationField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
-     
-    //constructor for SavingsGUI
-    BudgetGUI(){
+
+    // Constructor for TransactionGUI
+    public TransactionGUI() {
 
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
 
-        JLabel titleLabel = new JLabel("Budget", JLabel.CENTER);
+        // Create the title label
+        JLabel titleLabel = new JLabel("Transaction ", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel descriptionLabel = new JLabel("Add a new budget", JLabel.CENTER);
+        JLabel descriptionLabel = new JLabel("Add a new financial transaction ", JLabel.CENTER);
         descriptionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+
+        // Add the title label to the top of the panel
         add(titleLabel, BorderLayout.NORTH);
         add(descriptionLabel, BorderLayout.PAGE_START);
-        
-         //Center Pnael to display the input fields
-         JPanel centerPanel = new JPanel();
-         centerPanel.setLayout(new GridBagLayout());
-         GridBagConstraints gbc = new GridBagConstraints();
-         gbc.insets = new Insets(10, 10, 10, 10);
 
-         // Dropdown for Categories
-        JLabel categoryLabel = new JLabel("Category:");
+        //Center Pnael to display the input fields
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+
+
+        //Name field
+        JLabel nameLabel = new JLabel("Transaction Name:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
+        centerPanel.add(nameLabel, gbc);
+        nameField = new JTextField(30);
+        gbc.gridx =1;
+        gbc.anchor = GridBagConstraints.WEST;
+        centerPanel.add(nameField, gbc);
+
+        // Dropdown for Categories
+        JLabel categoryLabel = new JLabel("Category:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(categoryLabel, gbc);
 
-            // possiblilites
+
+        // possiblilites
         categoryField = new JComboBox<>(new String[]{
             "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
             "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
@@ -66,26 +86,13 @@ public class BudgetGUI extends JPanel{
         //Amount Field
         JLabel amountLabel = new JLabel("Amount:");
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(amountLabel, gbc);
         amountField = new JTextField(20);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(amountField, gbc);
-
-
-        //Duration Field
-        JLabel durationLabel = new JLabel("Duration:");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        centerPanel.add(durationLabel, gbc);
-        durationField = new JTextField(20);
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(durationField, gbc);
-
 
         //Notification set up
         //This will be it own seperate class later on
@@ -118,7 +125,7 @@ public class BudgetGUI extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 // Switch to the "Dashboard" panel when the button is clicked
                 // Don't Delete
-                handelBudget();
+                handelTransaction();
             }
         });
         buttonPanel.add(addButton);
@@ -130,15 +137,15 @@ public class BudgetGUI extends JPanel{
 
 
     //Handel the user's inputs
-    private void handelBudget(){
+    private void handelTransaction(){
+        String name = nameField.getText();
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
-        String duration = durationField.getText();
         boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
         //Check if any field is empty
-        if (duration.isEmpty() || category.isEmpty() || amount.isEmpty() ){
+        if (name.isEmpty() || category.isEmpty() || amount.isEmpty() ){
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -149,7 +156,7 @@ public class BudgetGUI extends JPanel{
             JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
 
             //clear everything after it is added
-            durationField.setText("");
+            nameField.setText("");
             categoryField.setSelectedIndex(0);
             amountField.setText("");
             notificationCheckBox.setSelected(false);
@@ -159,6 +166,7 @@ public class BudgetGUI extends JPanel{
             JOptionPane.showMessageDialog(this, "Please enter a number bewtween 1 - 1000000", "ERROR", JOptionPane.ERROR_MESSAGE);
 
         }
+
     }
 }
 
