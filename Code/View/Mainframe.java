@@ -1,7 +1,5 @@
 package View;
 
-import Main.Controller.UserController;
-
 import javax.swing.*;
 import java.awt.*;
 
