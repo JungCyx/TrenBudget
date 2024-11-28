@@ -116,8 +116,6 @@ public class BudgetGUI extends JPanel{
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Switch to the "Dashboard" panel when the button is clicked
-                // Don't Delete
                 handelBudget();
             }
         });
