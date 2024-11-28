@@ -1,3 +1,4 @@
+/*
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -25,3 +26,4 @@ public class BudgetWindow extends JFrame {
     }
     
 }
+*/
