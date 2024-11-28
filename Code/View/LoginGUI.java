@@ -108,7 +108,7 @@ public class LoginGUI extends JPanel {
                 String password = new String(passField.getPassword()); // get the password
 
                 // authenticate the user's info
-                if (controller.authenticateInput(username, password)) {
+                if (controller.authenticateUser(username, password)) {
                     // Redirect the user to the Dashboard page if authenticated
                     Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
                 } else {

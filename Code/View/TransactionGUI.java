@@ -141,7 +141,7 @@ public class TransactionGUI extends JPanel {
         String name = nameField.getText();
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
-        boolean notificationsEnabled = notificationCheckBox.isSelected();
+        // boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
         //Check if any field is empty

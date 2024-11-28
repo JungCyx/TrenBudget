@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Model.SavingsGoal; 
+
 public class SavingsGUI extends JPanel {
     private JTextField nameField;
     private JTextField targetField;
@@ -13,6 +15,7 @@ public class SavingsGUI extends JPanel {
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
+    public SavingsGoal savingsGoal;
 
 
     // Constructor for SavingsGUI
@@ -117,7 +120,7 @@ public class SavingsGUI extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    //Handel user's input
+    //Handel user's input - changes made here 
     private void handleSavings() {
 
         String name = nameField.getText();
@@ -132,6 +135,34 @@ public class SavingsGUI extends JPanel {
             return;
         }
 
+        try {
+        // Parse target and starting amount as doubles
+        double targetAmount = Double.parseDouble(target);
+        double startingAmountValue = Double.parseDouble(startingAmount);
+
+        // Create a SavingsGoal object
+        savingsGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
+
+
+
+
+        // Show success message
+        JOptionPane.showMessageDialog(this, "Savings goal created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        // Optionally, clear the fields
+        nameField.setText("");
+        targetField.setText("");
+        deadlineField.setText("");
+        startingAmountField.setText("");
+        notificationCheckBox.setSelected(false);
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Please enter valid numbers for target and/or starting amounts.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }
+}
+
+        /*
         // Validate numerical fields
         try {
             
@@ -142,6 +173,6 @@ public class SavingsGUI extends JPanel {
             JOptionPane.showMessageDialog(this, "Please enter valid numbers for target and/or starting amounts.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-}
+} */
 
 

@@ -134,7 +134,7 @@ public class BudgetGUI extends JPanel{
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
         String duration = durationField.getText();
-        boolean notificationsEnabled = notificationCheckBox.isSelected();
+        // boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
         //Check if any field is empty
