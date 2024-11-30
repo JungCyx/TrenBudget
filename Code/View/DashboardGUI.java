@@ -9,13 +9,13 @@ import DAO.SavingsGoalDAO;
 import Model.SavingsGoal;
 import Model.UserSession;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+// import javafx.application.Application;
+// import javafx.application.Platform;
+// import javafx.embed.swing.JFXPanel;
+// import javafx.scene.Scene;
+// import javafx.scene.chart.PieChart;
+// import javafx.scene.layout.StackPane;
+// import javafx.stage.Stage;
 
 
 
@@ -27,8 +27,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
     
    
 
-    private JFXPanel pieChartPanel; 
-    private PieChart pieChart;      
+    // private JFXPanel pieChartPanel; 
+    // private PieChart pieChart;      
 
 
     public DashboardGUI() {
@@ -80,12 +80,12 @@ public class DashboardGUI extends JPanel implements ActionListener {
         // Add the content panel to the center
         add(contentPanel, BorderLayout.CENTER);
 
-        //Piechart components
-        pieChartPanel = new JFXPanel();  
-        add(pieChartPanel, BorderLayout.SOUTH); 
+        // //Piechart components
+        // pieChartPanel = new JFXPanel();  
+        // add(pieChartPanel, BorderLayout.SOUTH); 
 
-        // method to create the PieChart
-        initializePieChart();
+        // // method to create the PieChart
+        // initializePieChart();
 
 
 
@@ -114,48 +114,48 @@ public class DashboardGUI extends JPanel implements ActionListener {
     }
 
 
-    // method to create the PieChart
-    private void initializePieChart() {
-        // Create initial PieChart data
-        double targetAmount = 1000;   
-        double startingAmount = 400;  
+    // // method to create the PieChart
+    // private void initializePieChart() {
+    //     // Create initial PieChart data
+    //     double targetAmount = 1000;   
+    //     double startingAmount = 400;  
 
-        // Create PieChart slices
-        PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
-        PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
+    //     // Create PieChart slices
+    //     PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
+    //     PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
 
-        // Create a PieChart
-        pieChart = new PieChart();
-        pieChart.getData().addAll(slice1, slice2);
+    //     // Create a PieChart
+    //     pieChart = new PieChart();
+    //     pieChart.getData().addAll(slice1, slice2);
 
-        // Set up the scene for the PieChart
-        StackPane pieChartLayout = new StackPane();
-        pieChartLayout.getChildren().add(pieChart);
-        Scene scene = new Scene(pieChartLayout, 600, 400);
+    //     // Set up the scene for the PieChart
+    //     StackPane pieChartLayout = new StackPane();
+    //     pieChartLayout.getChildren().add(pieChart);
+    //     Scene scene = new Scene(pieChartLayout, 600, 400);
 
-        // Initialize the JFXPanel and add the JavaFX scene
-        pieChartPanel.setScene(scene);
-    }
+    //     // Initialize the JFXPanel and add the JavaFX scene
+    //     pieChartPanel.setScene(scene);
+    // }
 
     // Update the savings goal pie chart with the new values
-    public void updateSavingsGoal() {
-        SavingsGoal goal = SavingsGoalDAO.getCurrentGoal();  // Get current savings goal from the database
-        if (goal != null) {
-            double startingAmount = goal.getStartingAmount();  // Get the current saved amount
-            double targetAmount = goal.getTargetAmount();    // Get the target amount
+    // public void updateSavingsGoal() {
+    //     SavingsGoal goal = SavingsGoalDAO.getCurrentGoal();  // Get current savings goal from the database
+    //     if (goal != null) {
+    //         double startingAmount = goal.getStartingAmount();  // Get the current saved amount
+    //         double targetAmount = goal.getTargetAmount();    // Get the target amount
 
             
-            Platform.runLater(() -> {
-                // Update pie chart data
-                PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
-                PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
+    //         Platform.runLater(() -> {
+    //             // Update pie chart data
+    //             PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
+    //             PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
                 
-                // Clear old data and add the new data
-                pieChart.getData().clear();
-                pieChart.getData().addAll(slice1, slice2);
-            });
-        }
-    }
+    //             // Clear old data and add the new data
+    //             pieChart.getData().clear();
+    //             pieChart.getData().addAll(slice1, slice2);
+    //         });
+    //     }
+    // }
 
 
 }
