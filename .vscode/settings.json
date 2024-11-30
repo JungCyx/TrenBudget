@@ -1,0 +1,20 @@
+{
+    "java.project.referencedLibraries": {
+        "include": [
+            "Code/lib",
+            "/Users/mariahernandez/Downloads/postgresql-42.7.4.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-23.0.1/lib",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx-swt.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.base.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.controls.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.fxml.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.graphics.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.media.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.swing.jar",
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.web.jar"
+        ],
+        "exclude": [
+            "/Users/mariahernandez/Downloads/javafx-sdk-23.0.1/lib/javafx.fxml.jar"
+        ]
+    }
+}
