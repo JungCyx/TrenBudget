@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import DAO.DAO;
+import Model.SavingsGoal;
 import Model.UserModel;
 
 
@@ -46,12 +46,17 @@ public class UserController {
         return false;
     }
 
-
     // The function maps the user input filed to the userModel and return the mapped object of user
     public UserModel mapUser(String userName, String firstName, String lastName, String email, String password){
         return new UserModel(userName, firstName, lastName, email, password );
     }
 
+    // TODO: a function that get the user from the data base and return a user model with ID
+    public UserModel getUser(String username, String password){
+        return new UserModel();
+    } 
+
+   // The Function adds a new user to the data base 
    public boolean addUserToDataBase(UserModel user){
     String sql = "INSERT INTO appuser (userName, firstName, lastName, email, password) VALUES (?, ?, ?, ?, ?)";
     
@@ -78,5 +83,9 @@ public class UserController {
     return false;
    }
 
+    // The function maps the Saving Goal input to Saving Goal model and return the model
+    public SavingsGoal mapGoal(String name, double targetAmount, String deadline, double startingAmount, boolean notificationsEnabled, UserModel appUser){
+        return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);     
+    }
 
 }

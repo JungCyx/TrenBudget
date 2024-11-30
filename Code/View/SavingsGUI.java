@@ -1,6 +1,9 @@
 package View;
 
 import javax.swing.*;
+
+import DAO.SavingsGoalDAO;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -129,6 +132,7 @@ public class SavingsGUI extends JPanel {
         String startingAmount = startingAmountField.getText();
         boolean notificationsEnabled = notificationCheckBox.isSelected();
 
+
         // Check for empty fields
         if (name.isEmpty() || target.isEmpty() || deadline.isEmpty() || startingAmount.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -139,12 +143,10 @@ public class SavingsGUI extends JPanel {
         // Parse target and starting amount as doubles
         double targetAmount = Double.parseDouble(target);
         double startingAmountValue = Double.parseDouble(startingAmount);
-
-        // Create a SavingsGoal object
-        savingsGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
-
-
-
+        
+        // Create a SavingsGoal object //TODO appUser instance 
+        SavingsGoal newgGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
+        SavingsGoalDAO.setCurrentSavingsGoal(newgGoal);
 
         // Show success message
         JOptionPane.showMessageDialog(this, "Savings goal created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

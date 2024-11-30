@@ -6,7 +6,9 @@ public class UserModel {
     private String lastName;
     private String email;
     private String password;
-
+    private int id;
+    
+    //Create account for login 
     public UserModel(String userName, String firstName, String lastName, String email, String password) {
         this.userName = userName;
         this.firstName = firstName;
@@ -14,8 +16,27 @@ public class UserModel {
         this.email = email;
         this.password = password;
     }
+    //Retrieve user info from DB 
+    public UserModel(int id, String userName, String firstName, String lastName, String email, String password) {
+        this.id = id;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
+    //User Getters & Setters 
+    public UserModel() {
+        
+    }
 
-    public UserModel() {}
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id){
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;

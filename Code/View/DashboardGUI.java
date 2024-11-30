@@ -5,6 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
+import DAO.SavingsGoalDAO;
+import Model.SavingsGoal;
+
+//import javafx.application.Platform;
+
 public class DashboardGUI extends JPanel implements ActionListener {
 
     private final JButton savingsButton;
@@ -77,5 +82,15 @@ public class DashboardGUI extends JPanel implements ActionListener {
         } else if (e.getSource() == transactionButton) {
             Mainframe.cardLayout.show(Mainframe.mainPanel, "Transaction");
         }
+    }
+
+
+    //update savings goal
+    public void updateSavingsGoal(){
+        SavingsGoal goal = SavingsGoalDAO.getCurrentGoal();
+        if(goal != null){
+            //display pie
+        }
+        
     }
 }

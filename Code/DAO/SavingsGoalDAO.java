@@ -1,25 +1,29 @@
-// package DAO;
-// import java.beans.Statement;
-// import java.sql.Connection;
-// import java.sql.DriverManager;
-// import java.sql.SQLException;
-// import java.sql.PreparedStatement;
-// import Model.SavingsGoal;
-// import View.SavingsGUI;
+package DAO;
+import java.beans.Statement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import Model.SavingsGoal;
+import View.SavingsGUI;
 
 
 
-// public class SavingsGoalDAO{
-//     public void saveSavingsGoal(){
-//         String sqlStatement = "INSERT INTO SAVINGS (name, targetAmount, deadline, startingAmount, notificationsEnabled) VALUES ()";
-//     try {
-//         Connection conn  = DAO.ConnectionToDataBase();
-//         PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
+ public class SavingsGoalDAO{
 
-//         preparedStatement.setString(1, SavingsGUI.savingsGoal.getName());
-//     } catch (Exception e) {
-//         // TODO: handle exception
-//     }
-// }
+    public static SavingsGoal currentGoal; // this is instance of a savings goal which will be updating in the dashboard
 
-// }
+    //get the current savings goal
+    public static SavingsGoal getCurrentGoal(){
+        return currentGoal;
+    }
+
+    //set the current savings goal
+    public static void setCurrentSavingsGoal(SavingsGoal goal) {
+         currentGoal = goal;
+        
+    }
+   
+}
+
+ 

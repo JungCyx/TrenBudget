@@ -30,7 +30,7 @@ public class DAO{
 
    }
 
-   public void createUserTables() {
+   public void createUserTable() {
       String sql = "CREATE TABLE IF NOT EXISTS appUser (" +
                    "id SERIAL PRIMARY KEY, " +
                    "userName VARCHAR(225), " +
@@ -45,13 +45,39 @@ public class DAO{
           stmt.executeUpdate();
           conn.close();
           stmt.close();
-          System.out.println("Table created successfully...");
+          System.out.println("User Table created successfully...");
   
       } catch (SQLException e) {
-         System.out.println("Faild To Create the DataBase");
+         System.out.println("Faild To Create User Table...");
           e.printStackTrace();    
       };
   }
+
+  public void createSavingGoalTable() {
+   String sql = "CREATE TABLE IF NOT EXISTS userGoals (" +
+             "goalId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
+             "userId INT NOT NULL, " +        // Foreign key referencing appUser
+             "goalName VARCHAR(255), " +
+             "targetAmount FLOAT, " +
+             "deadline VARCHAR(225), " +
+             "startingAmount FLOAT, " +
+             "notificationsEnabled BOOLEAN, " +
+             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
+
+   try (Connection conn = get_Connection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+       stmt.executeUpdate();
+       conn.close();
+       stmt.close();
+       System.out.println("Saving Table created successfully...");
+
+   } catch (SQLException e) {
+      System.out.println("Faild To Create Saving Table...");
+       e.printStackTrace();    
+   };
+}
+
   
 }
 
