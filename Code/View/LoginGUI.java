@@ -6,28 +6,49 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class LoginGUI extends JPanel {
+public class LoginGUI extends JFrame {
 
     private final UserController controller = new UserController();
+    public static CardLayout cardLayout;
+    public static JPanel mainPanel;
 
     public LoginGUI() {
-        setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
-
-        // Set a preferred size for the panel
+        // Initialize frame properties
+        setTitle("TrenBudget - Login");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
+
+        // Setup layout
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+        add(mainPanel);
+
+        // Add only the login view initially
+        JPanel loginPanel = createLoginPanel();
+        mainPanel.add(loginPanel, "Login");
+
+        // Display the login screen
+        cardLayout.show(mainPanel, "Login");
+
+        pack();
+        setLocationRelativeTo(null); // Center the frame
+        setVisible(true);
+    }
+
+    private JPanel createLoginPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
 
         // Left side panel with blue background
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(new Color(0, 123, 255)); // Blue color
-        leftPanel.setPreferredSize(new Dimension(200, getHeight())); // Proportional to the width
-        add(leftPanel, BorderLayout.WEST);
+        leftPanel.setPreferredSize(new Dimension(200, 600));
+        panel.add(leftPanel, BorderLayout.WEST);
 
         // Main form panel
         JPanel formPanel = new JPanel(new BorderLayout());
         formPanel.setBackground(Color.WHITE);
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        add(formPanel, BorderLayout.CENTER);
 
         // Welcome Label
         JLabel titleLabel = new JLabel("Welcome to TrenBudget", JLabel.CENTER);
@@ -99,21 +120,24 @@ public class LoginGUI extends JPanel {
         fieldsPanel.add(registerPanel, gbc);
 
         formPanel.add(fieldsPanel, BorderLayout.CENTER);
+        panel.add(formPanel, BorderLayout.CENTER);
 
         // Action listener for login button
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = userField.getText(); // get the username
-                String password = new String(passField.getPassword()); // get the password
+                String username = userField.getText(); // Get the username
+                String password = new String(passField.getPassword()); // Get the password
 
-                // authenticate the user's info
+                // Authenticate the user's info
                 if (controller.authenticateUser(username, password)) {
-                    // Redirect the user to the Dashboard page if authenticated
-                    Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
+                    // Initialize other views upon successful login
+                    initializeViews();
+
+                    // Redirect to the Dashboard page
+                    cardLayout.show(mainPanel, "Dashboard");
                 } else {
-                    // error message if the user inputs wrong credentials
-                    JOptionPane.showMessageDialog(null, "Incorrect credentials", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(panel, "Incorrect credentials", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -122,24 +146,21 @@ public class LoginGUI extends JPanel {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Redirect the user to the Register page
-                Mainframe.cardLayout.show(Mainframe.mainPanel, "Register");
+                // Redirect to the Register page
+                cardLayout.show(mainPanel, "Register");
             }
         });
+
+        return panel;
     }
 
-    // Main method to test GUI
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Login");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-
-        LoginGUI loginPanel = new LoginGUI();
-        frame.add(loginPanel, BorderLayout.CENTER);
-
-        // Set frame size and allow resizing
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+    private void initializeViews() {
+        // Add additional views
+        mainPanel.add(new CreateAccountGUI(), "Register");
+        mainPanel.add(new DashboardGUI(), "Dashboard");
+        mainPanel.add(new BudgetGUI(), "Budget");
+        mainPanel.add(new SavingsGUI(), "Savings");
+        mainPanel.add(new TransactionGUI(), "Transaction");
     }
 }
+

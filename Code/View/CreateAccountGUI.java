@@ -122,7 +122,7 @@ public class CreateAccountGUI extends JPanel implements ActionListener {
         }
 
         if(e.getSource() == backToLoginButton){
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "Login");
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");
         }
         
     }

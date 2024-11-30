@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import Model.SavingsGoal;
-import Model.UserModel;
 import Model.UserSession;
 
 
@@ -55,7 +54,7 @@ import Model.UserSession;
         };
     }
    
-    // The function retrives the saving goals and returns saving goal model <List> //highest to lowest return (latest value) 0,1,2
+    // The function retrives the saving goals and returns saving goal model <List> //highest to lowest return (latest value) 0,1
     public ArrayList<SavingsGoal> getSavingsGoalsList(){
         // get the current user Id
         int current_user_id = UserSession.getInstance().getCurrentUser().getId();
@@ -64,7 +63,7 @@ import Model.UserSession;
         ArrayList<SavingsGoal> savingsGoals = new ArrayList<>(); 
         
         // Query the db to get the saving goal for the current user 
-        String sql = "SELECT * FROM usergoals WHERE userid = ? ORDER BY id DESC"; // Example query
+        String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY id DESC"; // Example query
 
         try(Connection conn = connection.get_Connection();){
 
@@ -98,54 +97,45 @@ import Model.UserSession;
         return savingsGoals;
     }
 
-    // The function retrieves and returns the latest savings goal
-public SavingsGoal getSavingsGoal() {
-    SavingsGoal currGoal = null; // Initialize to null to handle cases where no goal is found
+    // The function retrives and return the latest saving goal
+    public SavingsGoal getSavingsGoal(){
 
-    // Get the current user
-    UserModel currentUser = UserSession.getInstance().getCurrentUser();
+        SavingsGoal currGoal = new SavingsGoal();
 
-    // Check if the user is logged in
-    if (currentUser == null) {
-        System.out.println("No user is currently logged in. Cannot retrieve savings goal.");
-        return null; // Return null or throw an exception based on your application's needs
+        // get the current user Id
+        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+        
+        // Query the db to get the saving goal for the current user 
+        String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY goalId DESC LIMIT 1"; // Example query
+
+        try(Connection conn = connection.get_Connection();){
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            stmt.setInt(1, current_user_id);
+
+            // Database results 
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+
+                currGoal.setGoalUserId(current_user_id);
+                currGoal.setName(rs.getString("goalName"));
+                currGoal.setTargetAmount(rs.getFloat("targetAmount"));
+                currGoal.setDeadline(rs.getString("deadline"));
+                currGoal.setStartingAmount(rs.getFloat("startingAmount"));
+                currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+            }
+            conn.close();
+            rs.close();
+
+        } catch (SQLException e) {
+            System.out.println("Failed to retrive goals!!!");
+            e.printStackTrace();
+        };
+        
+        return currGoal;
     }
-
-    int current_user_id = currentUser.getId(); // Get the current user's ID
-
-    // Query the database to get the savings goal for the current user
-    String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY id DESC LIMIT 1"; // Ensure the query filters by userId
-
-    try (Connection conn = connection.get_Connection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        stmt.setInt(1, current_user_id); // Set the parameter for userId
-
-        // Execute the query
-        ResultSet rs = stmt.executeQuery();
-
-        if (rs.next()) { // Use if instead of while since LIMIT 1 returns a single row
-            currGoal = new SavingsGoal();
-            currGoal.setGoalUserId(current_user_id);
-            currGoal.setName(rs.getString("goalName"));
-            currGoal.setTargetAmount(rs.getFloat("targetAmount"));
-            currGoal.setDeadline(rs.getString("deadline"));
-            currGoal.setStartingAmount(rs.getFloat("startingAmount"));
-            currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
-        }
-
-        // Close resources (try-with-resources automatically handles this)
-        rs.close();
-
-    } catch (SQLException e) {
-        System.out.println("Failed to retrieve savings goal!");
-        e.printStackTrace();
-    }
-
-    return currGoal; // Returns null if no goal is found or if an error occurred
-}
-
-
 }
 
  

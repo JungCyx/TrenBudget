@@ -1,7 +1,7 @@
 package Main;
 
 import DAO.DAO;
-import View.Mainframe;
+import View.LoginGUI;
 
 public class Main {
     public static DAO connector = new DAO();
@@ -12,7 +12,7 @@ public class Main {
         connector.createUserTable(); // Create a user table in the DB 
         connector.createSavingGoalTable(); // Creates a saving goal table in the DB
 
-        Mainframe mainframe = new Mainframe(); // Retrieve the Mainframe bean
+        LoginGUI mainframe = new LoginGUI(); // Retrieve the Mainframe bean
         mainframe.setVisible(true); // Display the Mainframe
  
     }

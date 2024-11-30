@@ -109,7 +109,7 @@ public class SavingsGUI extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the "Dashboard" panel when the button is clicked
                 // Don't Delete
-                Mainframe.cardLayout.show(Mainframe.mainPanel, "Dashboard");
+                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
             }
         });
         buttonPanel.add(backButton);

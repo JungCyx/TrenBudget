@@ -7,7 +7,6 @@ import javax.swing.*;
 
 import DAO.SavingsGoalDAO;
 import Model.SavingsGoal;
-import Model.UserSession;
 
 // import javafx.application.Application;
 // import javafx.application.Platform;
@@ -105,11 +104,11 @@ public class DashboardGUI extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == savingsButton) {
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "Savings");
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Savings");
         } else if (e.getSource() == budgetButton) {
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "Budget");
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
         } else if (e.getSource() == transactionButton) {
-            Mainframe.cardLayout.show(Mainframe.mainPanel, "Transaction");
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
         }
     }
 
