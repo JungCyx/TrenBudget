@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import DAO.DAO;
 import Model.SavingsGoal;
 import Model.UserModel;
+import Model.UserSession;
 
 
 public class UserController {
@@ -29,6 +30,10 @@ public class UserController {
             // Execute the query and check if the result exists
             ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
+
+                    // Create the User Instences
+                    createUserInstences(rs);
+
                     // User found, return true
                     System.out.println("User authenticated successfully.");
                     return true;
@@ -46,18 +51,43 @@ public class UserController {
         return false;
     }
 
+    // create an instaences of the logged usere
+    public void createUserInstences(ResultSet rs) throws SQLException{
+
+        UserModel current_user = mapDB_toUser(rs);
+
+        UserSession.getInstance().setCurrentUser(current_user);
+
+    }
+
+    // mapps Database respones to User Model
+    public UserModel mapDB_toUser(ResultSet rs) throws SQLException{
+        // create new user
+        UserModel current_user = new UserModel();
+
+        // mapp user model to DB reponse rs
+        current_user.setId(rs.getInt("id"));
+        current_user.setUserName(rs.getString("userName")); 
+        current_user.setFirstName(rs.getString("firstName")); 
+        current_user.setLastName(rs.getString("lastName"));
+        current_user.setEmail(rs.getString("email"));
+        current_user.setPassword(rs.getString("password"));
+
+        return current_user;
+    }
+
     // The function maps the user input filed to the userModel and return the mapped object of user
     public UserModel mapUser(String userName, String firstName, String lastName, String email, String password){
         return new UserModel(userName, firstName, lastName, email, password );
     }
 
-    // TODO: a function that get the user from the data base and return a user model with ID
-    public UserModel getUser(String username, String password){
-        return new UserModel();
+    // The Function return the current logged in user model
+    public UserModel getUser(){
+        return UserSession.getInstance().getCurrentUser();
     } 
 
    // The Function adds a new user to the data base 
-   public boolean addUserToDataBase(UserModel user){
+   public void addUserToDataBase(UserModel user){
     String sql = "INSERT INTO appuser (userName, firstName, lastName, email, password) VALUES (?, ?, ?, ?, ?)";
     
     try (Connection conn = connection.get_Connection();) {
@@ -79,12 +109,10 @@ public class UserController {
         System.out.println("Faild add to table...");
           e.printStackTrace();
       };
-    
-    return false;
    }
 
     // The function maps the Saving Goal input to Saving Goal model and return the model
-    public SavingsGoal mapGoal(String name, double targetAmount, String deadline, double startingAmount, boolean notificationsEnabled, UserModel appUser){
+    public SavingsGoal mapGoal(String name, Float targetAmount, String deadline, Float startingAmount, boolean notificationsEnabled, UserModel appUser){
         return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);     
     }
 

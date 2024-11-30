@@ -27,7 +27,6 @@ public class DAO{
       e.printStackTrace();
    }
    return conn;
-
    }
 
    public void createUserTable() {

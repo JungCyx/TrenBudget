@@ -20,6 +20,8 @@ public class SavingsGUI extends JPanel {
     private JButton backButton;
     public SavingsGoal savingsGoal;
 
+    private SavingsGoalDAO savingDao = new SavingsGoalDAO();
+
 
     // Constructor for SavingsGUI
     public SavingsGUI() {
@@ -141,12 +143,16 @@ public class SavingsGUI extends JPanel {
 
         try {
         // Parse target and starting amount as doubles
-        double targetAmount = Double.parseDouble(target);
-        double startingAmountValue = Double.parseDouble(startingAmount);
+        Float targetAmount = Float.parseFloat(target);
+        Float startingAmountValue = Float.parseFloat(startingAmount);
         
-        // Create a SavingsGoal object //TODO appUser instance 
-        SavingsGoal newgGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
-        SavingsGoalDAO.setCurrentSavingsGoal(newgGoal);
+        // Create a SavingsGoal object
+        SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
+
+        // Adding the saving goal in to the database table 
+        savingDao.addGoalIntoDatabase(newGoal);
+
+        SavingsGoalDAO.setCurrentSavingsGoal(newGoal);
 
         // Show success message
         JOptionPane.showMessageDialog(this, "Savings goal created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

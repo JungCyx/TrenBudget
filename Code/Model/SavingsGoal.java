@@ -5,15 +5,15 @@ package Model;
 public class SavingsGoal {
     private String name;
     private String deadline;
-    private double startingAmount;
-    private double targetAmount;
+    private Float startingAmount;
+    private Float targetAmount;
     private boolean notificationsEnabled;
     private UserModel appUser;
     private int userId;
     
 
     //Constructor
-    public SavingsGoal(String name, double targetAmount, String deadline, double startingAmount, boolean notificationsEnabled, UserModel appUser){
+    public SavingsGoal(String name, Float targetAmount, String deadline, Float startingAmount, boolean notificationsEnabled, UserModel appUser){
         this.appUser = appUser;
         this.name = name;
         this.targetAmount = targetAmount;
@@ -26,7 +26,7 @@ public class SavingsGoal {
     }
 
     //Constructor with no user model
-    public SavingsGoal(String name, double targetAmount, String deadline, double startingAmount, boolean notificationsEnabled){
+    public SavingsGoal(String name, Float targetAmount, String deadline, Float startingAmount, boolean notificationsEnabled){
         this.name = name;
         this.targetAmount = targetAmount;
         this.deadline = deadline;
@@ -55,7 +55,7 @@ public class SavingsGoal {
         this.name = savingsName;
     }
 
-    public void setTargetAmount(double targetAmount){
+    public void setTargetAmount(Float targetAmount){
         this.targetAmount = targetAmount;
     }
 
@@ -63,7 +63,7 @@ public class SavingsGoal {
         this.deadline = deadline;
     } 
 
-    public void setStartingAmount(double startingAmount){
+    public void setStartingAmount(Float startingAmount){
         this.startingAmount = startingAmount;
     } 
 
@@ -74,14 +74,14 @@ public class SavingsGoal {
     public String getName(){
         return name;
        }
-    public double getTargetAmount(){
+    public Float getTargetAmount(){
         return targetAmount;
     }
 
     public String getDeadLine(){
         return deadline;
     }
-    public double getStartingAmount(){
+    public Float getStartingAmount(){
         return startingAmount;
     }
 

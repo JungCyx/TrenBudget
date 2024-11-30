@@ -1,7 +1,8 @@
 package Model;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 
 public class BudgetGoal {
     private String category;
@@ -13,27 +14,37 @@ public class BudgetGoal {
     private int userId;
 
     // Constructor with user model
-    public BudgetGoal(String category, double budgetAmount, LocalDate startDate, LocalDate endDate, boolean notificationsEnabled, UserModel appUser) {
+    public BudgetGoal(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled, UserModel appUser) {
         this.category = category;
         this.budgetAmount = budgetAmount;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.notificationsEnabled = notificationsEnabled;
         this.appUser = appUser;
         this.userId = this.appUser.getId(); // Get user ID from the user model
+
+        // Parse the string inputs to LocalDate
+        this.startDate = parseDate(startDateString);
+        this.endDate = parseDate(endDateString);
     }
 
     // Constructor without user model
-    public BudgetGoal(String category, double budgetAmount, LocalDate startDate, LocalDate endDate, boolean notificationsEnabled) {
+    public BudgetGoal(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled) {
         this.category = category;
         this.budgetAmount = budgetAmount;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.notificationsEnabled = notificationsEnabled;
+
+        // Parse the string inputs to LocalDate
+        this.startDate = parseDate(startDateString);
+        this.endDate = parseDate(endDateString);
     }
 
     // Empty Constructor
     public BudgetGoal() {
+    }
+
+    // Parse the date string to LocalDate
+    private LocalDate parseDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Format expected: "2024-01-01"
+        return LocalDate.parse(dateString, formatter);
     }
 
     // Getters and Setters
@@ -57,12 +68,12 @@ public class BudgetGoal {
         this.budgetAmount = budgetAmount;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartDate(String startDateString) {
+        this.startDate = parseDate(startDateString);  // Parse the new date string
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setEndDate(String endDateString) {
+        this.endDate = parseDate(endDateString);  // Parse the new date string
     }
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
@@ -89,10 +100,10 @@ public class BudgetGoal {
         return notificationsEnabled;
     }
 
-    // Calculate duration in days
-    public int getDurationInDays() {
+    // Calculates duration of BudgetGoal
+    public long getDurationInDays() {
         if (startDate != null && endDate != null) {
-            return Period.between(startDate, endDate).getDays();
+            return ChronoUnit.DAYS.between(startDate, endDate);
         }
         return 0;
     }

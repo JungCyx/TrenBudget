@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class BudgetGUI extends JPanel{
     private JComboBox<String> categoryField;
     private JTextField amountField;
@@ -76,6 +77,7 @@ public class BudgetGUI extends JPanel{
 
 
         //Duration Field
+        //TODO: add start and end date field instead "YYYY-MM-dd"
         JLabel durationLabel = new JLabel("Duration:");
         gbc.gridx = 0;
         gbc.gridy = 2;
