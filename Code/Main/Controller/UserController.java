@@ -57,7 +57,6 @@ public class UserController {
         UserModel current_user = mapDB_toUser(rs);
 
         UserSession.getInstance().setCurrentUser(current_user);
-
     }
 
     // mapps Database respones to User Model
