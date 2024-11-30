@@ -23,6 +23,10 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton savingsButton;
     private final JButton budgetButton;
     private final JButton transactionButton;
+    private final JButton refreshButton;
+    private JPanel contentPanel;
+    private JLabel savingLabel;
+    SavingsGoalDAO sDao = new SavingsGoalDAO();
     
    
 
@@ -32,7 +36,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
     public DashboardGUI() {
 
-        SavingsGoalDAO sDao = new SavingsGoalDAO();
+        
 
         // Set layout for the main panel
         setLayout(new BorderLayout());
@@ -45,24 +49,26 @@ public class DashboardGUI extends JPanel implements ActionListener {
         savingsButton = createNavButton("Savings Goal");
         budgetButton = createNavButton("Budget");
         transactionButton = createNavButton("Transaction");
+        refreshButton = createNavButton("Refresh");
 
         // Add buttons to the navigation bar
         navBar.add(savingsButton);
         navBar.add(budgetButton);
         navBar.add(transactionButton);
+        navBar.add(refreshButton);
 
         // Add navigation bar to the top
         add(navBar, BorderLayout.NORTH);
 
         // Content panel for the budget, savings, and transaction details
-        JPanel contentPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        contentPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
 
         SavingsGoal currUser = sDao.getSavingsGoal();
         // Create labels for displaying data
         JLabel budgetLabel = new JLabel("Your current budget is: $" + 10345);
-        JLabel savingLabel = new JLabel("Your current saving is: $" + currUser.getStartingAmount());
+        savingLabel = new JLabel("Your current saving is: $" + currUser.getStartingAmount());
         JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
 
         // Set font for labels
@@ -85,9 +91,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
         // // method to create the PieChart
         // initializePieChart();
-
-
-
     }
 
     private JButton createNavButton(String text) {
@@ -110,6 +113,15 @@ public class DashboardGUI extends JPanel implements ActionListener {
         } else if (e.getSource() == transactionButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
         }
+        else if(e.getSource() == refreshButton){
+            // refresh page add code
+            // Refresh page
+            SavingsGoal currUser = sDao.getSavingsGoal(); // Fetch updated savings goal
+            savingLabel.setText("Your current saving is: $" + currUser.getStartingAmount()); // Update label
+            contentPanel.revalidate(); // Refresh layout
+            contentPanel.repaint(); // Redraw panel
+        }
+
     }
 
 
