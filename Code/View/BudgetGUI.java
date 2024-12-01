@@ -9,158 +9,124 @@ import Model.BudgetGoal;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 
-
-public class BudgetGUI extends JPanel{
+public class BudgetGUI extends JPanel {
     private JComboBox<String> categoryField;
     private JTextField amountField;
-    private JTextField durationField_Start;
-    private JTextField durationField_End;
+    private JTextField durationField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
-
-    private BudgetGoal curreBudgetGoal;
-
-    private UserController controller = new UserController();
-    private BudgetGoalDAO bDao = new BudgetGoalDAO();
      
     //constructor for SavingsGUI
     BudgetGUI(){
 
+    // Constructor for BudgetGUI
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
 
+        // Title and description
         JLabel titleLabel = new JLabel("Budget", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         JLabel descriptionLabel = new JLabel("Add a new budget", JLabel.CENTER);
         descriptionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         add(titleLabel, BorderLayout.NORTH);
         add(descriptionLabel, BorderLayout.PAGE_START);
-        
-         //Center Pnael to display the input fields
-         JPanel centerPanel = new JPanel();
-         centerPanel.setLayout(new GridBagLayout());
-         GridBagConstraints gbc = new GridBagConstraints();
-         gbc.insets = new Insets(10, 10, 10, 10);
 
-         // Dropdown for Categories
+        // Center Panel to display the input fields
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Dropdown for Categories
         JLabel categoryLabel = new JLabel("Category:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(categoryLabel, gbc);
 
-            // possiblilites
-        categoryField = new JComboBox<>(new String[]{
-            "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
-            "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
-            "Car Maintenance", "Parking Fees", "Car Repairs",
-            "DMV Fees", "Groceries", "Restaurants",
-            "Pet Food", "Electricity", "Water", "Garbage",
-            "Phones", "Cable", "Internet", "Apperal",
-            "Healthcare", "Dental Care", "Health Insurance", "Homeowner’s Insurance",
-            "Auto Insurance",  "Life Insurance", "Household Items/Supplies",
-            "Gym Memberships","Salon Services", "Cosmetics", "Babysitter",
-            "Subscriptions", "Personal Loans", "Student Loans",
-            "Credit Cards", "Retirement Fund", "Investing",
-            "Emergency Fund", "Big Purchases",
-            "Gifts/Donations", "Special Occasion", "Entertainment",
-            "Vacations", "Subscriptions"
+        categoryField = new JComboBox<>(new String[] {
+                "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
+                "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
+                "Car Maintenance", "Parking Fees", "Car Repairs", "DMV Fees",
+                "Groceries", "Restaurants", "Pet Food", "Electricity", "Water",
+                "Garbage", "Phones", "Cable", "Internet", "Apparel", "Healthcare",
+                "Dental Care", "Health Insurance", "Homeowner’s Insurance",
+                "Auto Insurance", "Life Insurance", "Household Items/Supplies",
+                "Gym Memberships", "Salon Services", "Cosmetics", "Babysitter",
+                "Subscriptions", "Personal Loans", "Student Loans", "Credit Cards",
+                "Retirement Fund", "Investing", "Emergency Fund", "Big Purchases",
+                "Gifts/Donations", "Special Occasion", "Entertainment",
+                "Vacations", "Subscriptions"
         });
-
         categoryField.setPreferredSize(new Dimension(200, 25));
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(categoryField, gbc);
 
-        
-
-        //Amount Field
+        // Amount Field
         JLabel amountLabel = new JLabel("Amount:");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(amountLabel, gbc);
+
         amountField = new JTextField(20);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(amountField, gbc);
 
 
-
-        JLabel durationLabel = new JLabel("Start Date:");
+        //Duration Field
+        //TODO: add start and end date field instead "YYYY-MM-dd"
+        JLabel durationLabel = new JLabel("Duration:");
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(durationLabel, gbc);
-        durationField_Start = new JTextField(20);
+        durationField = new JTextField(20);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(durationField_Start, gbc);
+        centerPanel.add(durationField, gbc);
 
-        //Duration Field
-        JLabel durationLabel2 = new JLabel("End Date:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.EAST;
-        centerPanel.add(durationLabel2, gbc);
-        durationField_End = new JTextField(20);
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(durationField_End, gbc);
-
-
-        //Notification set up
-        //This will be it own seperate class later on
+        // Notification setup
         notificationCheckBox = new JCheckBox("Turn On Notifications");
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         centerPanel.add(notificationCheckBox, gbc);
+
         add(centerPanel, BorderLayout.CENTER);
 
-
+        // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        // Create the "Back" button
+
         backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Switch to the "Dashboard" panel when the button is clicked
-                // Don't Delete
-                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
-            }
+        backButton.addActionListener(e -> {
+            // Switch to the "Dashboard" panel when the button is clicked
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
         });
         buttonPanel.add(backButton);
 
-        //Create the "Add" button
         addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handelBudget();
-            }
-        });
+        addButton.addActionListener(e -> handleBudget());
         buttonPanel.add(addButton);
-        
 
-        // Add the bottom panel to the bottom of the main panel
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-
-    //Handel the user's inputs
-    private void handelBudget(){
+    // Handle the user's inputs
+    private void handleBudget() {
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
-        String duration_start = durationField_Start.getText();
-        String duration_end = durationField_End.getText();
-        boolean notificationsEnabled = notificationCheckBox.isSelected();
+        String duration = durationField.getText();
+        // boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
         //Check if any field is empty
-        if (duration_start.isEmpty() || category.isEmpty() || amount.isEmpty() || duration_end.isEmpty()){
+        if (duration.isEmpty() || category.isEmpty() || amount.isEmpty() ){
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -170,23 +136,36 @@ public class BudgetGUI extends JPanel{
         
             JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
 
-            Double Pamount = Double.parseDouble(amount);
-
-            curreBudgetGoal = controller.mapBudgetGoal(category, Pamount, duration_start, duration_end, notificationsEnabled);
-            bDao.addBudgetIntoDatabase(curreBudgetGoal);
-
             //clear everything after it is added
-            durationField_Start.setText("");
-            durationField_End.setText("");
+            durationField.setText("");
             categoryField.setSelectedIndex(0);
             amountField.setText("");
+            yearDropdown.setSelectedIndex(0);
+            monthDropdown.setSelectedIndex(0);
+            dayDropdown.setSelectedIndex(0);
             notificationCheckBox.setSelected(false);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for the amount", "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
         }
+    }
 
-        catch (NumberFormatException ex){
-            JOptionPane.showMessageDialog(this, "Please enter a number bewtween 1 - 1000000", "ERROR", JOptionPane.ERROR_MESSAGE);
+    // Update the days dropdown based on the selected year and month
+    private void updateDaysDropdown(JComboBox<Integer> dayDropdown, JComboBox<Integer> yearDropdown,
+            JComboBox<String> monthDropdown) {
+        dayDropdown.removeAllItems();
+        int year = (int) yearDropdown.getSelectedItem();
+        int month = monthDropdown.getSelectedIndex();
 
+        int daysInMonth = switch (month) {
+            case 0, 2, 4, 6, 7, 9, 11 -> 31; // January, March, May, July, August, October, December
+            case 3, 5, 8, 10 -> 30; // April, June, September, November
+            case 1 -> (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28; // February
+            default -> 0;
+        };
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            dayDropdown.addItem(i);
         }
     }
 }
-

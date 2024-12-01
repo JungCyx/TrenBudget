@@ -8,12 +8,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import Model.SavingsGoal; 
+import Model.SavingsGoal;
 
 public class SavingsGUI extends JPanel {
     private JTextField nameField;
     private JTextField targetField;
-    private JTextField deadlineField;
+    private JComboBox<String> deadlineComboBox; // Dropdown for deadline
     private JTextField startingAmountField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
@@ -21,7 +21,6 @@ public class SavingsGUI extends JPanel {
     public SavingsGoal savingsGoal;
 
     private SavingsGoalDAO savingDao = new SavingsGoalDAO();
-
 
     // Constructor for SavingsGUI
     public SavingsGUI() {
@@ -38,15 +37,13 @@ public class SavingsGUI extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
         add(descriptionLabel, BorderLayout.PAGE_START);
 
-
         // Center Panel for input fields
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-
-        //Name Field
+        // Name Field
         JLabel nameLabel = new JLabel("Goal Name:");
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -56,7 +53,6 @@ public class SavingsGUI extends JPanel {
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(nameField, gbc);
-
 
         // Target Amount Field
         JLabel targetLabel = new JLabel("Target Amount:");
@@ -69,17 +65,17 @@ public class SavingsGUI extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(targetField, gbc);
 
-
-        // Deadline Field
+        // Deadline Dropdown
         JLabel deadlineLabel = new JLabel("Deadline:");
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(deadlineLabel, gbc);
-        deadlineField = new JTextField(20);
+        String[] deadlineOptions = { "1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year" };
+        deadlineComboBox = new JComboBox<>(deadlineOptions);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(deadlineField, gbc);
+        centerPanel.add(deadlineComboBox, gbc);
 
         // Starting Amount Field
         JLabel startingAmountLabel = new JLabel("Starting Amount:");
@@ -100,15 +96,13 @@ public class SavingsGUI extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         centerPanel.add(notificationCheckBox, gbc);
         add(centerPanel, BorderLayout.CENTER);
-    
 
+        // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Switch to the "Dashboard" panel when the button is clicked
-                // Don't Delete
                 LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
             }
         });
@@ -125,62 +119,48 @@ public class SavingsGUI extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    //Handel user's input - changes made here 
+    // Handle user's input
     private void handleSavings() {
 
         String name = nameField.getText();
         String target = targetField.getText();
-        String deadline = deadlineField.getText();
+        String deadline = (String) deadlineComboBox.getSelectedItem(); // Get selected deadline
         String startingAmount = startingAmountField.getText();
         boolean notificationsEnabled = notificationCheckBox.isSelected();
 
-
         // Check for empty fields
-        if (name.isEmpty() || target.isEmpty() || deadline.isEmpty() || startingAmount.isEmpty()) {
+        if (name.isEmpty() || target.isEmpty() || startingAmount.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
         // Parse target and starting amount as doubles
-        Double targetAmount = Double.parseDouble(target);
-        Double startingAmountValue = Double.parseDouble(startingAmount);
+        Float targetAmount = Float.parseFloat(target);
+        Float startingAmountValue = Float.parseFloat(startingAmount);
         
         // Create a SavingsGoal object
         SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
 
-        // Adding the saving goal in to the database table 
-        savingDao.addGoalIntoDatabase(newGoal);
+            // Add the saving goal into the database table
+            savingDao.addGoalIntoDatabase(newGoal);
 
-        SavingsGoalDAO.setCurrentSavingsGoal(newGoal);
+            SavingsGoalDAO.setCurrentSavingsGoal(newGoal);
 
-        // Show success message
-        JOptionPane.showMessageDialog(this, "Savings goal created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            // Show success message
+            JOptionPane.showMessageDialog(this, "Savings goal created successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-        // Optionally, clear the fields
-        nameField.setText("");
-        targetField.setText("");
-        deadlineField.setText("");
-        startingAmountField.setText("");
-        notificationCheckBox.setSelected(false);
+            // Optionally, clear the fields
+            nameField.setText("");
+            targetField.setText("");
+            deadlineComboBox.setSelectedIndex(0);
+            startingAmountField.setText("");
+            notificationCheckBox.setSelected(false);
 
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(this, "Please enter valid numbers for target and/or starting amounts.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numbers for target and/or starting amounts.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
-
-        /*
-        // Validate numerical fields
-        try {
-            
-            JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        }
-         catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numbers for target and/or starting amounts.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-} */
-
-
