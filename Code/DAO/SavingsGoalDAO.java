@@ -99,7 +99,7 @@ import Model.UserSession;
     // The function retrives and return the latest saving goal
     public SavingsGoal getSavingsGoal(){
 
-        SavingsGoal currGoal = new SavingsGoal();
+        SavingsGoal currGoal = null;
 
         // get the current user Id
         int current_user_id = UserSession.getInstance().getCurrentUser().getId();
@@ -107,9 +107,8 @@ import Model.UserSession;
         // Query the db to get the saving goal for the current user 
         String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY goalId DESC LIMIT 1"; // Example query
 
-        try(Connection conn = connection.get_Connection();){
-
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try(Connection conn = connection.get_Connection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, current_user_id);
 
@@ -117,6 +116,7 @@ import Model.UserSession;
             ResultSet rs = stmt.executeQuery();
 
             while(rs.next()){
+                currGoal = new SavingsGoal();
 
                 currGoal.setGoalUserId(current_user_id);
                 currGoal.setName(rs.getString("goalName"));
@@ -125,14 +125,11 @@ import Model.UserSession;
                 currGoal.setStartingAmount(rs.getFloat("startingAmount"));
                 currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
             }
-            conn.close();
             rs.close();
-
         } catch (SQLException e) {
             System.out.println("Failed to retrive goals!!!");
             e.printStackTrace();
-        };
-        
+        }
         return currGoal;
     }
 }

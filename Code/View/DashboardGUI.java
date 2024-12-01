@@ -21,16 +21,16 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton savingsButton;
     private final JButton budgetButton;
     private final JButton transactionButton;
-    
+    private final JButton refreshButton;
    
 
     private JFXPanel pieChartPanel; 
     private PieChart pieChart;  
-    private JLabel savingLabel;  // Label to display the current savings goal
+
+    private JPanel contentPanel;
+    SavingsGoalDAO sDao = new SavingsGoalDAO();
 
     public DashboardGUI() {
-
-        
 
         // Set layout for the main panel
         setLayout(new BorderLayout());
@@ -60,7 +60,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
         contentPanel.setBackground(Color.WHITE);
 
         JLabel budgetLabel = new JLabel("Your current budget is: $" + 10345);
-        JLabel savingLabel = new JLabel("Your current saving is: $" + currUser.getStartingAmount());
         JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
 
         // Set font for labels
@@ -106,57 +105,45 @@ public class DashboardGUI extends JPanel implements ActionListener {
         }
         else if(e.getSource() == refreshButton){
             // Refresh page
-            SavingsGoal currUser = sDao.getSavingsGoal(); // Fetch updated savings goal
-            savingLabel.setText("Your current saving is: $" + currUser.getStartingAmount()); // Update label
-            contentPanel.revalidate(); // Refresh layout
-            contentPanel.repaint(); // Redraw panel
+            updateSavingsGoal();
         }
 
     }
 
     private void initializePieChart() {
-        // Create initial PieChart data
-        double targetAmount = 1000;   
-        double startingAmount = 400;  
-
-        // Create PieChart slices
-        PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
-        PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
 
         // Create a PieChart
         pieChart = new PieChart();
-        pieChart.getData().addAll(slice1, slice2);
 
         // Set up the scene for the PieChart
         StackPane pieChartLayout = new StackPane();
+
         pieChartLayout.getChildren().add(pieChart);
         Scene scene = new Scene(pieChartLayout, 600, 400);
 
         // Initialize the JFXPanel and add the JavaFX scene
         pieChartPanel.setScene(scene);
+
+        updateSavingsGoal();
     }
 
     // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
-        SavingsGoal goal = new SavingsGoalDAO().getSavingsGoal();  // Get current savings goal from the database
-        if (goal != null) {
-            double startingAmount = goal.getStartingAmount();  // Get the current saved amount
-            double targetAmount = goal.getTargetAmount();    // Get the target amount
+        SavingsGoal currentGoal = sDao.getSavingsGoal(); // Call the DAO
 
-            // Update the savings label
-            savingLabel.setText("Your current saving is: $" + startingAmount);
-
-            // Update the pie chart data
+        if (currentGoal != null) {
+            JLabel savingLabel = new JLabel("Your current saving is: $" + currentGoal.getStartingAmount());
+            savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            contentPanel.add(savingLabel);
             Platform.runLater(() -> {
-                PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
-                PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
-
-                // Clear old data and add the new data
                 pieChart.getData().clear();
-                pieChart.getData().addAll(slice1, slice2);
+                pieChart.getData().addAll(
+                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
+                    new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
+                );
             });
-        } else {
-            savingLabel.setText("Can't display current saving's goal.");
-        }
+        } 
     }
-}
+    
+ }
+
