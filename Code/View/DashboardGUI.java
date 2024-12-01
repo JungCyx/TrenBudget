@@ -16,23 +16,17 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
-
 public class DashboardGUI extends JPanel implements ActionListener {
 
     private final JButton savingsButton;
     private final JButton budgetButton;
     private final JButton transactionButton;
-    private final JButton refreshButton;
-    private JPanel contentPanel;
-    private JLabel savingLabel;
-    SavingsGoalDAO sDao = new SavingsGoalDAO();
     
    
 
     private JFXPanel pieChartPanel; 
-    private PieChart pieChart;      
-
+    private PieChart pieChart;  
+    private JLabel savingLabel;  // Label to display the current savings goal
 
     public DashboardGUI() {
 
@@ -65,32 +59,29 @@ public class DashboardGUI extends JPanel implements ActionListener {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
 
-        SavingsGoal currUser = sDao.getSavingsGoal();
-        // Create labels for displaying data
         JLabel budgetLabel = new JLabel("Your current budget is: $" + 10345);
-        savingLabel = new JLabel("Your current saving is: $" + currUser.getStartingAmount());
+        JLabel savingLabel = new JLabel("Your current saving is: $" + currUser.getStartingAmount());
         JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
 
         // Set font for labels
         Font labelFont = new Font("Arial", Font.PLAIN, 16);
         budgetLabel.setFont(labelFont);
-        savingLabel.setFont(labelFont);
         transactionLabel.setFont(labelFont);
 
         // Add labels to the content panel
         contentPanel.add(budgetLabel);
-        contentPanel.add(savingLabel);
         contentPanel.add(transactionLabel);
 
         // Add the content panel to the center
         add(contentPanel, BorderLayout.CENTER);
 
-        // Piechart components
+        //Piechart components
         pieChartPanel = new JFXPanel();  
         add(pieChartPanel, BorderLayout.SOUTH); 
 
-        // method to create the PieChart
+        // Initialize the pie chart
         initializePieChart();
+
     }
 
     private JButton createNavButton(String text) {
@@ -123,8 +114,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
     }
 
-
-    // method to create the PieChart
     private void initializePieChart() {
         // Create initial PieChart data
         double targetAmount = 1000;   
@@ -147,25 +136,27 @@ public class DashboardGUI extends JPanel implements ActionListener {
         pieChartPanel.setScene(scene);
     }
 
-    // Update the savings goal pie chart with the new values
+    // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
-        SavingsGoal goal = SavingsGoalDAO.getCurrentGoal();  // Get current savings goal from the database
+        SavingsGoal goal = new SavingsGoalDAO().getSavingsGoal();  // Get current savings goal from the database
         if (goal != null) {
             double startingAmount = goal.getStartingAmount();  // Get the current saved amount
             double targetAmount = goal.getTargetAmount();    // Get the target amount
 
-            
+            // Update the savings label
+            savingLabel.setText("Your current saving is: $" + startingAmount);
+
+            // Update the pie chart data
             Platform.runLater(() -> {
-                // Update pie chart data
                 PieChart.Data slice1 = new PieChart.Data("Saved", startingAmount);
                 PieChart.Data slice2 = new PieChart.Data("Remaining", targetAmount - startingAmount);
-                
+
                 // Clear old data and add the new data
                 pieChart.getData().clear();
                 pieChart.getData().addAll(slice1, slice2);
             });
+        } else {
+            savingLabel.setText("Can't display current saving's goal.");
         }
     }
-
-
 }
