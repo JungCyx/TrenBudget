@@ -1,20 +1,29 @@
 package View;
 
 import javax.swing.*;
+
+import DAO.TransactionDAO;
+import Main.Controller.UserController;
+import Model.Transaction;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+
 
 public class TransactionGUI extends JPanel {
 
     //all the fields user will be using
     //private because it is used once everytime a transaction is created 
-    private JTextField nameField;
+    private JComboBox<String> typeField;
     private JComboBox<String> categoryField; 
     private JTextField amountField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
+    private UserController controller;
+    private TransactionDAO tDao;
 
     // Constructor for TransactionGUI
     public TransactionGUI() {
@@ -38,17 +47,23 @@ public class TransactionGUI extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
 
 
-
-        //Name field
-        JLabel nameLabel = new JLabel("Transaction Name:");
+        //Dropdown for Type
+        JLabel typeLabel = new JLabel("Type:");
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
-        centerPanel.add(nameLabel, gbc);
-        nameField = new JTextField(30);
+        centerPanel.add(typeLabel, gbc);
+
+        //possibilities
+        typeField = new JComboBox<>(new String[]{
+            "Deposit", "Withdrawal", "Transfer"
+        });
+
+        typeField.setPreferredSize(new Dimension(200, 25));
         gbc.gridx =1;
         gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(nameField, gbc);
+        centerPanel.add(typeField, gbc);
+        
 
         // Dropdown for Categories
         JLabel categoryLabel = new JLabel("Category:");
@@ -138,14 +153,20 @@ public class TransactionGUI extends JPanel {
 
     //Handel the user's inputs
     private void handelTransaction(){
-        String name = nameField.getText();
+        String type = (String) typeField.getSelectedItem();
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
-        // boolean notificationsEnabled = notificationCheckBox.isSelected();
+        Double newAmount = Double.parseDouble(amount);
+        boolean notificationsEnabled = notificationCheckBox.isSelected();
+
+        controller = new UserController();
+        tDao = new TransactionDAO();        
+        Transaction transactions = controller.mapTransaction(type, category, newAmount, notificationsEnabled);
+        tDao.addTransactionIntoDatabase(transactions);
 
 
         //Check if any field is empty
-        if (name.isEmpty() || category.isEmpty() || amount.isEmpty() ){
+        if (type.isEmpty() || category.isEmpty() || amount.isEmpty() ){
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -156,7 +177,7 @@ public class TransactionGUI extends JPanel {
             JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
 
             //clear everything after it is added
-            nameField.setText("");
+            typeField.setSelectedIndex(0);
             categoryField.setSelectedIndex(0);
             amountField.setText("");
             notificationCheckBox.setSelected(false);
@@ -166,6 +187,8 @@ public class TransactionGUI extends JPanel {
             JOptionPane.showMessageDialog(this, "Please enter a number bewtween 1 - 1000000", "ERROR", JOptionPane.ERROR_MESSAGE);
 
         }
+
+
 
     }
 }

@@ -3,20 +3,21 @@ package View;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+
 import javax.swing.*;
 
 import DAO.BudgetGoalDAO;
 import DAO.SavingsGoalDAO;
+import DAO.TransactionDAO;
 import Model.BudgetGoal;
 import Model.SavingsGoal;
-
-import javafx.application.Application;
+import Model.Transaction;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 public class DashboardGUI extends JPanel implements ActionListener {
 
@@ -24,14 +25,24 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton budgetButton;
     private final JButton transactionButton;
     private final JButton refreshButton;
+
+    private JLabel budgetLabel;
+    private JLabel savingLabel;
    
-
     private JFXPanel pieChartPanel; 
-    private PieChart pieChart;  
-
+    private PieChart pieChart;
+    private JLabel transactionLabel;  
     private JPanel contentPanel;
+
     SavingsGoalDAO sDao = new SavingsGoalDAO();
     BudgetGoalDAO bDao = new BudgetGoalDAO();
+    TransactionDAO tDao = new TransactionDAO();
+    
+    BudgetGoal currentBudget;
+    SavingsGoal currentGoal;
+    Transaction currTransaction;
+
+    DecimalFormat df = new DecimalFormat("#");
 
     public DashboardGUI() {
 
@@ -62,18 +73,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
 
-        
-        JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
-
-        // Set font for labels
-        Font labelFont = new Font("Arial", Font.PLAIN, 16);
-        
-        transactionLabel.setFont(labelFont);
-
-        // Add labels to the content panel
-
-        contentPanel.add(transactionLabel);
-
         // Add the content panel to the center
         add(contentPanel, BorderLayout.CENTER);
 
@@ -96,7 +95,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         button.addActionListener(this);
         return button;
     }
-
+    // DONT CHANGE
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == savingsButton) {
@@ -110,11 +109,13 @@ public class DashboardGUI extends JPanel implements ActionListener {
             // Refresh page
             updateSavingsGoal();
             updateBudget();
+            updateTransaction();
 
         }
 
     }
 
+    // DONT CHANGE
     private void initializePieChart() {
 
         // Create a PieChart
@@ -129,18 +130,17 @@ public class DashboardGUI extends JPanel implements ActionListener {
         // Initialize the JFXPanel and add the JavaFX scene
         pieChartPanel.setScene(scene);
 
-        updateSavingsGoal();
-        updateBudget();
+        createInfoText();
+        
     }
 
+    // DONT CHANGE
     // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
-        SavingsGoal currentGoal = sDao.getSavingsGoal(); // Call the DAO
+        currentGoal = sDao.getSavingsGoal(); // Call the DAO
+        savingLabel.setText("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
 
         if (currentGoal != null) {
-            JLabel savingLabel = new JLabel("Your current saving is: $" + currentGoal.getStartingAmount());
-            savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            contentPanel.add(savingLabel);
             Platform.runLater(() -> {
                 pieChart.getData().clear();
                 pieChart.getData().addAll(
@@ -148,17 +148,18 @@ public class DashboardGUI extends JPanel implements ActionListener {
                     new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
                 );
             });
-        } 
+        } else{
+            System.out.println(currentGoal.getName());
+        }
     }
 
 
     public void updateBudget(){
-        BudgetGoal currentBudget = bDao.getBudgetGoal(); // Call the DAO
-        
         if (currentBudget != null) {
-            JLabel budgetLabel = new JLabel("Your current budget is: $" + currentBudget.getBudgetAmount());
-            budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            contentPanel.add(budgetLabel);
+            //TODO: FIX BUDGET SHOWING ONLY 2000$
+            currentBudget = bDao.getBudgetGoal();
+            budgetLabel.setText("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
+
             Platform.runLater(() -> {
                 pieChart.getData().clear();
                 pieChart.getData().addAll(
@@ -169,6 +170,37 @@ public class DashboardGUI extends JPanel implements ActionListener {
         } else{
             System.out.println("Budget dont show");
         }
+    }
+
+    // DONT CHANGE
+    public void updateTransaction(){
+        currTransaction = tDao.getTransactionl();
+        if (currTransaction != null) {
+            transactionLabel.setText("Your current Transaction is: $" + df.format(currTransaction.getAmount()));
+
+        } else{
+            System.out.println("Budget dont show");
+        }
+    }
+
+    // DONT CHANGE
+    public void createInfoText(){
+        currentBudget = bDao.getBudgetGoal(); 
+        currentGoal = sDao.getSavingsGoal(); 
+        currTransaction = tDao.getTransactionl();
+
+        budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
+        budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        contentPanel.add(budgetLabel);
+
+        savingLabel = new JLabel("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
+        savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        contentPanel.add(savingLabel);
+
+        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currTransaction.getAmount()));
+        Font labelFont = new Font("Arial", Font.PLAIN, 16);
+        transactionLabel.setFont(labelFont);
+        contentPanel.add(transactionLabel);
     }
     
  }

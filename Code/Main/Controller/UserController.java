@@ -9,6 +9,7 @@ import Model.BudgetGoal;
 import Model.SavingsGoal;
 import Model.UserModel;
 import Model.UserSession;
+import Model.Transaction;
 
 
 public class UserController {
@@ -83,6 +84,11 @@ public class UserController {
 
     public BudgetGoal mapBudgetGoal(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled){
         return new BudgetGoal(category, budgetAmount, startDateString,endDateString,notificationsEnabled);
+    }
+
+    //Function to map the Transaction input into Transaction model and return it
+    public Transaction mapTransaction(String type, String category, double amount, boolean notificationsEnabled){
+        return new Transaction(type, category, amount, notificationsEnabled);
     }
 
     // The Function return the current logged in user model

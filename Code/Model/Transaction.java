@@ -8,8 +8,8 @@ package Model;
  */
 
 public class Transaction{
-    
-    private String category; //deposit or withdrawal (if deposit +, if withdrawal +)
+    private String type; //deposit, withdrawal, transfer
+    private String category;
     private double amount;
     private boolean notificationsEnabled;
     private UserModel appUser;
@@ -17,7 +17,8 @@ public class Transaction{
 
 
     //Transaction Construcor with User
-    public Transaction(String category, double amount, boolean notificationsEnabled, UserModel appUser){
+    public Transaction(String type, String category, double amount, boolean notificationsEnabled, UserModel appUser){
+        this.type = type;
         this.category = category;
         this.amount = amount;
         this.notificationsEnabled = notificationsEnabled;
@@ -26,7 +27,8 @@ public class Transaction{
     }
 
     //Transaction Construcor without User
-    public Transaction(String category, double amount, boolean notificationsEnabled){
+    public Transaction(String type, String category, double amount, boolean notificationsEnabled){
+        this.type = type;
         this.category = category;
         this.amount = amount;
         this.notificationsEnabled = notificationsEnabled;
@@ -49,7 +51,11 @@ public class Transaction{
     public UserModel getUser() {
         return appUser;
     }
-
+    
+    public void setType(String newType){
+        this.type = newType;
+    }
+    
     public void setCategory(String category){
         this.category = category; 
     }
@@ -60,6 +66,10 @@ public class Transaction{
 
     public void setNotificationsEnabled(boolean notificationsEnabled){
         this.notificationsEnabled = notificationsEnabled;
+    }
+    
+    public String getType(){
+        return type;
     }
 
     public String getCategory(){

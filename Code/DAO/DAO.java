@@ -103,13 +103,15 @@ public void createBudgetGoalTable() {
 }
 
 public void createTransactionTable() {
-   String sql = "CREATE TABLE IF NOT EXISTS userTransaction (" +
+   String sql = "CREATE TABLE IF NOT EXISTS usertransaction (" +
              "transactionId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
-             "userId INT NOT NULL, " +        // Foreign key referencing appUser
+             "userId INT NOT NULL, " +              // Foreign key referencing appUser
+             "type VARCHAR(255), " +
              "category VARCHAR(255), " +
-             "amount Double PRECISION, " +
+             "amount DOUBLE PRECISION, " +
              "notificationsEnabled BOOLEAN, " +
-             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
+             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE" +
+             ");";
 
    try (Connection conn = get_Connection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -55,7 +55,7 @@ import Model.UserSession;
         int current_user_id = UserSession.getInstance().getCurrentUser().getId();
 
         // Budget goal instances 
-        BudgetGoal budgetGoals = new BudgetGoal();
+        BudgetGoal budgetGoals = null;
 
         // Query the db to get the saving goal for the current user 
         String sql = "SELECT * FROM budgetgoals WHERE userId = ? ORDER BY budgetId DESC LIMIT 1"; // Example query
@@ -71,14 +71,14 @@ import Model.UserSession;
 
             while(rs.next()){
 
-                BudgetGoal currBudget = new BudgetGoal();
+                budgetGoals = new BudgetGoal();
 
-                currBudget.setGoalUserId(current_user_id);
-                currBudget.setCategory(rs.getString("category"));
-                currBudget.setBudgetAmount(rs.getDouble("budgetAmount"));
-                currBudget.setStartDate(rs.getDate("startDate").toLocalDate());
-                currBudget.setEndDate(rs.getDate("endDate").toLocalDate());
-                currBudget.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+                budgetGoals.setGoalUserId(current_user_id);
+                budgetGoals.setCategory(rs.getString("category"));
+                budgetGoals.setBudgetAmount(rs.getDouble("budgetAmount"));
+                budgetGoals.setStartDate(rs.getDate("startDate").toLocalDate());
+                budgetGoals.setEndDate(rs.getDate("endDate").toLocalDate());
+                budgetGoals.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
             }
             rs.close();
 
