@@ -109,6 +109,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
         else if(e.getSource() == refreshButton){
             // Refresh page
             updateSavingsGoal();
+            updateBudget();
+
         }
 
     }
@@ -128,6 +130,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         pieChartPanel.setScene(scene);
 
         updateSavingsGoal();
+        updateBudget();
     }
 
     // Method to update the savings goal and pie chart
@@ -150,8 +153,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
 
     public void updateBudget(){
-        BudgetGoal currentBudget = bDao.getCurrentBudgetGoal(); // Call the DAO
-
+        BudgetGoal currentBudget = bDao.getBudgetGoal(); // Call the DAO
+        
         if (currentBudget != null) {
             JLabel budgetLabel = new JLabel("Your current budget is: $" + currentBudget.getBudgetAmount());
             budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -163,7 +166,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
                     new PieChart.Data("Remaining", 20 - currentBudget.getBudgetAmount()) // we have to include transactiosn here 
                 );
             });
-        } 
+        } else{
+            System.out.println("Budget dont show");
+        }
     }
     
  }

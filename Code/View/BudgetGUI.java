@@ -3,15 +3,12 @@ package View;
 import javax.swing.*;
 
 import DAO.BudgetGoalDAO;
-import DAO.SavingsGoalDAO;
 import Main.Controller.UserController;
 import Model.BudgetGoal;
-import Model.SavingsGoal;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.ModuleLayer.Controller;
 
 
 public class BudgetGUI extends JPanel{
@@ -24,7 +21,7 @@ public class BudgetGUI extends JPanel{
     private JButton backButton;
 
     private BudgetGoal curreBudgetGoal;
-    
+
     private UserController controller = new UserController();
     private BudgetGoalDAO bDao = new BudgetGoalDAO();
      

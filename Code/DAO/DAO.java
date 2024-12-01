@@ -53,7 +53,7 @@ public class DAO{
   }
 
   public void createSavingGoalTable() {
-   String sql = "CREATE TABLE IF NOT EXISTS userGoals (" +
+   String sql = "CREATE TABLE IF NOT EXISTS usergoals (" +
              "goalId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
              "userId INT NOT NULL, " +        // Foreign key referencing appUser
              "goalName VARCHAR(255), " +
@@ -125,8 +125,6 @@ public void createTransactionTable() {
    };
 }
 
-
-  
 }
 
 

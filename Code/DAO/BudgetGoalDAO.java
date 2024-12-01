@@ -25,8 +25,8 @@ import Model.UserSession;
     }
 
     // The function Insert Goal into the Database table userGoal
-    public void addGoalIntoDatabase(BudgetGoal budget){
-        String sql = "INSERT INTO userbudgets (userId, goalName, targetAmount, startDate, endDate, notificationsEnabled) VALUES (?, ?, ?, ?, ?, ?)";
+    public void addBudgetIntoDatabase(BudgetGoal budget){
+        String sql = "INSERT INTO budgetgoals (userId, category, budgetAmount, startDate, endDate, notificationsEnabled) VALUES (?, ?, ?, ?, ?, ?)";
 
         int current_user_id = UserSession.getInstance().getCurrentUser().getId();
     
@@ -50,12 +50,15 @@ import Model.UserSession;
     }
    
     // The function retrives the saving goals and returns saving goal model <List> //highest to lowest return (latest value) 0,1
-    public ArrayList<BudgetGoal> getBudgetGoals(){
+    public BudgetGoal getBudgetGoal(){
         // get the current user Id
         int current_user_id = UserSession.getInstance().getCurrentUser().getId();
-        ArrayList<BudgetGoal> budgetGoals = new ArrayList<>();
+
+        // Budget goal instances 
+        BudgetGoal budgetGoals = new BudgetGoal();
+
         // Query the db to get the saving goal for the current user 
-        String sql = "SELECT * FROM userbudgets WHERE userId = ? ORDER BY id DESC"; // Example query
+        String sql = "SELECT * FROM budgetgoals WHERE userId = ? ORDER BY budgetId DESC LIMIT 1"; // Example query
 
         try(Connection conn = connection.get_Connection();){
 
@@ -69,14 +72,13 @@ import Model.UserSession;
             while(rs.next()){
 
                 BudgetGoal currBudget = new BudgetGoal();
+
                 currBudget.setGoalUserId(current_user_id);
-                currBudget.setCategory(rs.getString("goalName"));
-                currBudget.setBudgetAmount(rs.getDouble("targetAmount"));
+                currBudget.setCategory(rs.getString("category"));
+                currBudget.setBudgetAmount(rs.getDouble("budgetAmount"));
                 currBudget.setStartDate(rs.getDate("startDate").toLocalDate());
                 currBudget.setEndDate(rs.getDate("endDate").toLocalDate());
                 currBudget.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
-
-                budgetGoals.add(currBudget);
             }
             rs.close();
 
