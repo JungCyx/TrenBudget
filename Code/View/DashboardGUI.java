@@ -110,7 +110,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
             updateSavingsGoal();
             updateBudget();
             updateTransaction();
-
         }
 
     }
@@ -131,6 +130,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
         pieChartPanel.setScene(scene);
 
         createInfoText();
+        updateSavingsGoal();
+        updateBudget();
+        updateTransaction();
         
     }
 

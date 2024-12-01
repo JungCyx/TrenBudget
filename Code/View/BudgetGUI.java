@@ -1,8 +1,12 @@
 package View;
 
 import javax.swing.*;
+
+import DAO.BudgetGoalDAO;
+import Main.Controller.UserController;
+import Model.BudgetGoal;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 
@@ -13,13 +17,19 @@ public class BudgetGUI extends JPanel {
     private JButton addButton;
     private JButton backButton;
 
-    private JComboBox<Integer> yearDropdown;
-    private JComboBox<String> monthDropdown;
-    private JComboBox<Integer> dayDropdown;
+    private UserController controller;
+    private BudgetGoalDAO bDao;
+
+    private JComboBox<Integer> startYearDropdown, endYearDropdown;
+    private JComboBox<String> startMonthDropdown, endMonthDropdown;
+    private JComboBox<Integer> startDayDropdown, endDayDropdown;
 
     // Constructor for BudgetGUI
     public BudgetGUI() {
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
+
+        controller = new UserController();
+        bDao = new BudgetGoalDAO();
 
         // Title and description
         JLabel titleLabel = new JLabel("Budget", JLabel.CENTER);
@@ -73,48 +83,61 @@ public class BudgetGUI extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         centerPanel.add(amountField, gbc);
 
-        // Duration Field (Year, Month, Day Dropdowns)
-        JLabel durationLabel = new JLabel("Duration:");
+        // Start Date Fields
+        JLabel startDateLabel = new JLabel("Start Date:");
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
-        centerPanel.add(durationLabel, gbc);
+        centerPanel.add(startDateLabel, gbc);
 
-        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        // Year Dropdown
-        yearDropdown = new JComboBox<>();
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = currentYear; i >= 1900; i--) {
-            yearDropdown.addItem(i);
-        }
-        datePanel.add(yearDropdown);
-
-        // Month Dropdown
-        monthDropdown = new JComboBox<>(new String[] {
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+        JPanel startDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        startYearDropdown = new JComboBox<>();
+        startMonthDropdown = new JComboBox<>(new String[] {
+                "01", "02", "03", "04", "05", "06",
+                "07", "08", "09", "10", "11", "12"
         });
-        datePanel.add(monthDropdown);
+        startDayDropdown = new JComboBox<>();
+        populateYearDropdown(startYearDropdown);
+        updateDaysDropdown(startDayDropdown, startYearDropdown, startMonthDropdown);
+        addDateDropdownListeners(startYearDropdown, startMonthDropdown, startDayDropdown);
 
-        // Day Dropdown
-        dayDropdown = new JComboBox<>();
-        updateDaysDropdown(dayDropdown, yearDropdown, monthDropdown);
-        datePanel.add(dayDropdown);
-
-        // Update the days when year or month changes
-        ActionListener updateDaysListener = e -> updateDaysDropdown(dayDropdown, yearDropdown, monthDropdown);
-        yearDropdown.addActionListener(updateDaysListener);
-        monthDropdown.addActionListener(updateDaysListener);
-
+        startDatePanel.add(startYearDropdown);
+        startDatePanel.add(startMonthDropdown);
+        startDatePanel.add(startDayDropdown);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(datePanel, gbc);
+        centerPanel.add(startDatePanel, gbc);
+
+        // End Date Fields
+        JLabel endDateLabel = new JLabel("End Date:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        centerPanel.add(endDateLabel, gbc);
+
+        JPanel endDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        endYearDropdown = new JComboBox<>();
+        endMonthDropdown = new JComboBox<>(new String[] {
+                "01", "02", "03", "04", "05", "06",
+                "07", "08", "09", "10", "11", "12"
+        });
+        endDayDropdown = new JComboBox<>();
+        populateYearDropdown(endYearDropdown);
+        updateDaysDropdown(endDayDropdown, endYearDropdown, endMonthDropdown);
+        addDateDropdownListeners(endYearDropdown, endMonthDropdown, endDayDropdown);
+
+        endDatePanel.add(endYearDropdown);
+        endDatePanel.add(endMonthDropdown);
+        endDatePanel.add(endDayDropdown);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        centerPanel.add(endDatePanel, gbc);
 
         // Notification setup
         notificationCheckBox = new JCheckBox("Turn On Notifications");
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         centerPanel.add(notificationCheckBox, gbc);
@@ -125,10 +148,7 @@ public class BudgetGUI extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
         backButton = new JButton("Back");
-        backButton.addActionListener(e -> {
-            // Switch to the "Dashboard" panel when the button is clicked
-            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
-        });
+        backButton.addActionListener(e -> handleBackButton());
         buttonPanel.add(backButton);
 
         addButton = new JButton("Add");
@@ -138,39 +158,11 @@ public class BudgetGUI extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // Handle the user's inputs
-    private void handleBudget() {
-        String category = (String) categoryField.getSelectedItem();
-        String amount = amountField.getText();
-        int year = (int) yearDropdown.getSelectedItem();
-        String month = (String) monthDropdown.getSelectedItem();
-        int day = (int) dayDropdown.getSelectedItem();
-
-        // Check if any field is empty
-        if (category.isEmpty() || amount.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try {
-            Double.parseDouble(amount); // Validate amount as a number
-
-            // Success message
-            JOptionPane.showMessageDialog(this,
-                    "Category: " + category + "\nAmount: $" + amount +
-                            "\nDate: " + month + " " + day + ", " + year,
-                    "Success", JOptionPane.INFORMATION_MESSAGE);
-
-            // Clear everything after it is added
-            categoryField.setSelectedIndex(0);
-            amountField.setText("");
-            yearDropdown.setSelectedIndex(0);
-            monthDropdown.setSelectedIndex(0);
-            dayDropdown.setSelectedIndex(0);
-            notificationCheckBox.setSelected(false);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid number for the amount", "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
+    // Populate year dropdown with values from the current year back to 1900
+    private void populateYearDropdown(JComboBox<Integer> yearDropdown) {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = currentYear; i >= 1900; i--) {
+            yearDropdown.addItem(i);
         }
     }
 
@@ -182,9 +174,9 @@ public class BudgetGUI extends JPanel {
         int month = monthDropdown.getSelectedIndex();
 
         int daysInMonth = switch (month) {
-            case 0, 2, 4, 6, 7, 9, 11 -> 31; // January, March, May, July, August, October, December
-            case 3, 5, 8, 10 -> 30; // April, June, September, November
-            case 1 -> (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28; // February
+            case 0, 2, 4, 6, 7, 9, 11 -> 31; // Jan, Mar, May, Jul, Aug, Oct, Dec
+            case 3, 5, 8, 10 -> 30; // Apr, Jun, Sep, Nov
+            case 1 -> (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28; // Feb
             default -> 0;
         };
 
@@ -192,4 +184,70 @@ public class BudgetGUI extends JPanel {
             dayDropdown.addItem(i);
         }
     }
+
+    // Add listeners to update the days dropdown when the year or month changes
+    private void addDateDropdownListeners(JComboBox<Integer> yearDropdown, JComboBox<String> monthDropdown,
+            JComboBox<Integer> dayDropdown) {
+        ActionListener updateDaysListener = e -> updateDaysDropdown(dayDropdown, yearDropdown, monthDropdown);
+        yearDropdown.addActionListener(updateDaysListener);
+        monthDropdown.addActionListener(updateDaysListener);
+    }
+
+    public String returnValidString(int number) {
+        // Check if the number is between 1 and 9
+        if (number >= 1 && number <= 9) {
+            return "0" + number; // Add "0" at the beginning
+        }
+        // Otherwise, return the number as a string
+        return String.valueOf(number);
+    }
+
+    private void handleBackButton(){
+
+        LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
+
+    }
+
+    // Handle the user's inputs
+    private void handleBudget() {
+        String category = (String) categoryField.getSelectedItem();
+        String amount = amountField.getText();
+        int startYear = (int) startYearDropdown.getSelectedItem();
+        String startMonth = (String) startMonthDropdown.getSelectedItem();
+        int startDay = (int) startDayDropdown.getSelectedItem();
+        int endYear = (int) endYearDropdown.getSelectedItem();
+        String endMonth = (String) endMonthDropdown.getSelectedItem();
+        int endDay = (int) endDayDropdown.getSelectedItem();
+        boolean notifications = notificationCheckBox.isSelected();
+
+
+
+        if (category.isEmpty() || amount.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            Double.parseDouble(amount); // Validate amount as a number
+            JOptionPane.showMessageDialog(this,
+                    "Category: " + category + "\nAmount: $" + amount +
+                            "\nStart Date: " + startMonth + " " + startDay + ", " + startYear +
+                            "\nEnd Date: " + endMonth + " " + endDay + ", " + endYear,
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for the amount", "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+        String startD = returnValidString(startYear)+ "-" + startMonth + "-" + returnValidString(startDay);
+        String EndD = returnValidString(endYear)+ "-" + endMonth + "-" + returnValidString(endDay);
+
+        BudgetGoal newBudgetGoal = controller.mapBudgetGoal(category, Double.parseDouble(amount), startD, EndD, notifications);
+        bDao.addBudgetIntoDatabase(newBudgetGoal);
+
+    }
+
+    
 }
+
+
