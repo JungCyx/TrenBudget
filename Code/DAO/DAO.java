@@ -53,7 +53,7 @@ public class DAO{
   }
 
   public void createSavingGoalTable() {
-   String sql = "CREATE TABLE IF NOT EXISTS userGoals (" +
+   String sql = "CREATE TABLE IF NOT EXISTS usergoals (" +
              "goalId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
              "userId INT NOT NULL, " +        // Foreign key referencing appUser
              "goalName VARCHAR(255), " +
@@ -77,7 +77,33 @@ public class DAO{
    };
 }
 
-  
+
+public void createBudgetGoalTable() {
+
+   String sql = "CREATE TABLE IF NOT EXISTS userbudgets (" +
+             "goalId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
+             "userId INT NOT NULL, " +        // Foreign key referencing appUser
+             "category VARCHAR(255), " +
+             "budgetAmount DOUBLE, " +
+             "deadline VARCHAR(225), " +
+             "startDate DATE, " +
+             "endDate DATE, " +
+             "notificationsEnabled BOOLEAN, " +
+             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
+
+   try (Connection conn = get_Connection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+       stmt.executeUpdate();
+       conn.close();
+       stmt.close();
+       System.out.println("Budget Table created successfully...");
+
+   } catch (SQLException e) {
+      System.out.println("Faild To Create Budget Table...");
+       e.printStackTrace();    
+   };
+}  
 }
 
 

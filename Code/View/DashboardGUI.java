@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import DAO.SavingsGoalDAO;
+import Model.BudgetGoal;
 import Model.SavingsGoal;
 
 import javafx.application.Application;
@@ -130,6 +131,24 @@ public class DashboardGUI extends JPanel implements ActionListener {
     // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
         SavingsGoal currentGoal = sDao.getSavingsGoal(); // Call the DAO
+
+        if (currentGoal != null) {
+            JLabel savingLabel = new JLabel("Your current saving is: $" + currentGoal.getStartingAmount());
+            savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            contentPanel.add(savingLabel);
+            Platform.runLater(() -> {
+                pieChart.getData().clear();
+                pieChart.getData().addAll(
+                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
+                    new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
+                );
+            });
+        } 
+    }
+
+
+    public void updateBudget(){
+        BudgetGoal currentBudget = sDao.getSavingsGoal(); // Call the DAO
 
         if (currentGoal != null) {
             JLabel savingLabel = new JLabel("Your current saving is: $" + currentGoal.getStartingAmount());
