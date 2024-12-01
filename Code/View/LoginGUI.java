@@ -13,6 +13,7 @@ public class LoginGUI extends JFrame {
     public static JPanel mainPanel;
 
     public LoginGUI() {
+        
         // Initialize frame properties
         setTitle("TrenBudget - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,6 +23,7 @@ public class LoginGUI extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         add(mainPanel);
+        mainPanel.add(new CreateAccountGUI(), "Register");
 
         // Add only the login view initially
         JPanel loginPanel = createLoginPanel();
@@ -156,7 +158,6 @@ public class LoginGUI extends JFrame {
 
     private void initializeViews() {
         // Add additional views
-        mainPanel.add(new CreateAccountGUI(), "Register");
         mainPanel.add(new DashboardGUI(), "Dashboard");
         mainPanel.add(new BudgetGUI(), "Budget");
         mainPanel.add(new SavingsGUI(), "Savings");

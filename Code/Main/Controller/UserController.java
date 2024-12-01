@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import DAO.DAO;
+import Model.BudgetGoal;
 import Model.SavingsGoal;
 import Model.UserModel;
 import Model.UserSession;
@@ -80,6 +81,10 @@ public class UserController {
         return new UserModel(userName, firstName, lastName, email, password );
     }
 
+    public BudgetGoal mapBudgetGoal(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled){
+        return new BudgetGoal(category, budgetAmount, startDateString,endDateString,notificationsEnabled);
+    }
+
     // The Function return the current logged in user model
     public UserModel getUser(){
         return UserSession.getInstance().getCurrentUser();
@@ -111,7 +116,7 @@ public class UserController {
    }
 
     // The function maps the Saving Goal input to Saving Goal model and return the model
-    public SavingsGoal mapGoal(String name, Float targetAmount, String deadline, Float startingAmount, boolean notificationsEnabled, UserModel appUser){
+    public SavingsGoal mapGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
         return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);     
     }
 

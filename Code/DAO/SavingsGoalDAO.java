@@ -37,9 +37,9 @@ import Model.UserSession;
                 
             stmt.setInt(1, current_user_id);
             stmt.setString(2, goal.getName());
-            stmt.setFloat(3, goal.getTargetAmount());
-            stmt.setString(4, goal.getDeadLine());
-            stmt.setFloat(5, goal.getStartingAmount());
+            stmt.setDouble(3, goal.getTargetAmount());
+            stmt.setString(4, goal.getDeadLine());       
+            stmt.setDouble(5, goal.getStartingAmount());
             stmt.setBoolean(6, goal.getNotificationsEnabled());
 
             stmt.executeUpdate();
@@ -79,9 +79,9 @@ import Model.UserSession;
 
                 currGoal.setGoalUserId(current_user_id);
                 currGoal.setName(rs.getString("goalName"));
-                currGoal.setTargetAmount(rs.getFloat("targetAmount"));
+                currGoal.setTargetAmount(rs.getDouble("targetAmount"));
                 currGoal.setDeadline(rs.getString("deadline"));
-                currGoal.setStartingAmount(rs.getFloat("startingAmount"));
+                currGoal.setStartingAmount(rs.getDouble("startingAmount"));
                 currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
 
                 savingsGoals.add(currGoal);
@@ -120,9 +120,9 @@ import Model.UserSession;
 
                 currGoal.setGoalUserId(current_user_id);
                 currGoal.setName(rs.getString("goalName"));
-                currGoal.setTargetAmount(rs.getFloat("targetAmount"));
+                currGoal.setTargetAmount(rs.getDouble("targetAmount"));
                 currGoal.setDeadline(rs.getString("deadline"));
-                currGoal.setStartingAmount(rs.getFloat("startingAmount"));
+                currGoal.setStartingAmount(rs.getDouble("startingAmount"));
                 currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
             }
             conn.close();

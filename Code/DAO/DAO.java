@@ -57,9 +57,9 @@ public class DAO{
              "goalId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
              "userId INT NOT NULL, " +        // Foreign key referencing appUser
              "goalName VARCHAR(255), " +
-             "targetAmount FLOAT, " +
+             "targetAmount Double, " +
              "deadline VARCHAR(225), " +
-             "startingAmount FLOAT, " +
+             "startingAmount Double, " +
              "notificationsEnabled BOOLEAN, " +
              "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
 
@@ -76,6 +76,55 @@ public class DAO{
        e.printStackTrace();    
    };
 }
+//create budget Table
+public void createBudgetGoalTable() {
+   String sql = "CREATE TABLE IF NOT EXISTS budgetgoals (" +
+             "budgetId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
+             "userId INT NOT NULL, " +        // Foreign key referencing appUser
+             "category VARCHAR(255), " +
+             "budgetAmount Double PRECISION, " +
+             "startDate Date, " +
+             "endDate Date, " +
+             "notificationsEnabled BOOLEAN, " +
+             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
+
+   try (Connection conn = get_Connection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+       stmt.executeUpdate();
+       conn.close();
+       stmt.close();
+       System.out.println("Budget Table created successfully...");
+
+   } catch (SQLException e) {
+      System.out.println("Faild To Create Budget Table...");
+       e.printStackTrace();    
+   };
+}
+
+public void createTransactionTable() {
+   String sql = "CREATE TABLE IF NOT EXISTS userTransaction (" +
+             "transactionId SERIAL PRIMARY KEY, " +  // Unique identifier for this table
+             "userId INT NOT NULL, " +        // Foreign key referencing appUser
+             "category VARCHAR(255), " +
+             "amount Double PRECISION, " +
+             "notificationsEnabled BOOLEAN, " +
+             "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
+
+   try (Connection conn = get_Connection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+       stmt.executeUpdate();
+       conn.close();
+       stmt.close();
+       System.out.println("Transaction Table created successfully...");
+
+   } catch (SQLException e) {
+      System.out.println("Faild To Create Transaction Table...");
+       e.printStackTrace();    
+   };
+}
+
 
   
 }

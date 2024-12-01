@@ -143,8 +143,8 @@ public class SavingsGUI extends JPanel {
 
         try {
         // Parse target and starting amount as doubles
-        Float targetAmount = Float.parseFloat(target);
-        Float startingAmountValue = Float.parseFloat(startingAmount);
+        Double targetAmount = Double.parseDouble(target);
+        Double startingAmountValue = Double.parseDouble(startingAmount);
         
         // Create a SavingsGoal object
         SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);

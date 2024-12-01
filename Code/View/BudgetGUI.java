@@ -1,18 +1,32 @@
 package View;
 
 import javax.swing.*;
+
+import DAO.BudgetGoalDAO;
+import DAO.SavingsGoalDAO;
+import Main.Controller.UserController;
+import Model.BudgetGoal;
+import Model.SavingsGoal;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.ModuleLayer.Controller;
 
 
 public class BudgetGUI extends JPanel{
     private JComboBox<String> categoryField;
     private JTextField amountField;
-    private JTextField durationField;
+    private JTextField durationField_Start;
+    private JTextField durationField_End;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
+
+    private BudgetGoal curreBudgetGoal;
+    
+    private UserController controller = new UserController();
+    private BudgetGoalDAO bDao = new BudgetGoalDAO();
      
     //constructor for SavingsGUI
     BudgetGUI(){
@@ -76,24 +90,34 @@ public class BudgetGUI extends JPanel{
         centerPanel.add(amountField, gbc);
 
 
-        //Duration Field
-        //TODO: add start and end date field instead "YYYY-MM-dd"
-        JLabel durationLabel = new JLabel("Duration:");
+
+        JLabel durationLabel = new JLabel("Start Date:");
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(durationLabel, gbc);
-        durationField = new JTextField(20);
+        durationField_Start = new JTextField(20);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        centerPanel.add(durationField, gbc);
+        centerPanel.add(durationField_Start, gbc);
+
+        //Duration Field
+        JLabel durationLabel2 = new JLabel("End Date:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        centerPanel.add(durationLabel2, gbc);
+        durationField_End = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        centerPanel.add(durationField_End, gbc);
 
 
         //Notification set up
         //This will be it own seperate class later on
         notificationCheckBox = new JCheckBox("Turn On Notifications");
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         centerPanel.add(notificationCheckBox, gbc);
@@ -133,12 +157,13 @@ public class BudgetGUI extends JPanel{
     private void handelBudget(){
         String category = (String) categoryField.getSelectedItem();
         String amount = amountField.getText();
-        String duration = durationField.getText();
-        // boolean notificationsEnabled = notificationCheckBox.isSelected();
+        String duration_start = durationField_Start.getText();
+        String duration_end = durationField_End.getText();
+        boolean notificationsEnabled = notificationCheckBox.isSelected();
 
 
         //Check if any field is empty
-        if (duration.isEmpty() || category.isEmpty() || amount.isEmpty() ){
+        if (duration_start.isEmpty() || category.isEmpty() || amount.isEmpty() || duration_end.isEmpty()){
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -148,8 +173,14 @@ public class BudgetGUI extends JPanel{
         
             JOptionPane.showMessageDialog(this, null, "Success", JOptionPane.INFORMATION_MESSAGE);
 
+            Double Pamount = Double.parseDouble(amount);
+
+            curreBudgetGoal = controller.mapBudgetGoal(category, Pamount, duration_start, duration_end, notificationsEnabled);
+            bDao.addBudgetIntoDatabase(curreBudgetGoal);
+
             //clear everything after it is added
-            durationField.setText("");
+            durationField_Start.setText("");
+            durationField_End.setText("");
             categoryField.setSelectedIndex(0);
             amountField.setText("");
             notificationCheckBox.setSelected(false);

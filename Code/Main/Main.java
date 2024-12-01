@@ -11,6 +11,8 @@ public class Main {
         
         connector.createUserTable(); // Create a user table in the DB 
         connector.createSavingGoalTable(); // Creates a saving goal table in the DB
+        connector.createBudgetGoalTable();
+        connector.createTransactionTable();
 
         LoginGUI mainframe = new LoginGUI(); // Retrieve the Mainframe bean
         mainframe.setVisible(true); // Display the Mainframe
