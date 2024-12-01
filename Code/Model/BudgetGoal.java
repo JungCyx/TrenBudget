@@ -68,12 +68,12 @@ public class BudgetGoal {
         this.budgetAmount = budgetAmount;
     }
 
-    public void setStartDate(String startDateString) {
-        this.startDate = parseDate(startDateString);  // Parse the new date string
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;  // Parse the new date string
     }
 
-    public void setEndDate(String endDateString) {
-        this.endDate = parseDate(endDateString);  // Parse the new date string
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;  // Parse the new date string
     }
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {

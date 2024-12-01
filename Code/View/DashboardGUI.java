@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
+import DAO.BudgetGoalDAO;
 import DAO.SavingsGoalDAO;
 import Model.BudgetGoal;
 import Model.SavingsGoal;
@@ -30,6 +31,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
     private JPanel contentPanel;
     SavingsGoalDAO sDao = new SavingsGoalDAO();
+    BudgetGoalDAO bDao = new BudgetGoalDAO();
 
     public DashboardGUI() {
 
@@ -60,16 +62,16 @@ public class DashboardGUI extends JPanel implements ActionListener {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
 
-        JLabel budgetLabel = new JLabel("Your current budget is: $" + 10345);
+        
         JLabel transactionLabel = new JLabel("Your current monthly spending is: $" + 1000);
 
         // Set font for labels
         Font labelFont = new Font("Arial", Font.PLAIN, 16);
-        budgetLabel.setFont(labelFont);
+        
         transactionLabel.setFont(labelFont);
 
         // Add labels to the content panel
-        contentPanel.add(budgetLabel);
+
         contentPanel.add(transactionLabel);
 
         // Add the content panel to the center
@@ -148,17 +150,17 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
 
     public void updateBudget(){
-        BudgetGoal currentBudget = sDao.getSavingsGoal(); // Call the DAO
+        BudgetGoal currentBudget = bDao.getCurrentBudgetGoal(); // Call the DAO
 
-        if (currentGoal != null) {
-            JLabel savingLabel = new JLabel("Your current saving is: $" + currentGoal.getStartingAmount());
-            savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            contentPanel.add(savingLabel);
+        if (currentBudget != null) {
+            JLabel budgetLabel = new JLabel("Your current budget is: $" + currentBudget.getBudgetAmount());
+            budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            contentPanel.add(budgetLabel);
             Platform.runLater(() -> {
                 pieChart.getData().clear();
                 pieChart.getData().addAll(
-                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
-                    new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
+                    new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
+                    new PieChart.Data("Remaining", 20 - currentBudget.getBudgetAmount()) // we have to include transactiosn here 
                 );
             });
         } 

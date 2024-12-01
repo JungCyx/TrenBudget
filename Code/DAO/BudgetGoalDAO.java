@@ -15,7 +15,7 @@ import Model.UserSession;
     DAO connection = new DAO();
 
     //get the current savings goal
-    public static BudgetGoal getCurrentGoal(){
+    public static BudgetGoal getCurrentBudgetGoal(){
         return currentBudget;
     }
 
