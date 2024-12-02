@@ -1,8 +1,8 @@
 package Model;
 
 //new changes 
-
 public class SavingsGoal {
+
     private String name;
     private String deadline;
     private Double startingAmount;
@@ -10,10 +10,9 @@ public class SavingsGoal {
     private boolean notificationsEnabled;
     private UserModel appUser;
     private int userId;
-    
 
     //Constructor
-    public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
+    public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser) {
         this.appUser = appUser;
         this.name = name;
         this.targetAmount = targetAmount;
@@ -26,7 +25,7 @@ public class SavingsGoal {
     }
 
     //Constructor with no user model
-    public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled){
+    public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled) {
         this.name = name;
         this.targetAmount = targetAmount;
         this.deadline = deadline;
@@ -35,57 +34,59 @@ public class SavingsGoal {
     }
 
     // Empty Constructor 
-    public SavingsGoal(){
-        
+    public SavingsGoal() {
+
     }
 
-    public int getGoalUserId(){
+    public int getGoalUserId() {
         return userId;
     }
 
-    public void setGoalUserId(int id){
+    public void setGoalUserId(int id) {
         this.userId = id;
     }
 
-    public UserModel getUser(){
+    public UserModel getUser() {
         return appUser;
     }
 
-    public void setName(String savingsName){
+    public void setName(String savingsName) {
         this.name = savingsName;
     }
 
-    public void setTargetAmount(Double targetAmount){
+    public void setTargetAmount(Double targetAmount) {
         this.targetAmount = targetAmount;
     }
 
-    public void setDeadline(String deadline){
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
-    } 
+    }
 
-    public void setStartingAmount(Double startingAmount){
+    public void setStartingAmount(Double startingAmount) {
         this.startingAmount = startingAmount;
-    } 
+    }
 
-    public void setNotificationsEnabled(boolean notificationOn){
+    public void setNotificationsEnabled(boolean notificationOn) {
         this.notificationsEnabled = notificationOn;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
-       }
-    public Double getTargetAmount(){
+    }
+
+    public Double getTargetAmount() {
         return targetAmount;
     }
 
-    public String getDeadLine(){
+    public String getDeadLine() {
         return deadline;
     }
-    public Double getStartingAmount(){
+
+    public Double getStartingAmount() {
         return startingAmount;
     }
 
-    public boolean getNotificationsEnabled(){
+    public boolean getNotificationsEnabled() {
         return notificationsEnabled;
     }
 }
