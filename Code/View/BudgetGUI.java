@@ -6,6 +6,7 @@ import Model.BudgetGoal;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import java.util.List;
 import javax.swing.*;
 
 public class BudgetGUI extends JPanel {
@@ -160,7 +161,34 @@ public class BudgetGUI extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         centerPanel.add(notificationCheckBox, gbc);
 
-        add(centerPanel, BorderLayout.CENTER);
+// Panel setup
+        JPanel removeBudgetPanel = new JPanel();
+        removeBudgetPanel.setBackground(Color.WHITE); // Match background
+        removeBudgetPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbcRemove = new GridBagConstraints();
+        gbcRemove.insets = new Insets(10, 10, 10, 10);
+
+        JLabel removeLabel = new JLabel("Remove Budget:");
+        gbcRemove.gridx = 0;
+        gbcRemove.gridy = 0;
+        gbcRemove.anchor = GridBagConstraints.EAST;
+        removeBudgetPanel.add(removeLabel, gbcRemove);
+
+// Create a JComboBox for selecting the budget to remove
+        JComboBox<String> removeBudgetDropdown = new JComboBox<>(getBudgetNames()); // Populate with budget names
+        removeBudgetDropdown.setPreferredSize(new Dimension(200, 25));
+        gbcRemove.gridx = 1;
+        gbcRemove.anchor = GridBagConstraints.WEST;
+        removeBudgetPanel.add(removeBudgetDropdown, gbcRemove);
+
+// Add the Remove Button
+        JButton removeButton = new JButton("Remove");
+        removeButton.addActionListener(e -> handleRemoveBudget(removeBudgetDropdown));
+        gbcRemove.gridx = 0;
+        gbcRemove.gridy = 1;
+        gbcRemove.gridwidth = 2;
+        gbcRemove.anchor = GridBagConstraints.CENTER;
+        removeBudgetPanel.add(removeButton, gbcRemove);
 
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
@@ -174,7 +202,44 @@ public class BudgetGUI extends JPanel {
         addButton.addActionListener(e -> handleBudget());
         buttonPanel.add(addButton);
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        GridBagConstraints gbcRemovePanel = new GridBagConstraints();
+        gbcRemovePanel.gridx = 0;
+        gbcRemovePanel.gridy = 5; // Ensure it is below the checkbox (grid row 4)
+        gbcRemovePanel.gridwidth = 2;
+        gbcRemovePanel.fill = GridBagConstraints.HORIZONTAL; // Ensure it stretches across the width
+        centerPanel.add(removeBudgetPanel, gbcRemovePanel);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        // Add this panel to the North region of the mainPanel
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        add(mainPanel, BorderLayout.SOUTH);
+    }
+// Add removeBudgetPanel to the main layout (just below the form)
+
+    // Method to populate the dropdown with existing budgets
+    public String[] getBudgetNames() {
+        List<BudgetGoal> allBudgetGoals = bDao.getAllBudgetGoals(); // Get the list of all budget goals
+        String[] budgetNames = new String[allBudgetGoals.size()];
+
+        // Extract the category names from the BudgetGoal objects
+        for (int i = 0; i < allBudgetGoals.size(); i++) {
+            budgetNames[i] = allBudgetGoals.get(i).getCategory();
+        }
+        return budgetNames;
+    }
+
+// Handle the removal of the selected budget
+    private void handleRemoveBudget(JComboBox<String> removeBudgetDropdown) {
+        String selectedBudget = (String) removeBudgetDropdown.getSelectedItem();
+        if (selectedBudget != null && !selectedBudget.isEmpty()) {
+            bDao.removeBudgetByName(selectedBudget);
+            JOptionPane.showMessageDialog(this, "Budget " + selectedBudget + " has been removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a valid budget to remove.", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     // Populate year dropdown with values from the current year back to 1900
@@ -183,6 +248,7 @@ public class BudgetGUI extends JPanel {
         for (int i = currentYear; i >= 1900; i--) {
             yearDropdown.addItem(i);
         }
+
     }
 
     // Update the days dropdown based on the selected year and month
