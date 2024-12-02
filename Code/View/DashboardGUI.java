@@ -27,21 +27,27 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton refreshButton;
     private final JButton logoutButton;
 
+    
     private JLabel budgetLabel;
     private JLabel savingLabel;
+    private JLabel transactionLabel;  
 
-    private JFXPanel pieChartPanel;
-    private PieChart pieChart;
-    private JLabel transactionLabel;
+    private JFXPanel budgetChartPanel;
+    private JFXPanel savingsChartPanel;
+    private JFXPanel transactionChartPanel;
     private JPanel contentPanel;
+
+    private PieChart budgetPieChart;
+    private PieChart savingsPieChart;
+    private PieChart transactionPieChart;
 
     SavingsGoalDAO sDao = new SavingsGoalDAO();
     BudgetGoalDAO bDao = new BudgetGoalDAO();
     TransactionDAO tDao = new TransactionDAO();
-
+    
     BudgetGoal currentBudget;
     SavingsGoal currentGoal;
-    Transaction currTransaction;
+    Transaction currentTransaction;
 
     DecimalFormat df = new DecimalFormat("#");
 
@@ -51,8 +57,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
 
         // Navigation bar panel
-        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        navBar.setBackground(new Color(38, 120, 190));
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        navBar.setBackground(new Color(60, 63, 65)); // Modern dark gray
 
         // Create styled buttons
         savingsButton = createNavButton("Savings Goal");
@@ -61,6 +67,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         refreshButton = createNavButton("Refresh");
         logoutButton = createNavButton("Logout");
 
+
         // Add buttons to the navigation bar
         navBar.add(savingsButton);
         navBar.add(budgetButton);
@@ -68,35 +75,50 @@ public class DashboardGUI extends JPanel implements ActionListener {
         navBar.add(refreshButton);
         navBar.add(logoutButton);
 
+
         // Add navigation bar to the top
         add(navBar, BorderLayout.NORTH);
 
         // Content panel for the budget, savings, and transaction details
-        contentPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        contentPanel = new JPanel(new GridLayout(3,1,10,10));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
-
-        // Add the content panel to the center
         add(contentPanel, BorderLayout.CENTER);
 
         //Chart panel for pie charts
-        JPanel chartPanel = new JPanel(new GridLayout(1,3,10,10));
+        JPanel chartPanel = new JPanel();
+        chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.X_AXIS));
         chartPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         chartPanel.setBackground(Color.WHITE);
-        chartPanel.setPreferredSize(new Dimension(600,300));
 
 
         //Piechart components
-        pieChartPanel = new JFXPanel();
-        add(pieChartPanel, BorderLayout.SOUTH);
+        budgetChartPanel = new JFXPanel();
+        savingsChartPanel = new JFXPanel();
+        transactionChartPanel = new JFXPanel();
+
+        //Size of pieCharts
+        budgetChartPanel.setPreferredSize(new Dimension(200, 200));
+        savingsChartPanel.setPreferredSize(new Dimension(200, 200));
+        transactionChartPanel.setPreferredSize(new Dimension(200, 200));
 
         // Initialize the pie chart
         initializePieChart(budgetChartPanel, "Budget");
         initializePieChart(savingsChartPanel, "Savings");
         initializePieChart(transactionChartPanel, "Transaction");
 
+        //Add to the panels
+        Platform.runLater(() -> {
+             budgetChartPanel.setScene(new Scene(new StackPane(budgetPieChart), 600, 400));
+            savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 600, 400));
+             transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 600, 400));
+   
+    });
+
         chartPanel.add(budgetChartPanel);
+        chartPanel.add(Box.createHorizontalStrut(20));
         chartPanel.add(savingsChartPanel);
+        chartPanel.add(Box.createHorizontalStrut(20));
         chartPanel.add(transactionChartPanel);
         add(chartPanel, BorderLayout.SOUTH);
 
@@ -104,9 +126,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
         updateSavingsGoal();
         updateBudget();
         updateTransaction();
-
     }
-
+    
     private JButton createNavButton(String text) {
         JButton button = new JButton(text);
         button.setFocusable(false);
@@ -117,7 +138,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
         button.addActionListener(this);
         return button;
     }
-
     // DONT CHANGE
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -127,36 +147,50 @@ public class DashboardGUI extends JPanel implements ActionListener {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
         } else if (e.getSource() == transactionButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
-        } else if (e.getSource() == logoutButton) {
+        }
+        else if (e.getSource() == logoutButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");
-        } else if (e.getSource() == refreshButton) {
+        }
+        else if(e.getSource() == refreshButton){
             // Refresh page
             updateSavingsGoal();
             updateBudget();
             updateTransaction();
         }
 
+
     }
 
     //Assign each pie chart
     private void initializePieChart(JFXPanel chartPanel, String title) {
+        if(title.equals("Budget")){
+            initializeBudgetPieChart(chartPanel);
+            
+        }
+        else if (title.equals("Savings")) {
+            initializeSavingsPieChart(chartPanel);
+        } 
+        else if (title.equals("Transaction")) {
+            initializeTransactionPieChart(chartPanel);
+        }
 
-        Platform.runLater(() -> {
-        // Create a PieChart
-        pieChart = new PieChart();
-
-        // Set up the scene for the PieChart
-        StackPane pieChartLayout = new StackPane();
-
-        pieChartLayout.getChildren().add(pieChart);
-        Scene scene = new Scene(pieChartLayout, 600, 400);
-
-        // Initialize the JFXPanel and add the JavaFX scene
-        pieChartPanel.setScene(scene);
-
-        createInfoText();
-        
     }
+
+    private void initializeBudgetPieChart(JFXPanel chartPanel) {
+        budgetPieChart = new PieChart();
+        budgetPieChart.setTitle("Budget Overview");
+    }
+    
+    private void initializeSavingsPieChart(JFXPanel chartPanel) {
+        savingsPieChart = new PieChart();
+        savingsPieChart.setTitle("Savings Overview");
+    }
+    
+    private void initializeTransactionPieChart(JFXPanel chartPanel) {
+        transactionPieChart = new PieChart();
+        transactionPieChart.setTitle("Transaction Overview");
+    }
+    
 
     // DONT CHANGE
     // Method to update the savings goal and pie chart
@@ -166,32 +200,33 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
         if (currentGoal != null) {
             Platform.runLater(() -> {
-                pieChart.getData().clear();
-                pieChart.getData().addAll(
-                        new PieChart.Data("Saved", currentGoal.getStartingAmount()),
-                        new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
+                savingsPieChart.getData().clear();
+                savingsPieChart.getData().addAll(
+                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
+                    new PieChart.Data("Remaining", Math.max(0, currentGoal.getTargetAmount() - currentGoal.getStartingAmount()))
                 );
             });
-        } else {
+        } else{
             System.out.println(currentGoal.getName());
         }
     }
 
-    public void updateBudget() {
-        if (currentBudget != null) {
-            //TODO: FIX BUDGET SHOWING ONLY 2000$
-            currentBudget = bDao.getBudgetGoal();
-            budgetLabel.setText("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
 
+    public void updateBudget(){
+        currentBudget = bDao.getBudgetGoal();
+        budgetLabel.setText("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
+
+
+        if (currentBudget != null) {
             Platform.runLater(() -> {
-                pieChart.getData().clear();
-                pieChart.getData().addAll(
-                        new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
-                        new PieChart.Data("Remaining", 20 - currentBudget.getBudgetAmount()) // we have to include transactiosn here 
+                budgetPieChart.getData().clear();
+                budgetPieChart.getData().addAll(
+                    new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
+                    new PieChart.Data("Spent", Math.max(0,100 - currentBudget.getBudgetAmount())) // we have to include transactiosn here 
                 );
             });
-        } else {
-            System.out.println("Budget dont show");
+        } else{
+            System.out.println("No budget data available");
         }
     }
 
@@ -200,23 +235,26 @@ public class DashboardGUI extends JPanel implements ActionListener {
         currentTransaction = tDao.getTransactionl();
         transactionLabel.setText("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
 
-        if (currentTransaction != null) {
+        if (currentTransaction != null && currentBudget != null) {
             Platform.runLater(() -> {
                 transactionPieChart.getData().clear();
                 transactionPieChart.getData().addAll(
-                    new PieChart.Data("Spent", currentBudget.getBudgetAmount())
+                    new PieChart.Data("Transaction Amount", currentTransaction.getAmount()),
+                new PieChart.Data("Remaining Budget", Math.max(0, currentBudget.getBudgetAmount() - currentTransaction.getAmount()))
                 );
             });
         } else{
             System.out.println("No transaction data available");
         }
     }
+    
 
     // DONT CHANGE
-    public void createInfoText() {
-        currentBudget = bDao.getBudgetGoal();
-        currentGoal = sDao.getSavingsGoal();
-        currTransaction = tDao.getTransactionl();
+    public void createInfoText(){
+        currentBudget = bDao.getBudgetGoal(); 
+        currentGoal = sDao.getSavingsGoal(); 
+        currentTransaction = tDao.getTransactionl();
+        
 
         budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
         budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -226,10 +264,11 @@ public class DashboardGUI extends JPanel implements ActionListener {
         savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         contentPanel.add(savingLabel);
 
-        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currTransaction.getAmount()));
+        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
         Font labelFont = new Font("Arial", Font.PLAIN, 16);
         transactionLabel.setFont(labelFont);
         contentPanel.add(transactionLabel);
     }
+    
+ }
 
-}
