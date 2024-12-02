@@ -9,7 +9,6 @@ public class SavingsGoal {
     private Double targetAmount;
     private boolean notificationsEnabled;
     private UserModel appUser;
-    private int id;
     private int userId;
 
     //Constructor
@@ -32,23 +31,6 @@ public class SavingsGoal {
         this.deadline = deadline;
         this.startingAmount = startingAmount;
         this.notificationsEnabled = notificationsEnabled;
-    }
-
-    public SavingsGoal(int id, String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled) {
-        this.id = id;
-        this.name = name;
-        this.targetAmount = targetAmount;
-        this.deadline = deadline;
-        this.startingAmount = startingAmount;
-        this.notificationsEnabled = notificationsEnabled;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     // Empty Constructor 

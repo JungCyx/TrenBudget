@@ -17,8 +17,11 @@ public class SavingsGUI extends JPanel {
     private JComboBox<String> deadlineComboBox; // Dropdown for deadline
     private JTextField startingAmountField;
     private JCheckBox notificationCheckBox;
+
     private JButton addButton;
     private JButton backButton;
+    private JButton editButton;
+
     public SavingsGoal savingsGoal;
 
     private SavingsGoalDAO savingDao = new SavingsGoalDAO();
@@ -116,9 +119,14 @@ public class SavingsGUI extends JPanel {
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         buttonPanel.setBackground(Color.WHITE);
+        
         backButton = new JButton("Back");
         backButton.setFocusable(false);
         buttonPanel.add(backButton);
+
+        editButton = new JButton("Edit");
+        backButton.setFocusable(false);
+        buttonPanel.add(editButton);
 
         addButton = new JButton("Create Savings");
         addButton.setFocusable(false);

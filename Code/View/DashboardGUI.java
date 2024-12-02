@@ -4,6 +4,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 
@@ -56,8 +61,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
 
         // Navigation bar panel
-        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        navBar.setBackground(new Color(38, 120, 190)); // Modern dark gray
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        navBar.setBackground(new Color(60, 63, 65)); // Modern dark gray
 
         // Create styled buttons
         savingsButton = createNavButton("Savings Goal");

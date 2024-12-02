@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 
 import Model.Transaction;
 import Model.UserSession;
+import java.time.LocalDate;
+import java.util.List;
 
 
  public class TransactionDAO{
@@ -96,7 +98,7 @@ import Model.UserSession;
     }
 
     // The function retrives and return the latest transaction
-    public Transaction getTransactionl(){
+    public Transaction getTransaction(){
 
         Transaction currGoal = null;
 
@@ -130,4 +132,43 @@ import Model.UserSession;
         }
         return currGoal;
     }
+
+    //The function gets the withdraw transactions
+    public ArrayList<Transaction> getWithdrawTransactions() {
+        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+    
+        // Initialize an empty list to store the user's withdrawal transactions
+        ArrayList<Transaction> transactionList = new ArrayList<>();
+    
+        // Query to fetch the last 50 withdrawal transactions
+        String sql = "SELECT * FROM usertransaction WHERE userId = ? AND type = 'Withdrawal' ORDER BY transactionId DESC LIMIT 50";
+    
+        try (Connection conn = connection.get_Connection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            // Set parameters in the prepared statement
+            stmt.setInt(1, current_user_id);
+    
+            // Database results
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                Transaction transaction = new Transaction();
+                transaction.setGoalUserId(current_user_id);
+                transaction.setType(rs.getString("type"));
+                transaction.setCategory(rs.getString("category"));
+                transaction.setAmount(rs.getDouble("amount"));
+                transaction.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+    
+                transactionList.add(transaction);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve withdrawal transactions!");
+            e.printStackTrace();
+        }
+    
+        return transactionList;
+    }
+
+
 }
