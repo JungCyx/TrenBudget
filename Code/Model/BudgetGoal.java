@@ -1,16 +1,18 @@
 package Model;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class BudgetGoal {
+
     private String category;
     private double budgetAmount;
     private LocalDate startDate; // Start date of the budget goal
     private LocalDate endDate;   // End date of the budget goal
     private boolean notificationsEnabled;
     private UserModel appUser;
+    private int id;
     private int userId;
 
     // Constructor with user model
@@ -37,8 +39,28 @@ public class BudgetGoal {
         this.endDate = parseDate(endDateString);
     }
 
+    // Constructor without user model
+    public BudgetGoal(int id, String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled) {
+        this.id = id;
+        this.category = category;
+        this.budgetAmount = budgetAmount;
+        this.notificationsEnabled = notificationsEnabled;
+
+        // Parse the string inputs to LocalDate
+        this.startDate = parseDate(startDateString);
+        this.endDate = parseDate(endDateString);
+    }
+
     // Empty Constructor
     public BudgetGoal() {
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     // Parse the date string to LocalDate
@@ -107,4 +129,4 @@ public class BudgetGoal {
         }
         return 0;
     }
-} 
+}
