@@ -25,19 +25,20 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton budgetButton;
     private final JButton transactionButton;
     private final JButton refreshButton;
+    private final JButton logoutButton;
 
     private JLabel budgetLabel;
     private JLabel savingLabel;
-   
-    private JFXPanel pieChartPanel; 
+
+    private JFXPanel pieChartPanel;
     private PieChart pieChart;
-    private JLabel transactionLabel;  
+    private JLabel transactionLabel;
     private JPanel contentPanel;
 
     SavingsGoalDAO sDao = new SavingsGoalDAO();
     BudgetGoalDAO bDao = new BudgetGoalDAO();
     TransactionDAO tDao = new TransactionDAO();
-    
+
     BudgetGoal currentBudget;
     SavingsGoal currentGoal;
     Transaction currTransaction;
@@ -50,20 +51,22 @@ public class DashboardGUI extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
 
         // Navigation bar panel
-        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        navBar.setBackground(new Color(60, 63, 65)); // Modern dark gray
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        navBar.setBackground(new Color(38, 120, 190));
 
         // Create styled buttons
         savingsButton = createNavButton("Savings Goal");
         budgetButton = createNavButton("Budget");
         transactionButton = createNavButton("Transaction");
         refreshButton = createNavButton("Refresh");
+        logoutButton = createNavButton("Logout");
 
         // Add buttons to the navigation bar
         navBar.add(savingsButton);
         navBar.add(budgetButton);
         navBar.add(transactionButton);
         navBar.add(refreshButton);
+        navBar.add(logoutButton);
 
         // Add navigation bar to the top
         add(navBar, BorderLayout.NORTH);
@@ -77,8 +80,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
         add(contentPanel, BorderLayout.CENTER);
 
         //Piechart components
-        pieChartPanel = new JFXPanel();  
-        add(pieChartPanel, BorderLayout.SOUTH); 
+        pieChartPanel = new JFXPanel();
+        add(pieChartPanel, BorderLayout.SOUTH);
 
         // Initialize the pie chart
         initializePieChart();
@@ -95,6 +98,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         button.addActionListener(this);
         return button;
     }
+
     // DONT CHANGE
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -104,8 +108,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
         } else if (e.getSource() == transactionButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
-        }
-        else if(e.getSource() == refreshButton){
+        } else if (e.getSource() == logoutButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");
+        } else if (e.getSource() == refreshButton) {
             // Refresh page
             updateSavingsGoal();
             updateBudget();
@@ -133,7 +138,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         updateSavingsGoal();
         updateBudget();
         updateTransaction();
-        
+
     }
 
     // DONT CHANGE
@@ -146,17 +151,16 @@ public class DashboardGUI extends JPanel implements ActionListener {
             Platform.runLater(() -> {
                 pieChart.getData().clear();
                 pieChart.getData().addAll(
-                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
-                    new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
+                        new PieChart.Data("Saved", currentGoal.getStartingAmount()),
+                        new PieChart.Data("Remaining", currentGoal.getTargetAmount() - currentGoal.getStartingAmount())
                 );
             });
-        } else{
+        } else {
             System.out.println(currentGoal.getName());
         }
     }
 
-
-    public void updateBudget(){
+    public void updateBudget() {
         if (currentBudget != null) {
             //TODO: FIX BUDGET SHOWING ONLY 2000$
             currentBudget = bDao.getBudgetGoal();
@@ -165,30 +169,30 @@ public class DashboardGUI extends JPanel implements ActionListener {
             Platform.runLater(() -> {
                 pieChart.getData().clear();
                 pieChart.getData().addAll(
-                    new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
-                    new PieChart.Data("Remaining", 20 - currentBudget.getBudgetAmount()) // we have to include transactiosn here 
+                        new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
+                        new PieChart.Data("Remaining", 20 - currentBudget.getBudgetAmount()) // we have to include transactiosn here 
                 );
             });
-        } else{
+        } else {
             System.out.println("Budget dont show");
         }
     }
 
     // DONT CHANGE
-    public void updateTransaction(){
+    public void updateTransaction() {
         currTransaction = tDao.getTransactionl();
         if (currTransaction != null) {
             transactionLabel.setText("Your current Transaction is: $" + df.format(currTransaction.getAmount()));
 
-        } else{
+        } else {
             System.out.println("Budget dont show");
         }
     }
 
     // DONT CHANGE
-    public void createInfoText(){
-        currentBudget = bDao.getBudgetGoal(); 
-        currentGoal = sDao.getSavingsGoal(); 
+    public void createInfoText() {
+        currentBudget = bDao.getBudgetGoal();
+        currentGoal = sDao.getSavingsGoal();
         currTransaction = tDao.getTransactionl();
 
         budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
@@ -204,6 +208,5 @@ public class DashboardGUI extends JPanel implements ActionListener {
         transactionLabel.setFont(labelFont);
         contentPanel.add(transactionLabel);
     }
-    
- }
 
+}

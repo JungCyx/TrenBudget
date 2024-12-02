@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import Model.SavingsGoal;
 
 public class SavingsGUI extends JPanel {
+
     private JTextField nameField;
     private JTextField targetField;
     private JComboBox<String> deadlineComboBox; // Dropdown for deadline
@@ -26,20 +27,34 @@ public class SavingsGUI extends JPanel {
     public SavingsGUI() {
 
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
+        setBackground(Color.WHITE); // Set background to white
 
-        // Create the title label
+        // Create the title panel
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(new Color(38, 120, 190)); // Modern blue
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Create title label
         JLabel titleLabel = new JLabel("Savings", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel descriptionLabel = new JLabel(" Create a new savings goal", JLabel.CENTER);
-        descriptionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        titleLabel.setForeground(Color.WHITE);
 
-        // Add the title label to the top of the panel
-        add(titleLabel, BorderLayout.NORTH);
-        add(descriptionLabel, BorderLayout.PAGE_START);
+        // Create description label
+        JLabel descriptionLabel = new JLabel("Create a New Savings Goal", JLabel.CENTER);
+        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        descriptionLabel.setForeground(Color.WHITE);
+
+        // Add labels to the title panel
+        titlePanel.add(titleLabel, BorderLayout.NORTH);
+        titlePanel.add(descriptionLabel, BorderLayout.SOUTH);
+
+        // Add title panel to the top
+        add(titlePanel, BorderLayout.NORTH);
 
         // Center Panel for input fields
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridBagLayout());
+        centerPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -71,7 +86,7 @@ public class SavingsGUI extends JPanel {
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(deadlineLabel, gbc);
-        String[] deadlineOptions = { "1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year" };
+        String[] deadlineOptions = {"1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year"};
         deadlineComboBox = new JComboBox<>(deadlineOptions);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
@@ -90,6 +105,7 @@ public class SavingsGUI extends JPanel {
 
         // Notification Checkbox
         notificationCheckBox = new JCheckBox("Receive Notifications");
+        notificationCheckBox.setBackground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
@@ -99,24 +115,30 @@ public class SavingsGUI extends JPanel {
 
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        buttonPanel.setBackground(Color.WHITE);
         backButton = new JButton("Back");
+        backButton.setFocusable(false);
+        buttonPanel.add(backButton);
+
+        addButton = new JButton("Create Savings");
+        addButton.setFocusable(false);
+        buttonPanel.add(addButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Add action listeners
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
             }
         });
-        buttonPanel.add(backButton);
 
-        addButton = new JButton("Create Savings");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSavings();
             }
         });
-        buttonPanel.add(addButton);
-        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     // Handle user's input
@@ -135,12 +157,13 @@ public class SavingsGUI extends JPanel {
         }
 
         try {
-        // Parse target and starting amount as doubles
-        Double targetAmount = Double.parseDouble(target);
-        Double startingAmountValue = Double.parseDouble(startingAmount);
-        
-        // Create a SavingsGoal object
-        SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue, notificationsEnabled);
+            // Parse target and starting amount as doubles
+            Double targetAmount = Double.parseDouble(target);
+            Double startingAmountValue = Double.parseDouble(startingAmount);
+
+            // Create a SavingsGoal object
+            SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue,
+                    notificationsEnabled);
 
             // Add the saving goal into the database table
             savingDao.addGoalIntoDatabase(newGoal);

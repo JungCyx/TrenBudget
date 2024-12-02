@@ -1,16 +1,15 @@
 package View;
 
-import javax.swing.*;
-
 import DAO.BudgetGoalDAO;
 import Main.Controller.UserController;
 import Model.BudgetGoal;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import javax.swing.*;
 
 public class BudgetGUI extends JPanel {
+
     private JComboBox<String> categoryField;
     private JTextField amountField;
     private JCheckBox notificationCheckBox;
@@ -27,21 +26,37 @@ public class BudgetGUI extends JPanel {
     // Constructor for BudgetGUI
     public BudgetGUI() {
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
+        setBackground(Color.WHITE); // Set the background color to white
 
         controller = new UserController();
         bDao = new BudgetGoalDAO();
 
-        // Title and description
+        // Title Navbar
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(38, 120, 190));
+        titlePanel.setLayout(new BorderLayout());
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         JLabel titleLabel = new JLabel("Budget", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel descriptionLabel = new JLabel("Add a new budget", JLabel.CENTER);
-        descriptionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
-        add(titleLabel, BorderLayout.NORTH);
-        add(descriptionLabel, BorderLayout.PAGE_START);
+        titleLabel.setForeground(Color.WHITE);
+
+        // Create description label
+        JLabel descriptionLabel = new JLabel("Create a New Budget ", JLabel.CENTER);
+        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        descriptionLabel.setForeground(Color.WHITE);
+
+        // Add labels to the title panel
+        titlePanel.add(titleLabel, BorderLayout.NORTH);
+        titlePanel.add(descriptionLabel, BorderLayout.SOUTH);
+
+        // Add title panel to the top
+        add(titlePanel, BorderLayout.NORTH);
 
         // Center Panel to display the input fields
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridBagLayout());
+        centerPanel.setBackground(Color.WHITE); // Ensure inner panel matches background
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -52,19 +67,19 @@ public class BudgetGUI extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         centerPanel.add(categoryLabel, gbc);
 
-        categoryField = new JComboBox<>(new String[] {
-                "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
-                "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
-                "Car Maintenance", "Parking Fees", "Car Repairs", "DMV Fees",
-                "Groceries", "Restaurants", "Pet Food", "Electricity", "Water",
-                "Garbage", "Phones", "Cable", "Internet", "Apparel", "Healthcare",
-                "Dental Care", "Health Insurance", "Homeowner’s Insurance",
-                "Auto Insurance", "Life Insurance", "Household Items/Supplies",
-                "Gym Memberships", "Salon Services", "Cosmetics", "Babysitter",
-                "Subscriptions", "Personal Loans", "Student Loans", "Credit Cards",
-                "Retirement Fund", "Investing", "Emergency Fund", "Big Purchases",
-                "Gifts/Donations", "Special Occasion", "Entertainment",
-                "Vacations", "Subscriptions"
+        categoryField = new JComboBox<>(new String[]{
+            "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
+            "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
+            "Car Maintenance", "Parking Fees", "Car Repairs", "DMV Fees",
+            "Groceries", "Restaurants", "Pet Food", "Electricity", "Water",
+            "Garbage", "Phones", "Cable", "Internet", "Apparel", "Healthcare",
+            "Dental Care", "Health Insurance", "Homeowner’s Insurance",
+            "Auto Insurance", "Life Insurance", "Household Items/Supplies",
+            "Gym Memberships", "Salon Services", "Cosmetics", "Babysitter",
+            "Subscriptions", "Personal Loans", "Student Loans", "Credit Cards",
+            "Retirement Fund", "Investing", "Emergency Fund", "Big Purchases",
+            "Gifts/Donations", "Special Occasion", "Entertainment",
+            "Vacations", "Subscriptions"
         });
         categoryField.setPreferredSize(new Dimension(200, 25));
         gbc.gridx = 1;
@@ -91,10 +106,11 @@ public class BudgetGUI extends JPanel {
         centerPanel.add(startDateLabel, gbc);
 
         JPanel startDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        startDatePanel.setBackground(Color.WHITE); // Set background color
         startYearDropdown = new JComboBox<>();
-        startMonthDropdown = new JComboBox<>(new String[] {
-                "01", "02", "03", "04", "05", "06",
-                "07", "08", "09", "10", "11", "12"
+        startMonthDropdown = new JComboBox<>(new String[]{
+            "01", "02", "03", "04", "05", "06",
+            "07", "08", "09", "10", "11", "12"
         });
         startDayDropdown = new JComboBox<>();
         populateYearDropdown(startYearDropdown);
@@ -116,10 +132,11 @@ public class BudgetGUI extends JPanel {
         centerPanel.add(endDateLabel, gbc);
 
         JPanel endDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        endDatePanel.setBackground(Color.WHITE); // Set background color
         endYearDropdown = new JComboBox<>();
-        endMonthDropdown = new JComboBox<>(new String[] {
-                "01", "02", "03", "04", "05", "06",
-                "07", "08", "09", "10", "11", "12"
+        endMonthDropdown = new JComboBox<>(new String[]{
+            "01", "02", "03", "04", "05", "06",
+            "07", "08", "09", "10", "11", "12"
         });
         endDayDropdown = new JComboBox<>();
         populateYearDropdown(endYearDropdown);
@@ -136,6 +153,7 @@ public class BudgetGUI extends JPanel {
 
         // Notification setup
         notificationCheckBox = new JCheckBox("Turn On Notifications");
+        notificationCheckBox.setBackground(Color.WHITE); // Match background
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
@@ -146,6 +164,7 @@ public class BudgetGUI extends JPanel {
 
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        buttonPanel.setBackground(Color.WHITE); // Match background
 
         backButton = new JButton("Back");
         backButton.addActionListener(e -> handleBackButton());
@@ -174,10 +193,14 @@ public class BudgetGUI extends JPanel {
         int month = monthDropdown.getSelectedIndex();
 
         int daysInMonth = switch (month) {
-            case 0, 2, 4, 6, 7, 9, 11 -> 31; // Jan, Mar, May, Jul, Aug, Oct, Dec
-            case 3, 5, 8, 10 -> 30; // Apr, Jun, Sep, Nov
-            case 1 -> (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28; // Feb
-            default -> 0;
+            case 0, 2, 4, 6, 7, 9, 11 ->
+                31; // Jan, Mar, May, Jul, Aug, Oct, Dec
+            case 3, 5, 8, 10 ->
+                30; // Apr, Jun, Sep, Nov
+            case 1 ->
+                (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28; // Feb
+            default ->
+                0;
         };
 
         for (int i = 1; i <= daysInMonth; i++) {
@@ -202,7 +225,7 @@ public class BudgetGUI extends JPanel {
         return String.valueOf(number);
     }
 
-    private void handleBackButton(){
+    private void handleBackButton() {
 
         LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
 
@@ -220,8 +243,6 @@ public class BudgetGUI extends JPanel {
         int endDay = (int) endDayDropdown.getSelectedItem();
         boolean notifications = notificationCheckBox.isSelected();
 
-
-
         if (category.isEmpty() || amount.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
@@ -230,24 +251,21 @@ public class BudgetGUI extends JPanel {
         try {
             Double.parseDouble(amount); // Validate amount as a number
             JOptionPane.showMessageDialog(this,
-                    "Category: " + category + "\nAmount: $" + amount +
-                            "\nStart Date: " + startMonth + " " + startDay + ", " + startYear +
-                            "\nEnd Date: " + endMonth + " " + endDay + ", " + endYear,
+                    "Category: " + category + "\nAmount: $" + amount
+                    + "\nStart Date: " + startMonth + " " + startDay + ", " + startYear
+                    + "\nEnd Date: " + endMonth + " " + endDay + ", " + endYear,
                     "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid number for the amount", "ERROR",
                     JOptionPane.ERROR_MESSAGE);
         }
 
-        String startD = returnValidString(startYear)+ "-" + startMonth + "-" + returnValidString(startDay);
-        String EndD = returnValidString(endYear)+ "-" + endMonth + "-" + returnValidString(endDay);
+        String startD = returnValidString(startYear) + "-" + startMonth + "-" + returnValidString(startDay);
+        String EndD = returnValidString(endYear) + "-" + endMonth + "-" + returnValidString(endDay);
 
         BudgetGoal newBudgetGoal = controller.mapBudgetGoal(category, Double.parseDouble(amount), startD, EndD, notifications);
         bDao.addBudgetIntoDatabase(newBudgetGoal);
 
     }
 
-    
 }
-
-
