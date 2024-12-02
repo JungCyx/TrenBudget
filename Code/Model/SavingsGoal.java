@@ -9,10 +9,12 @@ public class SavingsGoal {
     private Double targetAmount;
     private boolean notificationsEnabled;
     private UserModel appUser;
+
+    private int id;
     private int userId;
     
 
-    //Constructor
+    // Constructor
     public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
         this.appUser = appUser;
         this.name = name;
@@ -25,13 +27,31 @@ public class SavingsGoal {
         this.userId = this.appUser.getId();
     }
 
-    //Constructor with no user model
+    // Constructor with no user model
     public SavingsGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled){
         this.name = name;
         this.targetAmount = targetAmount;
         this.deadline = deadline;
         this.startingAmount = startingAmount;
         this.notificationsEnabled = notificationsEnabled;
+    }
+
+    // Constructor with saving Id as a paramater 
+    public SavingsGoal(int id, String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled){
+        this.id = id;
+        this.name = name;
+        this.targetAmount = targetAmount;
+        this.deadline = deadline;
+        this.startingAmount = startingAmount;
+        this.notificationsEnabled = notificationsEnabled;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     // Empty Constructor 

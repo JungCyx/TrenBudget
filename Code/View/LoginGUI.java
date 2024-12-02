@@ -15,7 +15,7 @@ public class LoginGUI extends JFrame {
     public LoginGUI() {
         
         // Initialize frame properties
-        setTitle("TrenBudget - Login");
+        setTitle("TrenBudget");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
 

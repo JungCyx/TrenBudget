@@ -62,7 +62,7 @@ import Model.UserSession;
         ArrayList<SavingsGoal> savingsGoals = new ArrayList<>(); 
         
         // Query the db to get the saving goal for the current user 
-        String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY id DESC"; // Example query
+        String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY goalId DESC"; // Example query
 
         try(Connection conn = connection.get_Connection();){
 
@@ -78,6 +78,8 @@ import Model.UserSession;
                 SavingsGoal currGoal = new SavingsGoal();
 
                 currGoal.setGoalUserId(current_user_id);
+                
+                currGoal.setId(rs.getInt("goalId"));
                 currGoal.setName(rs.getString("goalName"));
                 currGoal.setTargetAmount(rs.getDouble("targetAmount"));
                 currGoal.setDeadline(rs.getString("deadline"));
@@ -95,6 +97,7 @@ import Model.UserSession;
         };
         return savingsGoals;
     }
+
 
     // The function retrives and return the latest saving goal
     public SavingsGoal getSavingsGoal(){
@@ -132,6 +135,8 @@ import Model.UserSession;
         }
         return currGoal;
     }
+
+    
 }
 
  
