@@ -79,12 +79,31 @@ public class DashboardGUI extends JPanel implements ActionListener {
         // Add the content panel to the center
         add(contentPanel, BorderLayout.CENTER);
 
+        //Chart panel for pie charts
+        JPanel chartPanel = new JPanel(new GridLayout(1,3,10,10));
+        chartPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setPreferredSize(new Dimension(600,300));
+
+
         //Piechart components
         pieChartPanel = new JFXPanel();
         add(pieChartPanel, BorderLayout.SOUTH);
 
         // Initialize the pie chart
-        initializePieChart();
+        initializePieChart(budgetChartPanel, "Budget");
+        initializePieChart(savingsChartPanel, "Savings");
+        initializePieChart(transactionChartPanel, "Transaction");
+
+        chartPanel.add(budgetChartPanel);
+        chartPanel.add(savingsChartPanel);
+        chartPanel.add(transactionChartPanel);
+        add(chartPanel, BorderLayout.SOUTH);
+
+        createInfoText();
+        updateSavingsGoal();
+        updateBudget();
+        updateTransaction();
 
     }
 
@@ -119,9 +138,10 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
     }
 
-    // DONT CHANGE
-    private void initializePieChart() {
+    //Assign each pie chart
+    private void initializePieChart(JFXPanel chartPanel, String title) {
 
+        Platform.runLater(() -> {
         // Create a PieChart
         pieChart = new PieChart();
 
@@ -135,10 +155,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         pieChartPanel.setScene(scene);
 
         createInfoText();
-        updateSavingsGoal();
-        updateBudget();
-        updateTransaction();
-
+        
     }
 
     // DONT CHANGE
@@ -178,14 +195,20 @@ public class DashboardGUI extends JPanel implements ActionListener {
         }
     }
 
-    // DONT CHANGE
-    public void updateTransaction() {
-        currTransaction = tDao.getTransactionl();
-        if (currTransaction != null) {
-            transactionLabel.setText("Your current Transaction is: $" + df.format(currTransaction.getAmount()));
 
-        } else {
-            System.out.println("Budget dont show");
+    public void updateTransaction(){
+        currentTransaction = tDao.getTransactionl();
+        transactionLabel.setText("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
+
+        if (currentTransaction != null) {
+            Platform.runLater(() -> {
+                transactionPieChart.getData().clear();
+                transactionPieChart.getData().addAll(
+                    new PieChart.Data("Spent", currentBudget.getBudgetAmount())
+                );
+            });
+        } else{
+            System.out.println("No transaction data available");
         }
     }
 
