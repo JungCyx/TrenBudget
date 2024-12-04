@@ -64,9 +64,8 @@ import Model.UserSession;
         // Query the db to get the saving goal for the current user 
         String sql = "SELECT * FROM usergoals WHERE userId = ? ORDER BY goalId DESC"; // Example query
 
-        try(Connection conn = connection.get_Connection();){
-
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try(Connection conn = connection.get_Connection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, current_user_id);
 
@@ -86,6 +85,7 @@ import Model.UserSession;
 
                 savingsGoals.add(currGoal);
             }
+        
             conn.close();
             rs.close();
 

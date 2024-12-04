@@ -9,10 +9,11 @@ import java.sql.SQLException;
 public class DAO {
 
     static final String DB_URL = "jdbc:postgresql://localhost:5432/budgetapp";
+
     static final String USER = "postgres";
     static final String PASS = "123";
     Connection conn = null;
-
+ 
     // returns a connection to the Database object each time its called 
     public Connection get_Connection() {
 
