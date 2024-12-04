@@ -4,23 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-<<<<<<< HEAD
 public class DAO{
    
-   static final String DB_URL = "jdbc:postgresql://localhost:5432/budgetapp";
-   static final String USER = "postgres";
-   static final String PASS = "123";
-   Connection conn = null;
-=======
-public class DAO {
->>>>>>> 1ba203ee1832587567f520b5784318e520ad055c
-
-    static final String DB_URL = "jdbc:postgresql://localhost:5433/trendb";
+    static final String DB_URL = "jdbc:postgresql://localhost:5432/trenbudget";
     static final String USER = "postgres";
-    static final String PASS = "pass";
+    static final String PASS = "123";
     Connection conn = null;
-
+ 
     // returns a connection to the Database object each time its called 
     public Connection get_Connection() {
 
