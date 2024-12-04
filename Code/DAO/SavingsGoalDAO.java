@@ -78,8 +78,6 @@ import Model.UserSession;
                 SavingsGoal currGoal = new SavingsGoal();
 
                 currGoal.setGoalUserId(current_user_id);
-                
-                currGoal.setId(rs.getInt("goalId"));
                 currGoal.setName(rs.getString("goalName"));
                 currGoal.setTargetAmount(rs.getDouble("targetAmount"));
                 currGoal.setDeadline(rs.getString("deadline"));

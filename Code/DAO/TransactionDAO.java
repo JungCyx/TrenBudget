@@ -8,10 +8,6 @@ import java.sql.ResultSet;
 
 import Model.Transaction;
 import Model.UserSession;
-import java.time.LocalDate;
-import java.util.List;
-
-
  public class TransactionDAO{
 
     public static Transaction currentGoal; // this is instance of a savings goal which will be updating in the dashboard

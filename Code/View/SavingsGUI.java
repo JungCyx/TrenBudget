@@ -170,6 +170,7 @@ public class SavingsGUI extends JPanel {
             Double startingAmountValue = Double.parseDouble(startingAmount);
 
             // Create a SavingsGoal object
+            // TODO: ADD THE MAPPING FUCTION TO THE CONTROLLER 
             SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue,
                     notificationsEnabled);
 

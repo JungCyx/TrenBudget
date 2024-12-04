@@ -225,7 +225,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
     }
 
     public void updateTransaction() {
-        currentTransaction = tDao.getTransactionl();
+        currentTransaction = tDao.getTransaction
+        ();
         transactionLabel.setText("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
 
         if (currentTransaction != null && currentBudget != null) {
@@ -245,7 +246,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
     public void createInfoText() {
         currentBudget = bDao.getBudgetGoal();
         currentGoal = sDao.getSavingsGoal();
-        currentTransaction = tDao.getTransactionl();
+        currentTransaction = tDao.getTransaction();
 
         budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
         budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));

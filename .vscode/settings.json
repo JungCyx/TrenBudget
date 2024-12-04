@@ -11,7 +11,16 @@
             "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.graphics.jar",
             "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.media.jar",
             "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.swing.jar",
-            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.web.jar"
+            "/Users/mariahernandez/Downloads/javafx-sdk-22.0.2/lib/javafx.web.jar",
+            "c:\\Users\\tariq\\Downloads\\postgresql-42.7.4.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.base.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.controls.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.fxml.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.graphics.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.media.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.swing.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx.web.jar",
+            "c:\\Users\\tariq\\OneDrive\\Desktop\\javafx-sdk-22.0.2\\lib\\javafx-swt.jar"
         ],
         "exclude": [
             "/Users/mariahernandez/Downloads/javafx-sdk-23.0.1/lib/javafx.fxml.jar"

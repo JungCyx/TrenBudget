@@ -15,6 +15,7 @@ import Model.Transaction;
 public class UserController {
 
     DAO connection = new DAO();
+    
 
     public UserController() {}
 
@@ -91,6 +92,11 @@ public class UserController {
         return new Transaction(type, category, amount, notificationsEnabled);
     }
 
+    // The function maps the Saving Goal input to Saving Goal model and return the model
+    public SavingsGoal mapGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
+        return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);     
+    }
+
     // The Function return the current logged in user model
     public UserModel getUser(){
         return UserSession.getInstance().getCurrentUser();
@@ -120,10 +126,5 @@ public class UserController {
           e.printStackTrace();
       };
    }
-
-    // The function maps the Saving Goal input to Saving Goal model and return the model
-    public SavingsGoal mapGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
-        return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);     
-    }
 
 }
