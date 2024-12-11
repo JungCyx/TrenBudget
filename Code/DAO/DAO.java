@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DAO {
 
-    static final String DB_URL = "jdbc:postgresql://localhost:5432/budgetapp";
+    static final String DB_URL = "jdbc:postgresql://localhost:5432/trenbudget";
 
     static final String USER = "postgres";
     static final String PASS = "123";

@@ -309,50 +309,23 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
     
 
     // DONT CHANGE
-public void createInfoText() {
-    currentBudget = bDao.getBudgetGoal(); 
-    currentGoal = sDao.getSavingsGoal(); 
-    currentTransaction = tDao.getTransaction();
-    
-    // Set the layout of contentPanel to BorderLayout
-    contentPanel.setLayout(new BorderLayout());
+    public void createInfoText() {
+        currentBudget = bDao.getBudgetGoal();
+        currentGoal = sDao.getSavingsGoal();
+        currentTransaction = tDao.getTransaction();
 
-    // Create the labels and set their font
-    budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
-    budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    
-    savingLabel = new JLabel("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
-    savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    
-    transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
-    Font labelFont = new Font("Arial", Font.PLAIN, 16);
-    transactionLabel.setFont(labelFont);
+        budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
+        budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        contentPanel.add(budgetLabel);
 
-    // Add the labels to the contentPanel on the right side
-    JPanel infoPanel = new JPanel();
-    infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));  // Arrange the labels vertically
+        savingLabel = new JLabel("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
+        savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        contentPanel.add(savingLabel);
 
-    // Set background color for the infoPanel
-    infoPanel.setBackground(new Color(244, 244, 244));  // HEX: #f4f4f4
-
-    // Add spacing between the labels and set margins
-    budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    budgetLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    infoPanel.add(budgetLabel);
-    infoPanel.add(Box.createVerticalStrut(50));  // Add space between labels
-
-    savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    savingLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    infoPanel.add(savingLabel);
-    infoPanel.add(Box.createVerticalStrut(50));  // Add space between labels
-
-    transactionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-    transactionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    infoPanel.add(transactionLabel);
-
-    // Add infoPanel to the right side (EAST) of contentPanel
-    contentPanel.add(infoPanel, BorderLayout.WEST);
-}
-
+        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
+        Font labelFont = new Font("Arial", Font.PLAIN, 16);
+        transactionLabel.setFont(labelFont);
+        contentPanel.add(transactionLabel);
+    }
     
  }
