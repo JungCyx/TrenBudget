@@ -60,9 +60,9 @@ public class DAO {
                 "userId INT NOT NULL, "
                 + // Foreign key referencing appUser
                 "goalName VARCHAR(255), "
-                + "targetAmount Double, "
+                + "targetAmount Double PRECISION, "
                 + "deadline VARCHAR(225), "
-                + "startingAmount Double, "
+                + "startingAmount Double PRECISION, "
                 + "notificationsEnabled BOOLEAN, "
                 + "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE)";
 

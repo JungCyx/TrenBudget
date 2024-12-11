@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.setProperty("java.awt.headless", "false");
+        System.out.println("hello word");
         
         connector.createUserTable(); // Create a user table in the DB 
         connector.createSavingGoalTable(); // Creates a saving goal table in the DB

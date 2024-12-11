@@ -31,6 +31,9 @@ public class UserModel {
         
     }
 
+    public UserModel(int i, String string) {
+        //TODO Auto-generated constructor stub
+    }
     public int getId() {
         return id;
     }
