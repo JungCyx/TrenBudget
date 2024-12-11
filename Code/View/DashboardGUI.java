@@ -4,12 +4,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Locale.Category;
 
 import javax.swing.*;
 
@@ -22,7 +19,6 @@ import Model.Transaction;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
@@ -40,13 +36,11 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton transactionButton;
     private final JButton refreshButton;
     private final JButton logoutButton;
-
     
     private JLabel budgetLabel;
     private JLabel savingLabel;
     private JLabel transactionLabel; 
-   
- 
+
 
     private JFXPanel budgetChartPanel;
     private JFXPanel savingsChartPanel;
@@ -98,14 +92,15 @@ public class DashboardGUI extends JPanel implements ActionListener {
         // Content panel for the budget, savings, and transaction details
         contentPanel = new JPanel(new GridLayout(3,1,10,10));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(java.awt.Color.decode("#f4f4f4")); // Using HEX color code
+
         add(contentPanel, BorderLayout.CENTER);
 
         //Chart panel for pie charts
         JPanel chartPanel = new JPanel();
         chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.X_AXIS));
         chartPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setBackground(java.awt.Color.decode("#f4f4f4"));
 
 
         //Piechart components
@@ -114,9 +109,10 @@ public class DashboardGUI extends JPanel implements ActionListener {
         transactionChartPanel = new JFXPanel();
 
         //Size of pieCharts
-        budgetChartPanel.setPreferredSize(new Dimension(200, 200));
-        savingsChartPanel.setPreferredSize(new Dimension(200, 200));
-        transactionChartPanel.setPreferredSize(new Dimension(200, 200));
+        budgetChartPanel.setPreferredSize(new Dimension(400, 400));
+        savingsChartPanel.setPreferredSize(new Dimension(400, 400));
+        transactionChartPanel.setPreferredSize(new Dimension(400, 400));
+
 
         // Initialize the pie chart
         initializePieChart(budgetChartPanel, "Budget");
@@ -130,7 +126,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
              transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 600, 400));
    
     });
-
         chartPanel.add(budgetChartPanel);
         chartPanel.add(Box.createHorizontalStrut(20));
         chartPanel.add(savingsChartPanel);
@@ -298,7 +293,6 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
         // Update the PieChart with categorized data
         Platform.runLater(() -> {
             transactionPieChart.getData().clear();  // Clear existing data
-
             // Add the new data to the pie chart
             for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
                 transactionPieChart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));

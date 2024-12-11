@@ -17,7 +17,8 @@ public class LoginGUI extends JFrame {
         // Initialize frame properties
         setTitle("TrenBudget");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(800, 600));
+        setResizable(false);
+        setPreferredSize(new Dimension(1100, 950));
 
         // Setup layout
         cardLayout = new CardLayout();
