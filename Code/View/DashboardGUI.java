@@ -28,7 +28,6 @@ import javafx.scene.layout.StackPane;
 
 
 
-
 public class DashboardGUI extends JPanel implements ActionListener {
 
     private final JButton savingsButton;
@@ -121,9 +120,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
         //Add to the panels
         Platform.runLater(() -> {
-             budgetChartPanel.setScene(new Scene(new StackPane(budgetBarChart), 600, 400));
-             savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 600, 400));
-             transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 600, 400));
+             budgetChartPanel.setScene(new Scene(new StackPane(budgetBarChart), 500, 400));
+             savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 500, 400));
+             transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 500, 400));
    
     });
         chartPanel.add(budgetChartPanel);
@@ -230,46 +229,63 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
 
 
 
-    public void updateBudget(){
-        currentBudget = bDao.getBudgetGoal();
-        budgetLabel.setText("Your most current budget is: $" + df.format(currentBudget.getBudgetAmount()));
-
-
-        if (currentBudget != null) {
-
-            double maxAmount = currentBudget.getBudgetAmount();
-            double spentAmount = 10; //needs to be change to be connected to transactions
-            double remainingAmount = Math.max(0, maxAmount - spentAmount);
-
+    public void updateBudget() {
+        // Fetch the budget goals from the database
+        ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
+    
+        if (budgetGoalsList != null && !budgetGoalsList.isEmpty()) {
+            // Map to hold the categories and their total budget amounts
+            Map<String, Double> categoryTotals = new HashMap<>();
+            for (BudgetGoal goal : budgetGoalsList) {
+                String category = goal.getCategory();
+                double budgetAmount = goal.getBudgetAmount();
+    
+                // Add the amounts to the corresponding category
+                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + budgetAmount);
+            }
+    
+            // Update the label to show the latest budget total
+            budgetLabel.setText("Your most current budget is: $" + 
+                df.format(categoryTotals.values().stream().mapToDouble(Double::doubleValue).sum()));
+    
+            // Update the BarChart with categorized data
             Platform.runLater(() -> {
+                // Clear the existing data from the bar chart
+                budgetBarChart.getData().clear();
+    
+                // Create series for "Spent" and "Remaining"
                 XYChart.Series<String, Number> spentSeries = new XYChart.Series<>();
                 spentSeries.setName("Spent");
-
-            XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
-            remainingSeries.setName("Remaining");
-
-            // Add data for the single "Budget" bar
-            spentSeries.getData().add(new XYChart.Data<>("Budget", spentAmount));
-            remainingSeries.getData().add(new XYChart.Data<>("Budget", remainingAmount));
-
-            // Add the series to the chart
-            budgetBarChart.getData().addAll(spentSeries, remainingSeries);
-
-            spentSeries.getData().forEach(data -> 
-            data.getNode().setStyle("-fx-bar-fill: red;")); // Spent 
-        remainingSeries.getData().forEach(data -> 
-            data.getNode().setStyle("-fx-bar-fill: green;")); // Remaining
-
-
+    
+                XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
+                remainingSeries.setName("Remaining");
+    
+                // Loop through the categories and add data for each
+                for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                    String category = entry.getKey();
+                    double totalBudget = entry.getValue();
+                    double spent = 10; // Replace with actual logic for spent amount
+                    double remaining = Math.max(0, totalBudget - spent);
+    
+                    // Add data for the current category
+                    spentSeries.getData().add(new XYChart.Data<>(category, spent));
+                    remainingSeries.getData().add(new XYChart.Data<>(category, remaining));
+                }
+    
+                // Add the series to the bar chart (stacking the data for each category)
+                budgetBarChart.getData().addAll(spentSeries, remainingSeries);
+    
+                // Apply bar colors for better visualization
+                spentSeries.getData().forEach(data -> 
+                    data.getNode().setStyle("-fx-bar-fill: red;")); // Spent in red
+                remainingSeries.getData().forEach(data -> 
+                    data.getNode().setStyle("-fx-bar-fill: green;")); // Remaining in green
             });
-
-        }
-         else{
-
-            System.out.println("No budget data available");
+    
+        } else {
+            System.out.println("No budget goals available.");
         }
     }
-
 
     public void updateTransaction(){
         // Fetch the latest 50 withdrawal transactions

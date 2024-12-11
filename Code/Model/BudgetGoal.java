@@ -52,7 +52,11 @@ public class BudgetGoal {
     }
 
     // Empty Constructor
+    public BudgetGoal(String category2, double totalBudget) {
+    }
+
     public BudgetGoal() {
+        //TODO Auto-generated constructor stub
     }
 
     public void setId(int id) {

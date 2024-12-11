@@ -27,7 +27,7 @@ public class DAOTest {
     private Connection testConnection;
 
     // Database configuration for testing
-    private static final String TEST_DB_URL = "jdbc:postgresql://localhost:5432/budgetapp";
+    private static final String TEST_DB_URL = "jdbc:postgresql://localhost:5432/trenbudget";
     private static final String USER = "postgres";
     private static final String PASS = "123";
 

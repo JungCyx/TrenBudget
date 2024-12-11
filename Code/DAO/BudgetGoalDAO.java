@@ -1,6 +1,7 @@
 package DAO;
 
 import Model.BudgetGoal;
+import Model.Transaction;
 import Model.UserSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -144,6 +145,44 @@ public class BudgetGoalDAO {
             System.out.println("Failed to remove budget...");
             e.printStackTrace();
         }
+    }
+
+    //get the budget goals category for bar chart
+    public ArrayList<BudgetGoal> getBudgetGoalsByCategory(){
+        ArrayList<BudgetGoal> budgetGoalsList = new ArrayList<>();
+
+        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+
+        // Query to get all the budget goals for the current user
+        String sql = "SELECT * FROM budgetgoals WHERE userId = ? ORDER BY category DESC LIMIT 10"; // Retrieves all goals, ordered by budgetId
+
+        try (Connection conn = connection.get_Connection(); 
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1, current_user_id);
+
+            ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    BudgetGoal budgetGoal = new BudgetGoal();
+
+                budgetGoal.setGoalUserId(current_user_id);
+                budgetGoal.setCategory(rs.getString("category"));
+                budgetGoal.setBudgetAmount(rs.getDouble("budgetAmount"));
+                budgetGoal.setStartDate(rs.getDate("startDate").toLocalDate());
+                budgetGoal.setEndDate(rs.getDate("endDate").toLocalDate());
+                budgetGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+
+                budgetGoalsList.add(budgetGoal);
+
+                }
+                rs.close();
+            }
+         catch (SQLException e) {
+            System.out.println("Failed to retrieve goals!!!");
+            e.printStackTrace();
+        }
+        return budgetGoalsList;
+        
     }
 
 }
