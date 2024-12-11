@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale.Category;
 
 import javax.swing.*;
 
@@ -21,7 +22,12 @@ import Model.Transaction;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 
 
@@ -47,7 +53,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private JFXPanel transactionChartPanel;
     private JPanel contentPanel;
 
-    private PieChart budgetPieChart;
+    private StackedBarChart<String, Number> budgetBarChart;
     private PieChart savingsPieChart;
     private PieChart transactionPieChart;
 
@@ -119,8 +125,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
         //Add to the panels
         Platform.runLater(() -> {
-             budgetChartPanel.setScene(new Scene(new StackPane(budgetPieChart), 600, 400));
-            savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 600, 400));
+             budgetChartPanel.setScene(new Scene(new StackPane(budgetBarChart), 600, 400));
+             savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 600, 400));
              transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 600, 400));
    
     });
@@ -174,7 +180,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
     //Assign each pie chart
     private void initializePieChart(JFXPanel chartPanel, String title) {
         if(title.equals("Budget")){
-            initializeBudgetPieChart(chartPanel);
+            initializeBudgetBarChart(chartPanel);
             
         }
         else if (title.equals("Savings")) {
@@ -186,16 +192,21 @@ public class DashboardGUI extends JPanel implements ActionListener {
 
     }
 
-    private void initializeBudgetPieChart(JFXPanel chartPanel) {
-        budgetPieChart = new PieChart();
-        budgetPieChart.setTitle("Budget Overview");
+    private void initializeBudgetBarChart(JFXPanel chartPanel) {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Categories");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Amount");
+        budgetBarChart = new StackedBarChart<>(xAxis, yAxis);
+        budgetBarChart.setTitle("Budget Goals Overview");
 
 }
     
-    private void initializeSavingsPieChart(JFXPanel chartPanel) {
-        savingsPieChart = new PieChart();
-        savingsPieChart.setTitle("Savings Overview");
-    }
+private void initializeSavingsPieChart(JFXPanel chartPanel) {
+    savingsPieChart = new PieChart();
+    savingsPieChart.setTitle("Savings Overview");
+}
     
     private void initializeTransactionPieChart(JFXPanel chartPanel) {
         transactionPieChart = new PieChart();
@@ -223,22 +234,43 @@ public class DashboardGUI extends JPanel implements ActionListener {
     }
 
 
+
     public void updateBudget(){
         currentBudget = bDao.getBudgetGoal();
-        budgetLabel.setText("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
+        budgetLabel.setText("Your most current budget is: $" + df.format(currentBudget.getBudgetAmount()));
 
 
         if (currentBudget != null) {
-            Platform.runLater(() -> {
-                budgetPieChart.getData().clear();
-                budgetPieChart.getData().addAll(
-                    new PieChart.Data("Max Amount", currentBudget.getBudgetAmount()),
-                    new PieChart.Data("Spent", Math.max(0,100 - currentBudget.getBudgetAmount())) // we have to include transactiosn here 
 
-                    
-                );
+            double maxAmount = currentBudget.getBudgetAmount();
+            double spentAmount = 10; //needs to be change to be connected to transactions
+            double remainingAmount = Math.max(0, maxAmount - spentAmount);
+
+            Platform.runLater(() -> {
+                XYChart.Series<String, Number> spentSeries = new XYChart.Series<>();
+                spentSeries.setName("Spent");
+
+            XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
+            remainingSeries.setName("Remaining");
+
+            // Add data for the single "Budget" bar
+            spentSeries.getData().add(new XYChart.Data<>("Budget", spentAmount));
+            remainingSeries.getData().add(new XYChart.Data<>("Budget", remainingAmount));
+
+            // Add the series to the chart
+            budgetBarChart.getData().addAll(spentSeries, remainingSeries);
+
+            spentSeries.getData().forEach(data -> 
+            data.getNode().setStyle("-fx-bar-fill: red;")); // Spent 
+        remainingSeries.getData().forEach(data -> 
+            data.getNode().setStyle("-fx-bar-fill: green;")); // Remaining
+
+
             });
-        } else{
+
+        }
+         else{
+
             System.out.println("No budget data available");
         }
     }
