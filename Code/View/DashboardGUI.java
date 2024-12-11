@@ -243,28 +243,51 @@ public class DashboardGUI extends JPanel implements ActionListener {
         }
     }
 
-    public void updateTransaction() {
-        currentTransaction = tDao.getTransactionl();
-        transactionLabel.setText("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
 
-        if (currentTransaction != null && currentBudget != null) {
-            Platform.runLater(() -> {
-                transactionPieChart.getData().clear();
-                transactionPieChart.getData().addAll(
-                        new PieChart.Data("Transaction Amount", currentTransaction.getAmount()),
-                        new PieChart.Data("Remaining Budget", Math.max(0, currentBudget.getBudgetAmount() - currentTransaction.getAmount()))
-                );
-            });
-        } else {
-            System.out.println("No transaction data available");
+    public void updateTransaction(){
+        // Fetch the latest 50 withdrawal transactions
+    ArrayList<Transaction> transactionsList = tDao.getWithdrawTransactions();
+
+    if (transactionsList != null && !transactionsList.isEmpty()) {
+        // Make a map to store the categories and their total amounts
+        Map<String, Double> categoryTotals = new HashMap<>();
+
+        for (Transaction transaction : transactionsList) {
+            String categoryOfTheTransaction = transaction.getCategory();
+            double amountOfTransaction = transaction.getAmount();
+
+            // Add the amounts to the corresponding category
+            categoryTotals.put(categoryOfTheTransaction, categoryTotals.getOrDefault(categoryOfTheTransaction, 0.0) + amountOfTransaction);
         }
+
+        // Display the total amount for the current transaction
+        transactionLabel.setText("Your most recent transaction was: $" + df.format(transactionsList.get(0).getAmount()));
+
+        // Update the PieChart with categorized data
+        Platform.runLater(() -> {
+            transactionPieChart.getData().clear();  // Clear existing data
+
+            // Add the new data to the pie chart
+            for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                transactionPieChart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
+            }
+
+            // Set the title of the pie chart
+            transactionPieChart.setTitle("Past 50 Withdraw Overview");
+        });
+
+    } else {
+        System.out.println("No withdrawal transactions available.");
     }
+}
+    
 
     // DONT CHANGE
-    public void createInfoText() {
-        currentBudget = bDao.getBudgetGoal();
-        currentGoal = sDao.getSavingsGoal();
-        currentTransaction = tDao.getTransactionl();
+    public void createInfoText(){
+        currentBudget = bDao.getBudgetGoal(); 
+        currentGoal = sDao.getSavingsGoal(); 
+        currentTransaction = tDao.getTransaction();
+        
 
         budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
         budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
