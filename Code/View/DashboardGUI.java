@@ -229,7 +229,6 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
             }
         }
         
-        // Optional: Update the starting amount with total deposits
         currentGoal.setStartingAmount(currentGoal.getStartingAmount() + totalDeposits);
         
         Platform.runLater(() -> {
@@ -261,7 +260,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
         ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
     
         if (budgetGoalsList != null && !budgetGoalsList.isEmpty()) {
-            // Map to hold the categories and their total budget amounts
+            // Hold the categories and their total budget amounts
             Map<String, Double> categoryTotals = new HashMap<>();
             for (BudgetGoal goal : budgetGoalsList) {
                 String category = goal.getCategory();
@@ -270,8 +269,6 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 // Add the amounts to the corresponding category
                 categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + budgetAmount);
             }
-    
-        
     
             // Update the BarChart with categorized data
             Platform.runLater(() -> {
@@ -300,7 +297,6 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 // Add the series to the bar chart (stacking the data for each category)
                 budgetBarChart.getData().addAll(spentSeries, remainingSeries);
     
-        
             });
     
         } else {
@@ -315,7 +311,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
 
 
 
-        // Fetch the latest 50 withdrawal transactions
+        // Get the latest 50 withdrawal transactions
     ArrayList<Transaction> transactionsList = tDao.getWithdrawTransactions();
 
     if (transactionsList != null && !transactionsList.isEmpty()) {
@@ -330,9 +326,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
             categoryTotals.put(categoryOfTheTransaction, categoryTotals.getOrDefault(categoryOfTheTransaction, 0.0) + amountOfTransaction);
         }
 
-      
-
-        // Update the PieChart with categorized data
+        // Update the PieChart with categorize data
         Platform.runLater(() -> {
             transactionPieChart.getData().clear();  // Clear existing data
             // Add the new data to the pie chart
