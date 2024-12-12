@@ -17,6 +17,8 @@ import Model.BudgetGoal;
 import Model.SavingsGoal;
 import Model.Transaction;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
@@ -212,24 +214,48 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
     // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
         currentGoal = sDao.getSavingsGoal(); // Call the DAO
-        savingLabel.setText("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
-
-        if (currentGoal != null) {
-            Platform.runLater(() -> {
-                savingsPieChart.getData().clear();
-                savingsPieChart.getData().addAll(
-                    new PieChart.Data("Saved", currentGoal.getStartingAmount()),
-                    new PieChart.Data("Remaining", Math.max(0, currentGoal.getTargetAmount() - currentGoal.getStartingAmount()))
-                );
-            });
-        } else {
-            System.out.println(currentGoal.getName());
+        savingLabel.setText("Your most recently created savings goal was: $" + df.format(currentGoal.getTargetAmount()) + " for " + currentGoal.getName());
+        
+        // Get deposit transactions
+        ArrayList<Transaction> depositList = tDao.getDepositTransactions();
+    
+        double totalDeposits = 0.0;
+        if (depositList != null && !depositList.isEmpty()) {
+            for (Transaction transaction : depositList) {
+                // Check if the transaction category matches the goal's name
+                if (transaction.getCategory().equalsIgnoreCase(currentGoal.getName())) {
+                    totalDeposits += transaction.getAmount();
+                }
+            }
         }
+        
+        // Optional: Update the starting amount with total deposits
+        currentGoal.setStartingAmount(currentGoal.getStartingAmount() + totalDeposits);
+        
+        Platform.runLater(() -> {
+            savingsPieChart.getData().clear();
+            
+            double remainingAmount = Math.max(0, currentGoal.getTargetAmount() - currentGoal.getStartingAmount());
+    
+            // Create pie chart data
+            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Saved", currentGoal.getStartingAmount()),
+                new PieChart.Data("Remaining", remainingAmount)
+            );
+            
+            // Set the pie chart data
+            savingsPieChart.setData(pieChartData);
+        });
     }
-
+    
 
 
     public void updateBudget() {
+        currentBudget = bDao.getBudgetGoal(); // Call the DAO
+        // Update the label to show the latest budget total
+        budgetLabel.setText("Your most recently created budget goal was: $" + df.format(currentBudget.getBudgetAmount()) + " for " + currentBudget.getCategory());
+
+
         // Fetch the budget goals from the database
         ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
     
@@ -244,9 +270,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + budgetAmount);
             }
     
-            // Update the label to show the latest budget total
-            budgetLabel.setText("Your most current budget is: $" + 
-                df.format(categoryTotals.values().stream().mapToDouble(Double::doubleValue).sum()));
+        
     
             // Update the BarChart with categorized data
             Platform.runLater(() -> {
@@ -288,6 +312,12 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
     }
 
     public void updateTransaction(){
+        currentTransaction = tDao.getTransaction(); // Call the DAO
+        // Update the label to show the latest budget total
+        transactionLabel.setText("Your most transaction was: $" + df.format(currentTransaction.getAmount()) + " " + currentTransaction.getType() + " for " + currentTransaction.getCategory());
+
+
+
         // Fetch the latest 50 withdrawal transactions
     ArrayList<Transaction> transactionsList = tDao.getWithdrawTransactions();
 
@@ -303,8 +333,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
             categoryTotals.put(categoryOfTheTransaction, categoryTotals.getOrDefault(categoryOfTheTransaction, 0.0) + amountOfTransaction);
         }
 
-        // Display the total amount for the current transaction
-        transactionLabel.setText("Your most recent transaction was: $" + df.format(transactionsList.get(0).getAmount()));
+      
 
         // Update the PieChart with categorized data
         Platform.runLater(() -> {

@@ -166,5 +166,43 @@ import Model.UserSession;
         return transactionList;
     }
 
+     //The function gets the deposits transactions
+     public ArrayList<Transaction> getDepositTransactions() {
+        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+    
+        // Initialize an empty list to store the user's withdrawal transactions
+        ArrayList<Transaction> depositList = new ArrayList<>();
+    
+        // Query to fetch the deposit transaction
+        String sql = "SELECT * FROM usertransaction WHERE userId = ? AND type = 'Deposit' ORDER BY transactionId";
+    
+        try (Connection conn = connection.get_Connection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            // Set parameters in the prepared statement
+            stmt.setInt(1, current_user_id);
+    
+            // Database results
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                Transaction depositTransaction = new Transaction();
+                depositTransaction.setGoalUserId(current_user_id);
+                depositTransaction.setType(rs.getString("type"));
+                depositTransaction.setCategory(rs.getString("category"));
+                depositTransaction.setAmount(rs.getDouble("amount"));
+                depositTransaction.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+    
+                depositList.add(depositTransaction);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve withdrawal transactions!");
+            e.printStackTrace();
+        }
+    
+        return depositList;
+    }
+
+
 
 }
