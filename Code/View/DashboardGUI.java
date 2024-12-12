@@ -110,9 +110,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
         transactionChartPanel = new JFXPanel();
 
         //Size of pieCharts
-        budgetChartPanel.setPreferredSize(new Dimension(400, 400));
-        savingsChartPanel.setPreferredSize(new Dimension(400, 400));
-        transactionChartPanel.setPreferredSize(new Dimension(400, 400));
+        budgetChartPanel.setPreferredSize(new Dimension(500, 500));
+        savingsChartPanel.setPreferredSize(new Dimension(500, 500));
+        transactionChartPanel.setPreferredSize(new Dimension(500, 500));
 
 
         // Initialize the pie chart
@@ -128,9 +128,9 @@ public class DashboardGUI extends JPanel implements ActionListener {
    
     });
         chartPanel.add(budgetChartPanel);
-        chartPanel.add(Box.createHorizontalStrut(20));
+        chartPanel.add(Box.createHorizontalStrut(10));
         chartPanel.add(savingsChartPanel);
-        chartPanel.add(Box.createHorizontalStrut(20));
+        chartPanel.add(Box.createHorizontalStrut(10));
         chartPanel.add(transactionChartPanel);
         add(chartPanel, BorderLayout.SOUTH);
 
