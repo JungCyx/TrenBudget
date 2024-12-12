@@ -251,58 +251,60 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
 
 
     public void updateBudget() {
-        currentBudget = bDao.getBudgetGoal(); // Call the DAO
-        // Update the label to show the latest budget total
-        budgetLabel.setText("Your most recently created budget goal was: $" + df.format(currentBudget.getBudgetAmount()) + " for " + currentBudget.getCategory());
-
-
-        // Fetch the budget goals from the database
+        currentBudget = bDao.getBudgetGoal(); 
+        budgetLabel.setText("Your most recently created budget goal was: $" +
+            df.format(currentBudget.getBudgetAmount()) + " for " + currentBudget.getCategory());
+        
+        // Budget goals from the database
         ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
+        ArrayList<Transaction> withdrawalList = tDao.getWithdrawTransactions();
     
-        if (budgetGoalsList != null && !budgetGoalsList.isEmpty()) {
-            // Hold the categories and their total budget amounts
-            Map<String, Double> categoryTotals = new HashMap<>();
-            for (BudgetGoal goal : budgetGoalsList) {
-                String category = goal.getCategory();
-                double budgetAmount = goal.getBudgetAmount();
+        //categories and total budget amounts
+        Map<String, Double> categoryBudgets = new HashMap<>();
+        Map<String, Double> spentAmounts = new HashMap<>();
     
-                // Add the amounts to the corresponding category
-                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + budgetAmount);
-            }
-    
-            // Update the BarChart with categorized data
-            Platform.runLater(() -> {
-                // Clear the existing data from the bar chart
-                budgetBarChart.getData().clear();
-    
-                // Create series for "Spent" and "Remaining"
-                XYChart.Series<String, Number> spentSeries = new XYChart.Series<>();
-                spentSeries.setName("Spent");
-    
-                XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
-                remainingSeries.setName("Remaining");
-    
-                // Loop through the categories and add data for each
-                for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-                    String category = entry.getKey();
-                    double totalBudget = entry.getValue();
-                    double spent = 10; // Replace with actual logic for spent amount
-                    double remaining = Math.max(0, totalBudget - spent);
-    
-                    // Add data for the current category
-                    spentSeries.getData().add(new XYChart.Data<>(category, spent));
-                    remainingSeries.getData().add(new XYChart.Data<>(category, remaining));
-                }
-    
-                // Add the series to the bar chart (stacking the data for each category)
-                budgetBarChart.getData().addAll(spentSeries, remainingSeries);
-    
-            });
-    
-        } else {
-            System.out.println("No budget goals available.");
+        //budget amounts for each category
+        for (BudgetGoal goal : budgetGoalsList) {
+            String category = goal.getCategory();
+            double budgetAmount = goal.getBudgetAmount();
+            categoryBudgets.put(category, budgetAmount);
         }
+    
+        //withdrawals for each category
+        if (withdrawalList != null && !withdrawalList.isEmpty()) {
+            for (Transaction transaction : withdrawalList) {
+                String transactionCategory = transaction.getCategory();
+                double transactionAmount = transaction.getAmount();
+    
+                //calculation
+                if (categoryBudgets.containsKey(transactionCategory)) {
+                    spentAmounts.merge(transactionCategory, transactionAmount, Double::sum);
+                }
+            }
+        }
+    
+        Platform.runLater(() -> {
+            budgetBarChart.getData().clear();
+    
+            XYChart.Series<String, Number> budgetSeries = new XYChart.Series<>();
+            budgetSeries.setName("Spent");
+    
+            XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
+            remainingSeries.setName("Remaining");
+    
+            for (Map.Entry<String, Double> entry : categoryBudgets.entrySet()) {
+                String category = entry.getKey();
+                double totalBudget = entry.getValue();
+                double spent = spentAmounts.getOrDefault(category, 0.0);
+                double remaining = Math.max(0, totalBudget - spent);
+    
+                budgetSeries.getData().add(new XYChart.Data<>(category, spent)); 
+                remainingSeries.getData().add(new XYChart.Data<>(category, remaining)); 
+            }
+            budgetBarChart.getData().addAll(budgetSeries, remainingSeries);
+        });
     }
+    
 
     public void updateTransaction(){
         currentTransaction = tDao.getTransaction(); // Call the DAO

@@ -93,7 +93,7 @@ public class LoginGUI extends JFrame {
         // Login Button
         JButton loginButton = new JButton("Login");
         loginButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        loginButton.setBackground(new Color(0, 123, 255)); // Blue color
+        loginButton.setBackground(Color.blue); // Blue color
         loginButton.setForeground(Color.WHITE);
 
         gbc.gridx = 1;
