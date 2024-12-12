@@ -242,6 +242,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 new PieChart.Data("Saved", currentGoal.getStartingAmount()),
                 new PieChart.Data("Remaining", remainingAmount)
             );
+    
             
             // Set the pie chart data
             savingsPieChart.setData(pieChartData);
@@ -299,11 +300,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 // Add the series to the bar chart (stacking the data for each category)
                 budgetBarChart.getData().addAll(spentSeries, remainingSeries);
     
-                // Apply bar colors for better visualization
-                spentSeries.getData().forEach(data -> 
-                    data.getNode().setStyle("-fx-bar-fill: red;")); // Spent in red
-                remainingSeries.getData().forEach(data -> 
-                    data.getNode().setStyle("-fx-bar-fill: green;")); // Remaining in green
+        
             });
     
         } else {
