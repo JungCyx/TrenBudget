@@ -1,8 +1,29 @@
 package edu.csusm.View;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import edu.csusm.DAO.BudgetGoalDAO;
 import edu.csusm.DAO.SavingsGoalDAO;
 import edu.csusm.DAO.TransactionDAO;
+import edu.csusm.Model.BudgetGoal;
 import edu.csusm.Model.SavingsGoal;
 import edu.csusm.Model.Transaction;
 import javafx.application.Platform;
@@ -10,18 +31,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.chart.*;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
-import edu.csusm.Model.BudgetGoal;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DashboardGUI extends JPanel implements ActionListener {
 
@@ -203,12 +218,19 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
     }
     
 
-    // DONT CHANGE
     // Method to update the savings goal and pie chart
     public void updateSavingsGoal() {
         currentGoal = sDao.getSavingsGoal(); // Call the DAO
-        savingLabel.setText("Your most recently created savings goal was: $" + df.format(currentGoal.getTargetAmount()) + " for " + currentGoal.getName());
-        
+    
+        if (currentGoal == null) {
+            savingLabel.setText("No savings goal found.");
+            savingsPieChart.getData().clear(); // Clear the chart since there's no data
+            return;
+        }
+    
+        savingLabel.setText("Your most recently created savings goal was: $" +
+            df.format(currentGoal.getTargetAmount()) + " for " + currentGoal.getName());
+    
         // Get deposit transactions
         ArrayList<Transaction> depositList = tDao.getDepositTransactions();
     
@@ -221,12 +243,12 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 }
             }
         }
-        
+    
         currentGoal.setStartingAmount(currentGoal.getStartingAmount() + totalDeposits);
-        
+    
         Platform.runLater(() -> {
             savingsPieChart.getData().clear();
-            
+    
             double remainingAmount = Math.max(0, currentGoal.getTargetAmount() - currentGoal.getStartingAmount());
     
             // Create pie chart data
@@ -235,128 +257,152 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                 new PieChart.Data("Remaining", remainingAmount)
             );
     
-            
             // Set the pie chart data
             savingsPieChart.setData(pieChartData);
         });
     }
     
+    
 
 
     public void updateBudget() {
-        currentBudget = bDao.getBudgetGoal(); 
-        budgetLabel.setText("Your most recently created budget goal was: $" +
-            df.format(currentBudget.getBudgetAmount()) + " for " + currentBudget.getCategory());
-        
-        // Budget goals from the database
-        ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
-        ArrayList<Transaction> withdrawalList = tDao.getWithdrawTransactions();
-    
-        //categories and total budget amounts
-        Map<String, Double> categoryBudgets = new HashMap<>();
-        Map<String, Double> spentAmounts = new HashMap<>();
-    
-        //budget amounts for each category
-        for (BudgetGoal goal : budgetGoalsList) {
-            String category = goal.getCategory();
-            double budgetAmount = goal.getBudgetAmount();
-            categoryBudgets.put(category, budgetAmount);
+        currentBudget = bDao.getBudgetGoal();
+        if(currentBudget == null){
+            budgetLabel.setText("Your most recently created budget goal was: $0");
         }
-    
-        //withdrawals for each category
-        if (withdrawalList != null && !withdrawalList.isEmpty()) {
-            for (Transaction transaction : withdrawalList) {
-                String transactionCategory = transaction.getCategory();
-                double transactionAmount = transaction.getAmount();
-    
-                //calculation
-                if (categoryBudgets.containsKey(transactionCategory)) {
-                    spentAmounts.merge(transactionCategory, transactionAmount, Double::sum);
+        else{
+            budgetLabel.setText("Your most recently created budget goal was: $" +
+                df.format(currentBudget.getBudgetAmount()) + " for " + currentBudget.getCategory());
+            
+            // Budget goals from the database
+            ArrayList<BudgetGoal> budgetGoalsList = bDao.getBudgetGoalsByCategory();
+            ArrayList<Transaction> withdrawalList = tDao.getWithdrawTransactions();
+        
+            //categories and total budget amounts
+            Map<String, Double> categoryBudgets = new HashMap<>();
+            Map<String, Double> spentAmounts = new HashMap<>();
+        
+            //budget amounts for each category
+            for (BudgetGoal goal : budgetGoalsList) {
+                String category = goal.getCategory();
+                double budgetAmount = goal.getBudgetAmount();
+                categoryBudgets.put(category, budgetAmount);
+            }
+        
+            //withdrawals for each category
+            if (withdrawalList != null && !withdrawalList.isEmpty()) {
+                for (Transaction transaction : withdrawalList) {
+                    String transactionCategory = transaction.getCategory();
+                    double transactionAmount = transaction.getAmount();
+        
+                    //calculation
+                    if (categoryBudgets.containsKey(transactionCategory)) {
+                        spentAmounts.merge(transactionCategory, transactionAmount, Double::sum);
+                    }
                 }
             }
+        
+            Platform.runLater(() -> {
+                budgetBarChart.getData().clear();
+        
+                XYChart.Series<String, Number> budgetSeries = new XYChart.Series<>();
+                budgetSeries.setName("Spent");
+        
+                XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
+                remainingSeries.setName("Remaining");
+        
+                for (Map.Entry<String, Double> entry : categoryBudgets.entrySet()) {
+                    String category = entry.getKey();
+                    double totalBudget = entry.getValue();
+                    double spent = spentAmounts.getOrDefault(category, 0.0);
+                    double remaining = Math.max(0, totalBudget - spent);
+        
+                    budgetSeries.getData().add(new XYChart.Data<>(category, spent)); 
+                    remainingSeries.getData().add(new XYChart.Data<>(category, remaining)); 
+                }
+                budgetBarChart.getData().addAll(budgetSeries, remainingSeries);
+            });
         }
-    
-        Platform.runLater(() -> {
-            budgetBarChart.getData().clear();
-    
-            XYChart.Series<String, Number> budgetSeries = new XYChart.Series<>();
-            budgetSeries.setName("Spent");
-    
-            XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
-            remainingSeries.setName("Remaining");
-    
-            for (Map.Entry<String, Double> entry : categoryBudgets.entrySet()) {
-                String category = entry.getKey();
-                double totalBudget = entry.getValue();
-                double spent = spentAmounts.getOrDefault(category, 0.0);
-                double remaining = Math.max(0, totalBudget - spent);
-    
-                budgetSeries.getData().add(new XYChart.Data<>(category, spent)); 
-                remainingSeries.getData().add(new XYChart.Data<>(category, remaining)); 
-            }
-            budgetBarChart.getData().addAll(budgetSeries, remainingSeries);
-        });
     }
     
 
-    public void updateTransaction(){
+    public void updateTransaction() {
         currentTransaction = tDao.getTransaction(); // Call the DAO
-        // Update the label to show the latest budget total
-        transactionLabel.setText("Your most transaction was: $" + df.format(currentTransaction.getAmount()) + " " + currentTransaction.getType() + " for " + currentTransaction.getCategory());
-
-
-
-        // Get the latest 50 withdrawal transactions
-    ArrayList<Transaction> transactionsList = tDao.getWithdrawTransactions();
-
-    if (transactionsList != null && !transactionsList.isEmpty()) {
-        // Make a map to store the categories and their total amounts
-        Map<String, Double> categoryTotals = new HashMap<>();
-
-        for (Transaction transaction : transactionsList) {
-            String categoryOfTheTransaction = transaction.getCategory();
-            double amountOfTransaction = transaction.getAmount();
-
-            // Add the amounts to the corresponding category
-            categoryTotals.put(categoryOfTheTransaction, categoryTotals.getOrDefault(categoryOfTheTransaction, 0.0) + amountOfTransaction);
-        }
-
-        // Update the PieChart with categorize data
-        Platform.runLater(() -> {
-            transactionPieChart.getData().clear();  // Clear existing data
-            // Add the new data to the pie chart
-            for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-                transactionPieChart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
-            }
-
-            // Set the title of the pie chart
-            transactionPieChart.setTitle("Past 50 Withdraw Overview");
-        });
-
-    } else {
-        System.out.println("No withdrawal transactions available.");
-    }
-}
     
+        if (currentTransaction != null) {
+            transactionLabel.setText("Your most recent transaction was: $" +
+                df.format(currentTransaction.getAmount()) + " " +
+                currentTransaction.getType() + " for " +
+                currentTransaction.getCategory());
+        } else {
+            transactionLabel.setText("No recent transaction found.");
+        }
+    
+        // Get the latest 50 withdrawal transactions
+        ArrayList<Transaction> transactionsList = tDao.getWithdrawTransactions();
+    
+        if (transactionsList != null && !transactionsList.isEmpty()) {
+            Map<String, Double> categoryTotals = new HashMap<>();
+    
+            for (Transaction transaction : transactionsList) {
+                String categoryOfTheTransaction = transaction.getCategory();
+                double amountOfTransaction = transaction.getAmount();
+    
+                categoryTotals.put(
+                    categoryOfTheTransaction,
+                    categoryTotals.getOrDefault(categoryOfTheTransaction, 0.0) + amountOfTransaction
+                );
+            }
+    
+            Platform.runLater(() -> {
+                transactionPieChart.getData().clear();
+    
+                for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                    transactionPieChart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
+                }
+    
+                transactionPieChart.setTitle("Past 50 Withdraw Overview");
+            });
+        } else {
+            System.out.println("No withdrawal transactions available.");
+    
+            // Optional: Clear the chart if there's no data
+            Platform.runLater(() -> {
+                transactionPieChart.getData().clear();
+                transactionPieChart.setTitle("No data to display");
+            });
+        }
+    }    
 
-    // DONT CHANGE
-    public void createInfoText() {
-        currentBudget = bDao.getBudgetGoal();
-        currentGoal = sDao.getSavingsGoal();
-        currentTransaction = tDao.getTransaction();
+public void createInfoText() {
+    currentBudget = bDao.getBudgetGoal();
+    currentGoal = sDao.getSavingsGoal();
+    currentTransaction = tDao.getTransaction();
 
+    if (currentBudget != null) {
         budgetLabel = new JLabel("Your current budget is: $" + df.format(currentBudget.getBudgetAmount()));
-        budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        contentPanel.add(budgetLabel);
-
-        savingLabel = new JLabel("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
-        savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        contentPanel.add(savingLabel);
-
-        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
-        Font labelFont = new Font("Arial", Font.PLAIN, 16);
-        transactionLabel.setFont(labelFont);
-        contentPanel.add(transactionLabel);
+    } else {
+        budgetLabel = new JLabel("Your current budget is: N/A");
     }
+    budgetLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+    contentPanel.add(budgetLabel);
+
+    if (currentGoal != null) {
+        savingLabel = new JLabel("Your current saving is: $" + df.format(currentGoal.getStartingAmount()));
+    } else {
+        savingLabel = new JLabel("Your current saving is: N/A");
+    }
+    savingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+    contentPanel.add(savingLabel);
+
+    if (currentTransaction != null) {
+        transactionLabel = new JLabel("Your current Transaction is: $" + df.format(currentTransaction.getAmount()));
+    } else {
+        transactionLabel = new JLabel("Your current Transaction is: N/A");
+    }
+    transactionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+    contentPanel.add(transactionLabel);
+}
+
     
  }

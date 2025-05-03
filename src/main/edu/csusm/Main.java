@@ -1,6 +1,10 @@
 package edu.csusm;
 
 import edu.csusm.DAO.DAO;
+import edu.csusm.Observer.ClientRegisterObserver;
+import edu.csusm.Observer.Observable;
+import edu.csusm.Observer.ObservableTransaction;
+import edu.csusm.Observer.ObserverEmailNotification;
 import edu.csusm.View.LoginGUI;
 
 public class Main {
@@ -14,6 +18,11 @@ public class Main {
         connector.createSavingGoalTable(); // Creates a saving goal table in the DB
         connector.createBudgetGoalTable();
         connector.createTransactionTable();//creates a transaction table in DB
+
+        Observable transactionObservable = ObservableTransaction.getInstance(); // create an obervable for transaction logic 
+        ObserverEmailNotification eamilObserver = new ObserverEmailNotification(); // create email observaer 
+
+        ClientRegisterObserver.registerObserver(eamilObserver, transactionObservable); // add observer to Observable 
 
         LoginGUI mainframe = new LoginGUI(); // Retrieve the Mainframe bean
         mainframe.setVisible(true); // Display the Mainframe

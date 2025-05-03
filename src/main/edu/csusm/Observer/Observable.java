@@ -8,19 +8,18 @@ import java.util.List;
  * function forces subclass to defin a list of Observers
  */
 
-public abstract class Observable {
+ public abstract class Observable {
 
-    protected abstract List<Observer> getObservers();
+    protected abstract List<ObserverIF> getObservers();
 
-    public void addObserver(Observer o){
-
+    public void addObserver(ObserverIF o) {
         getObservers().add(o);
     }
 
-    public boolean removeObserver(Observer o){
+    public boolean removeObserver(ObserverIF o) {
         return getObservers().remove(o);
     }
-    
 }
+
 
 

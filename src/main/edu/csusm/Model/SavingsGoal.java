@@ -94,6 +94,17 @@ public class SavingsGoal implements emaptyIF{
     public emaptyIF getInstance() {
         return this;
     }
+
+    public String emailContant(){
+
+        String emailContantString = String.format("A new saving goal has been created. Titel: %s DeadLine: %s Starting amount: %.2f and Target amount: %.2f",
+        this.name,
+        this.deadline,
+        this.startingAmount,
+        this.targetAmount
+        );
+
+        return emailContantString;
+    } 
 }
 
-//based on the user and pass maps the user call to a module and returns the module

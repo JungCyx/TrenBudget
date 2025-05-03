@@ -91,5 +91,10 @@ public class UserModel implements emaptyIF{
     return this;
     }
 
+    @Override
+    public String emailContant() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
 }

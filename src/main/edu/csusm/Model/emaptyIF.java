@@ -2,7 +2,7 @@ package edu.csusm.Model;
 
 public interface emaptyIF{
 
-    // function that returns current User Model 
+    // function that returns current UserModel 
     public UserModel getUser();
 
     /*
@@ -10,5 +10,8 @@ public interface emaptyIF{
      * to use
      */
     emaptyIF getInstance();
+    
+    // a function that formats an string for email notification
+    String emailContant();
 
 }
