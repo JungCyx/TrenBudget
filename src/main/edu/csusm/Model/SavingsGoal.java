@@ -1,7 +1,7 @@
 package edu.csusm.Model;
 
 //new changes 
-public class SavingsGoal {
+public class SavingsGoal implements emaptyIF{
 
     private String name;
     private String deadline;
@@ -89,6 +89,22 @@ public class SavingsGoal {
     public boolean getNotificationsEnabled() {
         return notificationsEnabled;
     }
+
+    @Override
+    public emaptyIF getInstance() {
+        return this;
+    }
+
+    public String emailContant(){
+
+        String emailContantString = String.format("A new saving goal has been created. Titel: %s DeadLine: %s Starting amount: %.2f and Target amount: %.2f",
+        this.name,
+        this.deadline,
+        this.startingAmount,
+        this.targetAmount
+        );
+
+        return emailContantString;
+    } 
 }
 
-//based on the user and pass maps the user call to a module and returns the module

@@ -7,7 +7,7 @@ package edu.csusm.Model;
  This should also be reflected in the dashboard in the appropriate section 
  */
 
-public class Transaction{
+public class Transaction implements emaptyIF{
     private String type; //deposit, withdrawal, transfer
     private String category;
     private double amount;
@@ -82,6 +82,27 @@ public class Transaction{
 
     public boolean getNotificationsEnabled(){
         return notificationsEnabled;
+    }
+
+    @Override
+    public emaptyIF getInstance() {
+        return this;
+    }
+
+    // private String type; //deposit, withdrawal, transfer
+    // private String category;
+    // private double amount;
+    // private boolean notificationsEnabled;
+    // private UserModel appUser;
+    // private int userId;
+
+    public String emailContant(){
+
+        String emailContatnString = String.format("A new Transaction has been made. Transaction Type: %s Amount: %.2f", 
+        this.type,
+        this.amount);
+
+        return emailContatnString;
     }
 
 

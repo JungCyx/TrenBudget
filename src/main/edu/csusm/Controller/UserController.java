@@ -1,12 +1,16 @@
 package edu.csusm.Controller;
 
-import edu.csusm.DAO.DAO;
-import edu.csusm.Model.*;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import edu.csusm.DAO.DAO;
+import edu.csusm.Model.BudgetGoal;
+import edu.csusm.Model.SavingsGoal;
+import edu.csusm.Model.Transaction;
+import edu.csusm.Model.UserModel;
+import edu.csusm.Model.UserSession;
 
 
 public class UserController {
@@ -87,6 +91,10 @@ public class UserController {
     //Function to map the Transaction input into Transaction model and return it
     public Transaction mapTransaction(String type, String category, double amount, boolean notificationsEnabled){
         return new Transaction(type, category, amount, notificationsEnabled);
+    }
+
+    public Transaction mapTransactionWithUser(String type, String category, double amount, boolean notificationsEnabled, UserModel user){
+        return new Transaction(type, category, amount, notificationsEnabled, user);
     }
 
     // The function maps the Saving Goal input to Saving Goal model and return the model

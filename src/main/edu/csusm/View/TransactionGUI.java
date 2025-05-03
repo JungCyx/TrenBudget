@@ -1,12 +1,30 @@
 package edu.csusm.View;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import edu.csusm.Controller.UserController;
 import edu.csusm.DAO.TransactionDAO;
 import edu.csusm.Model.Transaction;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
+import edu.csusm.Model.UserModel;
+import edu.csusm.Observer.ObservableTransaction;
 
 public class TransactionGUI extends JPanel {
 
@@ -20,6 +38,7 @@ public class TransactionGUI extends JPanel {
     private JButton backButton;
     private UserController controller;
     private TransactionDAO tDao;
+    private ObservableTransaction t;
 
     // Constructor for TransactionGUI
     public TransactionGUI() {
@@ -128,7 +147,6 @@ public class TransactionGUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Switch to the "Dashboard" panel when the button is clicked
-                // Don't Delete
                 LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Dashboard");
             }
         });
@@ -140,7 +158,6 @@ public class TransactionGUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Switch to the "Dashboard" panel when the button is clicked
-                // Don't Delete
                 handelTransaction();
             }
         });
@@ -160,8 +177,11 @@ public class TransactionGUI extends JPanel {
 
         controller = new UserController();
         tDao = new TransactionDAO();
-        Transaction transactions = controller.mapTransaction(type, category, newAmount, notificationsEnabled);
+        Transaction transactions = controller.mapTransactionWithUser(type, category, newAmount, notificationsEnabled, controller.getUser());
         tDao.addTransactionIntoDatabase(transactions);
+
+        t = ObservableTransaction.getInstance();
+        t.processTransaction(transactions);
 
         //Check if any field is empty
         if (type.isEmpty() || category.isEmpty() || amount.isEmpty()) {

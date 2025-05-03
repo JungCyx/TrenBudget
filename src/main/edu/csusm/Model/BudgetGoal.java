@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class BudgetGoal {
+public class BudgetGoal implements emaptyIF{
 
     private String category;
     private double budgetAmount;
@@ -132,5 +132,22 @@ public class BudgetGoal {
             return ChronoUnit.DAYS.between(startDate, endDate);
         }
         return 0;
+    }
+
+    @Override
+    public emaptyIF getInstance() {
+        return this;
+    }
+
+    public String emailContant() {
+        String emailContentString = String.format(
+            "A budget goal has been created. Category: %s Budget Amount: %.2f Start Date: %s End Date: %s", 
+            this.category, 
+            this.budgetAmount, 
+            this.startDate.toString(), 
+            this.endDate.toString()
+        );
+
+        return emailContentString;
     }
 }
