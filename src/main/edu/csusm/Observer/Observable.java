@@ -11,11 +11,11 @@ import java.util.List;
  public abstract class Observable {
 
     protected abstract List<ObserverIF> getObservers();
-
+    // add the observer to the obervable list 
     public void addObserver(ObserverIF o) {
         getObservers().add(o);
     }
-
+    // remove the observer from the obervable list 
     public boolean removeObserver(ObserverIF o) {
         return getObservers().remove(o);
     }

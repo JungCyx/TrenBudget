@@ -89,13 +89,6 @@ public class Transaction implements emaptyIF{
         return this;
     }
 
-    // private String type; //deposit, withdrawal, transfer
-    // private String category;
-    // private double amount;
-    // private boolean notificationsEnabled;
-    // private UserModel appUser;
-    // private int userId;
-
     public String emailContant(){
 
         String emailContatnString = String.format("A new Transaction has been made. Transaction Type: %s Amount: %.2f", 
