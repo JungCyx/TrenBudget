@@ -7,7 +7,7 @@ package edu.csusm.Model;
  This should also be reflected in the dashboard in the appropriate section 
  */
 
-public class Transaction{
+public class Transaction implements emaptyIF{
     private String type; //deposit, withdrawal, transfer
     private String category;
     private double amount;
@@ -82,6 +82,11 @@ public class Transaction{
 
     public boolean getNotificationsEnabled(){
         return notificationsEnabled;
+    }
+
+    @Override
+    public emaptyIF getInstance() {
+        return this;
     }
 
 

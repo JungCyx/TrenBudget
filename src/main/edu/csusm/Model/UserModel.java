@@ -1,6 +1,6 @@
 package edu.csusm.Model;
 
-public class UserModel {
+public class UserModel implements emaptyIF{
     private String userName;
     private String firstName;
     private String lastName;
@@ -81,4 +81,15 @@ public class UserModel {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserModel getUser(){
+        return this;
+    }
+
+    @Override
+    public emaptyIF getInstance() {
+    return this;
+    }
+
+
 }

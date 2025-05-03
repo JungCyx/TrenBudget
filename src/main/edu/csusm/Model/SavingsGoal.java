@@ -1,7 +1,7 @@
 package edu.csusm.Model;
 
 //new changes 
-public class SavingsGoal {
+public class SavingsGoal implements emaptyIF{
 
     private String name;
     private String deadline;
@@ -88,6 +88,11 @@ public class SavingsGoal {
 
     public boolean getNotificationsEnabled() {
         return notificationsEnabled;
+    }
+
+    @Override
+    public emaptyIF getInstance() {
+        return this;
     }
 }
 
