@@ -87,6 +87,10 @@ public class UserController {
     public BudgetGoal mapBudgetGoal(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled){
         return new BudgetGoal(category, budgetAmount, startDateString,endDateString,notificationsEnabled);
     }
+    
+    public BudgetGoal mapBudgetGoalwithUser(String category, double budgetAmount, String startDateString, String endDateString, boolean notificationsEnabled, UserModel user){
+        return new BudgetGoal(category, budgetAmount, startDateString,endDateString,notificationsEnabled, user);
+    }
 
     //Function to map the Transaction input into Transaction model and return it
     public Transaction mapTransaction(String type, String category, double amount, boolean notificationsEnabled){
@@ -97,8 +101,11 @@ public class UserController {
         return new Transaction(type, category, amount, notificationsEnabled, user);
     }
 
-    // The function maps the Saving Goal input to Saving Goal model and return the model
-    public SavingsGoal mapGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
+    public SavingsGoal mapSavingGoal(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled){
+        return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled);
+    }
+
+    public SavingsGoal mapSavingGoalwithUser(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
         return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);
     }
 

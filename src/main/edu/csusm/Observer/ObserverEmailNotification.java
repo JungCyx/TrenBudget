@@ -6,6 +6,7 @@ import com.resend.services.emails.model.CreateEmailResponse;
 
 import edu.csusm.Model.UserModel;
 import edu.csusm.Model.emaptyIF;
+import io.github.cdimascio.dotenv.Dotenv;
 
 /*
  * the class is reponsible for sending notification when funciton update is called by Observable transaction/budgetGoal/savingGoal
@@ -14,6 +15,8 @@ import edu.csusm.Model.emaptyIF;
  */
 
 public class ObserverEmailNotification implements ObserverIF{
+
+    Dotenv dotenv = Dotenv.load(); // Automatically loads the .env file
 
     // takes a generic dataObject which can be (Transaction, BudgetGoal, SavingGoal)
     @Override
@@ -31,11 +34,13 @@ public class ObserverEmailNotification implements ObserverIF{
         String emailContant = String.format("Hi %s,<br><strong>%s</strong>", 
         userModel.getUserName(),
         serviceModel.emailContant());
-        // TODO: hide apikey :{
-        Resend resend = new Resend("re_bkBFiBPk_5v18BSjoMUMs3P7SyKdsXQQn");
+        
+        String apiKey = dotenv.get("API_KEY");
+
+        Resend resend = new Resend(apiKey);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
-            .from("Acme <csusmSE471@tariqelamin.live>")
+            .from("TrenBuget <csusmSE471@tariqelamin.live>")
             .to(userModel.getEmail())
             .subject("Changes has been made on your TrenBuget app")
             .html(emailContant)

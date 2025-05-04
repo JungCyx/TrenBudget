@@ -26,8 +26,5 @@ public class UserSession {
         return this.currentUser;
     }
 
-    // Check if user is logged in
-    // public boolean CheckIfUserLogged
-
 }
 
