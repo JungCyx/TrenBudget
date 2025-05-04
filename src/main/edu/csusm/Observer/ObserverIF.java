@@ -4,7 +4,6 @@ package edu.csusm.Observer;
 // cheas is a b****
 // OwO
 public interface ObserverIF{
-    
     // Observer update app 
     <T> void update(T DataObject);
 
