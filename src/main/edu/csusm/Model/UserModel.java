@@ -1,6 +1,6 @@
 package edu.csusm.Model;
 
-public class UserModel implements emaptyIF{
+public class UserModel {
     private String userName;
     private String firstName;
     private String lastName;
@@ -83,16 +83,6 @@ public class UserModel implements emaptyIF{
 
     public UserModel getUser(){
         return this;
-    }
-
-    @Override
-    public emaptyIF getInstance() {
-    return this;
-    }
-
-    @Override
-    public String emailContant() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

@@ -30,6 +30,10 @@ public class ObserverEmailNotification implements ObserverIF{
         // interface defin a function for returning this or itself 
         emaptyIF serviceModel = obj.getInstance();
 
+        if(!serviceModel.getNotificationsEnabled()){
+            return;
+        }
+
         // build email contant
         String emailContant = String.format("Hi %s,<br><strong>%s</strong>", 
         userModel.getUserName(),

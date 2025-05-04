@@ -158,7 +158,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
         button.addActionListener(this);
         return button;
     }
-    // DONT CHANGE
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == savingsButton) {
@@ -361,7 +360,7 @@ private void initializeSavingsPieChart(JFXPanel chartPanel) {
                     transactionPieChart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
                 }
     
-                transactionPieChart.setTitle("Past 50 Withdraw Overview");
+                transactionPieChart.setTitle("Past 3 Withdraw Overview");
             });
         } else {
             System.out.println("No withdrawal transactions available.");
@@ -405,4 +404,4 @@ public void createInfoText() {
 }
 
     
- }
+ } 
