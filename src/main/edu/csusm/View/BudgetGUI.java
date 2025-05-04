@@ -1,14 +1,30 @@
 package edu.csusm.View;
 
-import edu.csusm.Controller.UserController;
-import edu.csusm.DAO.BudgetGoalDAO;
-import edu.csusm.Model.BudgetGoal;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import edu.csusm.Controller.UserController;
+import edu.csusm.DAO.BudgetGoalDAO;
+import edu.csusm.Model.BudgetGoal;
+import edu.csusm.Observer.ObservableBugetGoal;
 
 public class BudgetGUI extends JPanel {
 
@@ -310,6 +326,15 @@ public class BudgetGUI extends JPanel {
         int endDay = (int) endDayDropdown.getSelectedItem();
         boolean notifications = notificationCheckBox.isSelected();
 
+        String startD = returnValidString(startYear) + "-" + startMonth + "-" + returnValidString(startDay);
+        String EndD = returnValidString(endYear) + "-" + endMonth + "-" + returnValidString(endDay);
+
+        BudgetGoal newBudgetGoal = controller.mapBudgetGoalwithUser(category, Double.parseDouble(amount), startD, EndD, notifications, controller.getUser());
+        bDao.addBudgetIntoDatabase(newBudgetGoal);
+
+        ObservableBugetGoal b = ObservableBugetGoal.getInstance();
+        b.processBudgetGoal(newBudgetGoal);
+
         if (category.isEmpty() || amount.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill out all the fields", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
@@ -325,13 +350,7 @@ public class BudgetGUI extends JPanel {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid number for the amount", "ERROR",
                     JOptionPane.ERROR_MESSAGE);
-        }
-
-        String startD = returnValidString(startYear) + "-" + startMonth + "-" + returnValidString(startDay);
-        String EndD = returnValidString(endYear) + "-" + endMonth + "-" + returnValidString(endDay);
-
-        BudgetGoal newBudgetGoal = controller.mapBudgetGoal(category, Double.parseDouble(amount), startD, EndD, notifications);
-        bDao.addBudgetIntoDatabase(newBudgetGoal);
+        } 
 
     }
 

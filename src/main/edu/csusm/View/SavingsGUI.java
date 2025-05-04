@@ -1,5 +1,6 @@
 package edu.csusm.View;
 
+import edu.csusm.Controller.UserController;
 import edu.csusm.DAO.SavingsGoalDAO;
 import edu.csusm.Model.SavingsGoal;
 
@@ -8,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import edu.csusm.Observer.ObservableSavingGoal;
 
 public class SavingsGUI extends JPanel {
 
@@ -21,12 +24,16 @@ public class SavingsGUI extends JPanel {
     private JButton backButton;
     private JButton editButton;
 
+    private UserController controller;
+
     public SavingsGoal savingsGoal;
 
     private SavingsGoalDAO savingDao = new SavingsGoalDAO();
 
     // Constructor for SavingsGUI
     public SavingsGUI() {
+
+        controller = new UserController();
 
         setLayout(new BorderLayout()); // Use BorderLayout for the main panel
         setBackground(Color.WHITE); // Set background to white
@@ -168,10 +175,12 @@ public class SavingsGUI extends JPanel {
             Double targetAmount = Double.parseDouble(target);
             Double startingAmountValue = Double.parseDouble(startingAmount);
 
-            // Create a SavingsGoal object
-            // TODO: ADD THE MAPPING FUCTION TO THE CONTROLLER 
-            SavingsGoal newGoal = new SavingsGoal(name, targetAmount, deadline, startingAmountValue,
-                    notificationsEnabled);
+            // Create a SavingsGoal object 
+            SavingsGoal newGoal = controller.mapSavingGoalwithUser(name, targetAmount, deadline, startingAmountValue, notificationsEnabled, controller.getUser());
+
+            ObservableSavingGoal s = ObservableSavingGoal.getInstance();
+            s.processSavingGoal(newGoal);
+            
 
             // Add the saving goal into the database table
             savingDao.addGoalIntoDatabase(newGoal);

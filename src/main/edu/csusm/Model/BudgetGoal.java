@@ -141,7 +141,7 @@ public class BudgetGoal implements emaptyIF{
 
     public String emailContant() {
         String emailContentString = String.format(
-            "A budget goal has been created. Category: %s Budget Amount: %.2f Start Date: %s End Date: %s", 
+            "A budget goal has been created.<br>Category: %s<br>Budget Amount: %.2f<br>Start Date: %s<br>End Date: %s", 
             this.category, 
             this.budgetAmount, 
             this.startDate.toString(), 

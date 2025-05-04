@@ -97,7 +97,7 @@ public class SavingsGoal implements emaptyIF{
 
     public String emailContant(){
 
-        String emailContantString = String.format("A new saving goal has been created. Titel: %s DeadLine: %s Starting amount: %.2f and Target amount: %.2f",
+        String emailContantString = String.format("A new saving goal has been created.<br>Titel: %s<br>DeadLine: %s<br>Starting amount: %.2f<br>Target amount: %.2f",
         this.name,
         this.deadline,
         this.startingAmount,

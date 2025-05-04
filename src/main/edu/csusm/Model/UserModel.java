@@ -27,8 +27,7 @@ public class UserModel implements emaptyIF{
     }
     
     //User Getters & Setters 
-    public UserModel() {
-        
+    public UserModel() {   
     }
 
     public UserModel(int i, String string) {

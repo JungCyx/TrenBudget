@@ -91,7 +91,7 @@ public class Transaction implements emaptyIF{
 
     public String emailContant(){
 
-        String emailContatnString = String.format("A new Transaction has been made. Transaction Type: %s Amount: %.2f", 
+        String emailContatnString = String.format("A new Transaction has been made.<br>Transaction Type: %s<br>Amount: %.2f", 
         this.type,
         this.amount);
 

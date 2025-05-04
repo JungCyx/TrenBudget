@@ -24,16 +24,19 @@ public class ObservableTransaction extends Observable {
     public static ObservableTransaction getInstance() {
         return instance;
     }
+    
     // simply return the list of observers 
     @Override
     protected List<ObserverIF> getObservers() {
         return observers;
     }
+
     // assigen data object 
     public void processTransaction(Transaction t) {
         this.transaction = t;
         notifyObservers();
     }
+
     // notifies all observers 
     public void notifyObservers() {
         for (ObserverIF obs : this.observers) {
