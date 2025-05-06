@@ -3,8 +3,6 @@
 .idea/
 *.iml
 
-target/
-target\
 out/
 
 .gradle/
