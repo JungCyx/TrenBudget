@@ -6,15 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import edu.csusm.DAO.DAO;
+import edu.csusm.Factory.BudgetGoalFactory;
+import edu.csusm.Factory.SavingsFactory;
+import edu.csusm.Factory.SavingsGoalFactory;
+import edu.csusm.Factory.TransactionFactory;
 import edu.csusm.Model.BudgetGoal;
 import edu.csusm.Model.SavingsGoal;
 import edu.csusm.Model.Transaction;
 import edu.csusm.Model.UserModel;
 import edu.csusm.Model.UserSession;
-import edu.csusm.Factory.BudgetGoalFactory;
-import edu.csusm.Factory.SavingsFactory;
-import edu.csusm.Factory.SavingsGoalFactory;
-import edu.csusm.Factory.TransactionFactory;
 
 
 public class UserController {

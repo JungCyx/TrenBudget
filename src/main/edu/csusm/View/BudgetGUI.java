@@ -26,9 +26,6 @@ import edu.csusm.DAO.BudgetGoalDAO;
 import edu.csusm.Model.BudgetGoal;
 import edu.csusm.Observer.ObservableBugetGoal;
 
-import edu.csusm.Factory.SavingsFactory;
-import edu.csusm.Factory.BudgetGoalFactory;
-
 public class BudgetGUI extends JPanel {
 
     private JComboBox<String> categoryField;
