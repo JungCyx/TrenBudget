@@ -45,6 +45,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final JButton savingsButton;
     private final JButton budgetButton;
     private final JButton transactionButton;
+    private final JButton currencyExchangeButton;
     private final JButton refreshButton;
     private final JButton logoutButton;
     
@@ -85,6 +86,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         savingsButton = createNavButton("Savings Goal");
         budgetButton = createNavButton("Budget");
         transactionButton = createNavButton("Transaction");
+        currencyExchangeButton = createNavButton("Currency Exchange");
         refreshButton = createNavButton("Refresh");
         logoutButton = createNavButton("Logout");
 
@@ -93,6 +95,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         navBar.add(savingsButton);
         navBar.add(budgetButton);
         navBar.add(transactionButton);
+        navBar.add(currencyExchangeButton);
         navBar.add(refreshButton);
         navBar.add(logoutButton);
 
@@ -169,6 +172,8 @@ public class DashboardGUI extends JPanel implements ActionListener {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
         } else if (e.getSource() == transactionButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
+        }else if (e.getSource() == currencyExchangeButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "CurrencyExchange");
         }
         else if (e.getSource() == logoutButton) {
             LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");

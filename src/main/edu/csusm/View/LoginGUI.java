@@ -1,11 +1,14 @@
 package edu.csusm.View;
 
+import edu.csusm.Adapter.CurrencyExchangeAdapter;
+import edu.csusm.Adapter.CurrencyExchangeService;
 import edu.csusm.Controller.UserController;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+
 
 public class LoginGUI extends JFrame {
 
@@ -164,6 +167,9 @@ public class LoginGUI extends JFrame {
         mainPanel.add(new BudgetGUI(), "Budget");
         mainPanel.add(new SavingsGUI(), "Savings");
         mainPanel.add(new TransactionGUI(), "Transaction");
+        CurrencyExchangeService exchangeService = new CurrencyExchangeAdapter();
+        mainPanel.add(new CurrencyExchangeGUI(exchangeService), "CurrencyExchange");;
+
     }
 }
 
