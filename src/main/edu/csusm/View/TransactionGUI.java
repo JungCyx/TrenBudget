@@ -181,11 +181,6 @@ public class TransactionGUI extends JPanel {
         controller = new UserController();
         tDao = new TransactionDAO();
 
-        /*/old code
-        Transaction transactions = controller.mapTransactionWithUser(type, category, newAmount, notificationsEnabled, controller.getUser());
-        */
-
-        //New Factory Code
         Transaction transactions = controller.mapTransactionWithFactory(type,category,newAmount,notificationsEnabled);
 
         tDao.addTransactionIntoDatabase(transactions);

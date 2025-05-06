@@ -10,7 +10,7 @@ public class DAO {
     static final String DB_URL = "jdbc:postgresql://localhost:5432/trenbudget";
 
     static final String USER = "postgres";
-    static final String PASS = "1234";
+    static final String PASS = "123";
     Connection conn = null;
  
     // returns a connection to the Database object each time its called 
