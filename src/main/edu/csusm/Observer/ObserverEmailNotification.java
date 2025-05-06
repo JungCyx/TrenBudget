@@ -9,8 +9,8 @@ import edu.csusm.Model.emaptyIF;
 import io.github.cdimascio.dotenv.Dotenv;
 
 /*
- * the class is reponsible for sending notification when funciton update is called by Observable transaction/budgetGoal/savingGoal
- * the function upadate also has generic paramater that is becuase we the function might be called by different observable which will 
+ * the class is responsible for sending notification when function update is called by Observable transaction/budgetGoal/savingGoal
+ * the function update also has generic parameter that is because we the function might be called by different observable which will
  * each pass a different dataObject/model(Transaction, BudgetGoal, SavingGoal)
  */
 
@@ -46,7 +46,7 @@ public class ObserverEmailNotification implements ObserverIF{
         CreateEmailOptions params = CreateEmailOptions.builder()
             .from("TrenBuget <csusmSE471@tariqelamin.live>")
             .to(userModel.getEmail())
-            .subject("Changes has been made on your TrenBuget app")
+            .subject("Changes have been made on your TrenBudget app")
             .html(emailContant)
             .build();
 
