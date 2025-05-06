@@ -100,7 +100,7 @@ public class TransactionGUI extends JPanel {
         centerPanel.add(categoryLabel, gbc);
 
         // possiblilites
-        categoryField = new JComboBox<>(new String[]{
+        categoryField = new JComboBox<>(new String[]{"Work",
             "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
             "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
             "Car Maintenance", "Parking Fees", "Car Repairs",
@@ -181,11 +181,6 @@ public class TransactionGUI extends JPanel {
         controller = new UserController();
         tDao = new TransactionDAO();
 
-        /*/old code
-        Transaction transactions = controller.mapTransactionWithUser(type, category, newAmount, notificationsEnabled, controller.getUser());
-        */
-
-        //New Factory Code
         Transaction transactions = controller.mapTransactionWithFactory(type,category,newAmount,notificationsEnabled);
 
         tDao.addTransactionIntoDatabase(transactions);

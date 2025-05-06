@@ -52,47 +52,42 @@ public class TransactionDAO{
         };
     }
    
-    // The function retrives the transaction and returns transaction model <List> //highest to lowest return (latest value) 0,1
-    public ArrayList<Transaction> getTransactionList(){
-        // get the current user Id
-        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+    // In TransactionDAO.java
+public ArrayList<Transaction> getTransactionList() {
+    // get the current user Id
+    int current_user_id = UserSession.getInstance().getCurrentUser().getId();
 
-        // Initialize an empty list to store the user's transactions
-        ArrayList<Transaction> nextTransaction = new ArrayList<>(); 
-        
-        // Query the db to get the transaction for the current user 
-        String sql = "SELECT * FROM usertransaction WHERE userId = ? ORDER BY id DESC"; // Example query
+    // Initialize an empty list to store the user's transactions
+    ArrayList<Transaction> nextTransaction = new ArrayList<>(); 
+    
+    // Query the db to get the transaction for the current user 
+    // Replace "id" with "transactionId" which is the correct column name in your table
+    String sql = "SELECT * FROM usertransaction WHERE userId = ? ORDER BY transactionId DESC"; // Fixed query
 
-        try(Connection conn = connection.get_Connection();){
+    try(Connection conn = connection.get_Connection();){
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, current_user_id);
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        // Database results 
+        ResultSet rs = stmt.executeQuery();
 
-            stmt.setInt(1, current_user_id);
-
-            // Database results 
-            ResultSet rs = stmt.executeQuery();
-
-            while(rs.next()){
-
-                Transaction currGoal = new Transaction();
-
-                currGoal.setGoalUserId(current_user_id);
-                currGoal.setType(rs.getString("type"));
-                currGoal.setCategory(rs.getString("category"));
-                currGoal.setAmount(rs.getDouble("amount"));
-                currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
-
-                nextTransaction.add(currGoal);
-            }
-            conn.close();
-            rs.close();
-
-        } catch (SQLException e) {
-            System.out.println("Failed to retrive transactions!!!");
-            e.printStackTrace();
-        };
-        return nextTransaction;
+        while(rs.next()){
+            Transaction currGoal = new Transaction();
+            currGoal.setGoalUserId(current_user_id);
+            currGoal.setType(rs.getString("type"));
+            currGoal.setCategory(rs.getString("category"));
+            currGoal.setAmount(rs.getDouble("amount"));
+            currGoal.setNotificationsEnabled(rs.getBoolean("notificationsEnabled"));
+            nextTransaction.add(currGoal);
+        }
+        conn.close();
+        rs.close();
+    } catch (SQLException e) {
+        System.out.println("Failed to retrieve transactions!!!");
+        e.printStackTrace();
     }
+    return nextTransaction;
+}
 
     // The function retrives and return the latest transaction
     public Transaction getTransaction(){
