@@ -25,6 +25,8 @@ public class Main {
         Observable bugetGoalObservable = ObservableBugetGoal.getInstance();
         Observable savingGoalObservable = ObservableSavingGoal.getInstance();
 
+        
+
         ObserverEmailNotification eamilObserver = new ObserverEmailNotification(); // create email observaer 
 
         ClientRegisterObserver.registerObserver(eamilObserver, transactionObservable); // add observer to Observable 

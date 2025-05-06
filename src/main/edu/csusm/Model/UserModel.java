@@ -94,6 +94,11 @@ public class UserModel implements emaptyIF{
     public String emailContant() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    @Override
+    public boolean getNotificationsEnabled() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getNotificationsEnabled'");
+    }
 
 
 }

@@ -132,6 +132,9 @@ public class UserController {
         return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled);
     }
 
+    public SavingsGoal mapSavingGoalwithUser(String name, Double targetAmount, String deadline, Double startingAmount, boolean notificationsEnabled, UserModel appUser){
+        return new SavingsGoal(name, targetAmount, deadline, startingAmount, notificationsEnabled, appUser);
+    }
 
     // The Function return the current logged in user model
     public UserModel getUser(){
