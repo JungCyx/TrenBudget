@@ -17,7 +17,9 @@ import edu.csusm.Factory.SavingsFactory;
 import edu.csusm.Factory.SavingsGoalFactory;
 import edu.csusm.Model.UserModel;
 
-public class SavingsGUI extends JPanel {
+public class SavingsGUI extends JPanel { 
+
+    
 
     private JTextField nameField;
     private JTextField targetField;
@@ -344,6 +346,7 @@ public class SavingsGUI extends JPanel {
                 // Ensure the user model is set before notification
                 if (selectedGoal.getUser() == null) {
                     // Set the current user from the controller
+
                     UserModel currentUser = controller.getUser();
                     selectedGoal = controller.mapSavingGoalWithFactory(
                         selectedGoal.getName(), 

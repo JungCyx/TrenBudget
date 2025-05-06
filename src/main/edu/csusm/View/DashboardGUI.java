@@ -14,6 +14,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,7 +24,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -35,251 +36,355 @@ import edu.csusm.Model.Transaction;
 import edu.csusm.Model.UserModel;
 import edu.csusm.Model.UserSession;
 
-public class DashboardGUI extends JPanel {
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.layout.StackPane;
 
-    // UI Components
-    private JPanel summaryPanel;
-    private JPanel actionsPanel;
-    private JPanel recentActivityPanel;
+public class DashboardGUI extends JPanel implements ActionListener {
     
     // Navigation buttons
     private JButton savingsButton;
     private JButton budgetButton;
     private JButton transactionButton;
+    private JButton currencyExchangeButton;
     private JButton refreshButton;
     private JButton logoutButton;
     
-    // Info labels
-    private JLabel welcomeLabel;
-    private JLabel dateLabel;
-    private JLabel balanceLabel;
-    private JLabel savingsLabel;
-    private JLabel budgetLabel;
+    // Chart panels
+    private JFXPanel budgetChartPanel;
+    private JFXPanel savingsChartPanel;
+    private JFXPanel transactionChartPanel;
+    
+    private StackedBarChart<String, Number> budgetBarChart;
+    private PieChart savingsPieChart;
+    private PieChart transactionPieChart;
+    
+    // Panels
+    private JPanel summaryPanel;
+    private JPanel transactionsPanel;
+    private JPanel chartsPanel;
     
     // Data access objects
-    private final SavingsGoalDAO savingsDao;
-    private final BudgetGoalDAO budgetDao;
-    private final TransactionDAO transactionDao;
+    private final SavingsGoalDAO sDao;
+    private final BudgetGoalDAO bDao;
+    private final TransactionDAO tDao;
     
-    // Current user data
+    // Current data models
+    private BudgetGoal currentBudget;
+    private SavingsGoal currentGoal;
+    private Transaction currentTransaction;
     private final UserModel currentUser;
     
     // Styling constants
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Soft blue
-    private static final Color ACCENT_COLOR = new Color(26, 188, 156); // Mint green
+    private static final Color PRIMARY_COLOR = new Color(38, 120, 190); // Blue
+    private static final Color ACCENT_COLOR = new Color(46, 204, 113); // Green
     private static final Color WARNING_COLOR = new Color(231, 76, 60); // Red
-    private static final Color BACKGROUND_COLOR = new Color(245, 246, 250); // Light gray/blue
+    private static final Color BACKGROUND_COLOR = new Color(245, 246, 250); // Light gray
     private static final Color CARD_COLOR = Color.WHITE;
     private static final Color TEXT_COLOR = new Color(52, 73, 94); // Dark blue/gray
-    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 24);
-    private static final Font HEADING_FONT = new Font("Segoe UI", Font.BOLD, 18);
-    private static final Font SUBHEADING_FONT = new Font("Segoe UI", Font.BOLD, 16);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 20);
+    private static final Font HEADING_FONT = new Font("Segoe UI", Font.BOLD, 16);
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.PLAIN, 14);
     private static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 14);
-    private static final int PADDING = 20;
+    private static final int PADDING = 15;
     
     // Formatter for currency
+    private final DecimalFormat df = new DecimalFormat("#,##0.00");
     private final DecimalFormat currencyFormat = new DecimalFormat("$#,##0.00");
 
     public DashboardGUI() {
         // Initialize data objects
-        savingsDao = new SavingsGoalDAO();
-        budgetDao = new BudgetGoalDAO();
-        transactionDao = new TransactionDAO();
+        sDao = new SavingsGoalDAO();
+        bDao = new BudgetGoalDAO();
+        tDao = new TransactionDAO();
         currentUser = UserSession.getInstance().getCurrentUser();
         
         // Set up main panel
-        setLayout(new BorderLayout(15, 15));
+        setLayout(new BorderLayout());
         setBackground(BACKGROUND_COLOR);
-        setBorder(new EmptyBorder(PADDING, PADDING, PADDING, PADDING));
         
-        // Add components
-        add(createHeaderPanel(), BorderLayout.NORTH);
+        // Create navigation bar
+        JPanel navBar = createNavBar();
+        add(navBar, BorderLayout.NORTH);
         
-        // Create center panel with grid layout
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 15, 15));
+        // Create main content area with 3 sections: summary, transactions, charts
+        JPanel mainContent = new JPanel(new BorderLayout(PADDING, PADDING));
+        mainContent.setBackground(BACKGROUND_COLOR);
+        mainContent.setBorder(new EmptyBorder(PADDING, PADDING, PADDING, PADDING));
+        
+        // Create the welcome header
+        JPanel headerPanel = createHeaderPanel();
+        mainContent.add(headerPanel, BorderLayout.NORTH);
+        
+        // Create center panel with summary and transactions side by side
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, PADDING, 0));
         centerPanel.setBackground(BACKGROUND_COLOR);
         
-        // Left side - Summary and Actions
-        JPanel leftPanel = new JPanel(new BorderLayout(0, 15));
-        leftPanel.setBackground(BACKGROUND_COLOR);
-        leftPanel.add(createSummaryPanel(), BorderLayout.NORTH);
-        leftPanel.add(createActionsPanel(), BorderLayout.CENTER);
+        // Create summary panel
+        summaryPanel = createSummaryPanel();
+        centerPanel.add(summaryPanel);
         
-        // Right side - Recent Activity
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(BACKGROUND_COLOR);
-        rightPanel.add(createRecentActivityPanel(), BorderLayout.CENTER);
+        // Create transactions panel
+        transactionsPanel = createTransactionsPanel();
+        centerPanel.add(transactionsPanel);
         
-        centerPanel.add(leftPanel);
-        centerPanel.add(rightPanel);
-        add(centerPanel, BorderLayout.CENTER);
+        mainContent.add(centerPanel, BorderLayout.CENTER);
         
-        // Refresh data on load
-        refreshDashboardData();
+        // Create charts panel
+        chartsPanel = createChartsPanel();
+        mainContent.add(chartsPanel, BorderLayout.SOUTH);
+        
+        add(mainContent, BorderLayout.CENTER);
+        
+        // Update data
+        updateData();
+    }
+    
+    private JPanel createNavBar() {
+        JPanel navBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        navBar.setBackground(PRIMARY_COLOR);
+        navBar.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, PRIMARY_COLOR.darker()));
+        
+        // Create navigation buttons
+        savingsButton = createNavButton("Savings");
+        budgetButton = createNavButton("Budget");
+        transactionButton = createNavButton("Transaction");
+        currencyExchangeButton = createNavButton("Currency Exchange");
+        refreshButton = createNavButton("Refresh");
+        logoutButton = createNavButton("Logout");
+        
+        // Add buttons to the navigation bar
+        navBar.add(savingsButton);
+        navBar.add(budgetButton);
+        navBar.add(transactionButton);
+        navBar.add(currencyExchangeButton);
+        navBar.add(refreshButton);
+        navBar.add(logoutButton);
+        
+        return navBar;
     }
     
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(PRIMARY_COLOR);
+        headerPanel.setBackground(CARD_COLOR);
         headerPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(PRIMARY_COLOR.darker(), 1),
-                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
+            BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
+            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
         ));
         
-        // Left side - Welcome and Date
-        JPanel leftHeaderPanel = new JPanel(new GridLayout(2, 1));
-        leftHeaderPanel.setBackground(PRIMARY_COLOR);
-        
-        welcomeLabel = new JLabel("Welcome, " + currentUser.getFirstName());
+        // Welcome message
+        JLabel welcomeLabel = new JLabel("Welcome, " + currentUser.getFirstName() + "!");
         welcomeLabel.setFont(TITLE_FONT);
-        welcomeLabel.setForeground(Color.WHITE);
-        leftHeaderPanel.add(welcomeLabel);
+        welcomeLabel.setForeground(TEXT_COLOR);
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
         
+        // Current date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy");
-        dateLabel = new JLabel(dateFormat.format(new Date()));
+        JLabel dateLabel = new JLabel(dateFormat.format(new Date()));
         dateLabel.setFont(LABEL_FONT);
-        dateLabel.setForeground(Color.WHITE);
-        leftHeaderPanel.add(dateLabel);
-        
-        headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
-        
-        // Right side - Navigation
-        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        navPanel.setBackground(PRIMARY_COLOR);
-        
-        savingsButton = createNavButton("Savings");
-        budgetButton = createNavButton("Budget");
-        transactionButton = createNavButton("Transaction");
-        refreshButton = createNavButton("Refresh");
-        logoutButton = createNavButton("Logout");
-        
-        navPanel.add(savingsButton);
-        navPanel.add(budgetButton);
-        navPanel.add(transactionButton);
-        navPanel.add(refreshButton);
-        navPanel.add(logoutButton);
-        
-        headerPanel.add(navPanel, BorderLayout.EAST);
+        dateLabel.setForeground(TEXT_COLOR);
+        headerPanel.add(dateLabel, BorderLayout.EAST);
         
         return headerPanel;
     }
     
     private JPanel createSummaryPanel() {
-        summaryPanel = new JPanel();
-        summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
-        summaryPanel.setBackground(CARD_COLOR);
-        summaryPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
+            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
         ));
         
-        // Title
-        JLabel summaryTitle = new JLabel("Financial Summary");
-        summaryTitle.setFont(HEADING_FONT);
-        summaryTitle.setForeground(TEXT_COLOR);
-        summaryTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        summaryPanel.add(summaryTitle);
-        summaryPanel.add(Box.createVerticalStrut(15));
+        // Summary title
+        JLabel titleLabel = new JLabel("Financial Summary");
+        titleLabel.setFont(HEADING_FONT);
+        titleLabel.setForeground(TEXT_COLOR);
+        panel.add(titleLabel, BorderLayout.NORTH);
         
-        // Balance
-        JPanel balanceRow = createSummaryRow("Current Balance:", "$0.00");
-        balanceLabel = (JLabel) balanceRow.getComponent(1);
-        summaryPanel.add(balanceRow);
-        summaryPanel.add(Box.createVerticalStrut(10));
+        // Summary content
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(CARD_COLOR);
         
-        // Savings
-        JPanel savingsRow = createSummaryRow("Savings Progress:", "$0.00 / $0.00");
-        savingsLabel = (JLabel) savingsRow.getComponent(1);
-        summaryPanel.add(savingsRow);
-        summaryPanel.add(Box.createVerticalStrut(10));
+        // Overall balance
+        JPanel balancePanel = createInfoRow("Current Balance:", "Loading...", ACCENT_COLOR);
+        contentPanel.add(balancePanel);
+        contentPanel.add(Box.createVerticalStrut(15));
         
-        // Budget
-        JPanel budgetRow = createSummaryRow("Current Budget:", "No active budget");
-        budgetLabel = (JLabel) budgetRow.getComponent(1);
-        summaryPanel.add(budgetRow);
+        // Savings goals
+        JPanel savingsPanel = createInfoRow("Savings Goal:", "Loading...", TEXT_COLOR);
+        contentPanel.add(savingsPanel);
+        contentPanel.add(Box.createVerticalStrut(15));
         
-        return summaryPanel;
+        // Budget summary
+        JPanel budgetPanel = createInfoRow("Current Budget:", "Loading...", TEXT_COLOR);
+        contentPanel.add(budgetPanel);
+        contentPanel.add(Box.createVerticalStrut(15));
+        
+        // Latest transaction
+        JPanel transactionPanel = createInfoRow("Latest Transaction:", "Loading...", TEXT_COLOR);
+        contentPanel.add(transactionPanel);
+        
+        panel.add(contentPanel, BorderLayout.CENTER);
+        
+        return panel;
     }
     
-    private JPanel createSummaryRow(String labelText, String valueText) {
-        JPanel row = new JPanel(new BorderLayout(10, 0));
-        row.setBackground(CARD_COLOR);
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        row.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        JLabel label = new JLabel(labelText);
-        label.setFont(LABEL_FONT);
-        label.setForeground(TEXT_COLOR);
-        row.add(label, BorderLayout.WEST);
-        
-        JLabel value = new JLabel(valueText);
-        value.setFont(LABEL_FONT);
-        value.setForeground(TEXT_COLOR);
-        value.setHorizontalAlignment(SwingConstants.RIGHT);
-        row.add(value, BorderLayout.EAST);
-        
-        return row;
-    }
-    
-    private JPanel createActionsPanel() {
-        actionsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        actionsPanel.setBackground(BACKGROUND_COLOR);
-        
-        actionsPanel.add(createActionButton("Add Transaction", ACCENT_COLOR, e -> 
-            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction")));
-        
-        actionsPanel.add(createActionButton("Create Budget", PRIMARY_COLOR, e -> 
-            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget")));
-        
-        actionsPanel.add(createActionButton("Set Savings Goal", PRIMARY_COLOR, e -> 
-            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Savings")));
-        
-        actionsPanel.add(createActionButton("Transaction History", PRIMARY_COLOR, e -> 
-            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "TransactionHistory")));
-        
-        return actionsPanel;
-    }
-    
-    private JPanel createRecentActivityPanel() {
-        recentActivityPanel = new JPanel();
-        recentActivityPanel.setLayout(new BorderLayout());
-        recentActivityPanel.setBackground(CARD_COLOR);
-        recentActivityPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
+    private JPanel createTransactionsPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
+            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
         ));
         
-        // Title
-        JLabel activityTitle = new JLabel("Recent Activity");
-        activityTitle.setFont(HEADING_FONT);
-        activityTitle.setForeground(TEXT_COLOR);
-        recentActivityPanel.add(activityTitle, BorderLayout.NORTH);
+        // Transactions title
+        JLabel titleLabel = new JLabel("Recent Transactions");
+        titleLabel.setFont(HEADING_FONT);
+        titleLabel.setForeground(TEXT_COLOR);
+        panel.add(titleLabel, BorderLayout.NORTH);
         
-        // Activity list (will be populated in refreshDashboardData())
-        JPanel activityListPanel = new JPanel();
-        activityListPanel.setLayout(new BoxLayout(activityListPanel, BoxLayout.Y_AXIS));
-        activityListPanel.setBackground(CARD_COLOR);
-        activityListPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+        // Transactions list container
+        JPanel listContainer = new JPanel();
+        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+        listContainer.setBackground(CARD_COLOR);
         
-        // Add a scrollpane
-        JScrollPane scrollPane = new JScrollPane(activityListPanel);
-        scrollPane.setBorder(null);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        recentActivityPanel.add(scrollPane, BorderLayout.CENTER);
+        // Create a scroll pane for the transactions
+        JScrollPane scrollPane = new JScrollPane(listContainer);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        panel.add(scrollPane, BorderLayout.CENTER);
         
-        return recentActivityPanel;
+        // Fill with placeholder or real transactions
+        listContainer.add(new JLabel("Loading transactions..."));
+        
+        return panel;
     }
     
-    private JButton createNavButton(String text) {
+    private JPanel createChartsPanel() {
+        JPanel panel = new JPanel(new GridLayout(1, 3, PADDING, 0));
+        panel.setBackground(BACKGROUND_COLOR);
+        
+        // Budget chart
+        budgetChartPanel = new JFXPanel();
+        JPanel budgetPanel = wrapChartInPanel(budgetChartPanel, "Budget Overview");
+        panel.add(budgetPanel);
+        
+        // Savings chart
+        savingsChartPanel = new JFXPanel();
+        JPanel savingsPanel = wrapChartInPanel(savingsChartPanel, "Savings Progress");
+        panel.add(savingsPanel);
+        
+        // Transactions chart
+        transactionChartPanel = new JFXPanel();
+        JPanel transactionPanel = wrapChartInPanel(transactionChartPanel, "Spending Categories");
+        panel.add(transactionPanel);
+        
+        // Initialize charts
+        initializeCharts();
+        
+        return panel;
+    }
+    
+    private JPanel wrapChartInPanel(JFXPanel chartPanel, String title) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
+            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
+        ));
+        
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(HEADING_FONT);
+        titleLabel.setForeground(TEXT_COLOR);
+        panel.add(titleLabel, BorderLayout.NORTH);
+        
+        chartPanel.setPreferredSize(new Dimension(300, 250));
+        panel.add(chartPanel, BorderLayout.CENTER);
+        
+        return panel;
+    }
+    
+    private JPanel createInfoRow(String label, String value, Color valueColor) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        
+        JLabel labelComponent = new JLabel(label);
+        labelComponent.setFont(LABEL_FONT);
+        labelComponent.setForeground(TEXT_COLOR);
+        panel.add(labelComponent, BorderLayout.WEST);
+        
+        JLabel valueComponent = new JLabel(value);
+        valueComponent.setName(label); // Use the label as identifier
+        valueComponent.setFont(new Font(LABEL_FONT.getFontName(), Font.BOLD, LABEL_FONT.getSize()));
+        valueComponent.setForeground(valueColor);
+        valueComponent.setHorizontalAlignment(SwingConstants.RIGHT);
+        panel.add(valueComponent, BorderLayout.EAST);
+        
+        return panel;
+    }
+    
+    private JPanel createTransactionItem(Transaction transaction) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(240, 240, 240)));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        
+        // Transaction type icon/indicator
+        boolean isDeposit = "Deposit".equals(transaction.getType());
+        JLabel typeIndicator = new JLabel(isDeposit ? "+" : "-");
+        typeIndicator.setFont(new Font(LABEL_FONT.getFontName(), Font.BOLD, 16));
+        typeIndicator.setForeground(isDeposit ? ACCENT_COLOR : WARNING_COLOR);
+        typeIndicator.setHorizontalAlignment(SwingConstants.CENTER);
+        typeIndicator.setPreferredSize(new Dimension(30, 30));
+        panel.add(typeIndicator, BorderLayout.WEST);
+        
+        // Transaction details
+        JPanel detailsPanel = new JPanel(new GridLayout(2, 1));
+        detailsPanel.setBackground(CARD_COLOR);
+        
+        JLabel categoryLabel = new JLabel(transaction.getCategory());
+        categoryLabel.setFont(LABEL_FONT);
+        categoryLabel.setForeground(TEXT_COLOR);
+        detailsPanel.add(categoryLabel);
+        
+        JLabel typeLabel = new JLabel(transaction.getType());
+        typeLabel.setFont(new Font(LABEL_FONT.getFontName(), Font.PLAIN, 12));
+        typeLabel.setForeground(new Color(150, 150, 150));
+        detailsPanel.add(typeLabel);
+        
+        panel.add(detailsPanel, BorderLayout.CENTER);
+        
+        // Transaction amount
+        JLabel amountLabel = new JLabel(currencyFormat.format(transaction.getAmount()));
+        amountLabel.setFont(new Font(LABEL_FONT.getFontName(), Font.BOLD, LABEL_FONT.getSize()));
+        amountLabel.setForeground(isDeposit ? ACCENT_COLOR : WARNING_COLOR);
+        amountLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        panel.add(amountLabel, BorderLayout.EAST);
+        
+        return panel;
+    }
+    
+    public  JButton createNavButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(BUTTON_FONT);
-        button.setForeground(Color.WHITE);
+        button.setFocusable(false);
         button.setBackground(PRIMARY_COLOR);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
+        button.setForeground(Color.WHITE);
+        button.setFont(BUTTON_FONT);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.addActionListener(this::handleNavigation);
+        button.addActionListener(this);
         
         // Add hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -295,193 +400,309 @@ public class DashboardGUI extends JPanel {
         return button;
     }
     
-    private JButton createActionButton(String text, Color color, ActionListener action) {
-        JButton button = new JButton(text);
-        button.setFont(BUTTON_FONT);
-        button.setForeground(Color.WHITE);
-        button.setBackground(color);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.addActionListener(action);
-        
-        // Add hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(color.darker());
-            }
+    private void initializeCharts() {
+        // Initialize budget bar chart
+        Platform.runLater(() -> {
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Categories");
             
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(color);
-            }
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Amount");
+            
+            budgetBarChart = new StackedBarChart<>(xAxis, yAxis);
+            budgetBarChart.setTitle("Budget Goals");
+            budgetBarChart.setAnimated(false);
+            
+            budgetChartPanel.setScene(new Scene(new StackPane(budgetBarChart), 300, 250));
         });
         
-        return button;
+        // Initialize savings pie chart
+        Platform.runLater(() -> {
+            savingsPieChart = new PieChart();
+            savingsPieChart.setTitle("Savings Progress");
+            savingsPieChart.setLabelsVisible(true);
+            savingsPieChart.setAnimated(false);
+            
+            savingsChartPanel.setScene(new Scene(new StackPane(savingsPieChart), 300, 250));
+        });
+        
+        // Initialize transaction pie chart
+        Platform.runLater(() -> {
+            transactionPieChart = new PieChart();
+            transactionPieChart.setTitle("Spending Categories");
+            transactionPieChart.setLabelsVisible(true);
+            transactionPieChart.setAnimated(false);
+            
+            transactionChartPanel.setScene(new Scene(new StackPane(transactionPieChart), 300, 250));
+        });
     }
     
-    private JPanel createActivityItem(String type, String description, String amount, boolean isDeposit) {
-        JPanel itemPanel = new JPanel(new BorderLayout(10, 0));
-        itemPanel.setBackground(CARD_COLOR);
-        itemPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)));
-        itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        
-        // Left - icon
-        JLabel iconLabel = new JLabel(isDeposit ? "+" : "-");
-        iconLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        iconLabel.setForeground(isDeposit ? ACCENT_COLOR : WARNING_COLOR);
-        iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        iconLabel.setPreferredSize(new Dimension(30, 40));
-        itemPanel.add(iconLabel, BorderLayout.WEST);
-        
-        // Center - description
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1));
-        centerPanel.setBackground(CARD_COLOR);
-        
-        JLabel typeLabel = new JLabel(type);
-        typeLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        typeLabel.setForeground(TEXT_COLOR);
-        centerPanel.add(typeLabel);
-        
-        JLabel descLabel = new JLabel(description);
-        descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        descLabel.setForeground(new Color(120, 120, 120));
-        centerPanel.add(descLabel);
-        
-        itemPanel.add(centerPanel, BorderLayout.CENTER);
-        
-        // Right - amount
-        JLabel amountLabel = new JLabel(amount);
-        amountLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        amountLabel.setForeground(isDeposit ? ACCENT_COLOR : WARNING_COLOR);
-        amountLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        itemPanel.add(amountLabel, BorderLayout.EAST);
-        
-        return itemPanel;
-    }
-    
-    private void handleNavigation(ActionEvent e) {
-        JButton sourceButton = (JButton) e.getSource();
-        String buttonText = sourceButton.getText();
-        
-        switch (buttonText) {
-            case "Savings":
-                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Savings");
-                break;
-            case "Budget":
-                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
-                break;
-            case "Transaction":
-                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
-                break;
-            case "Refresh":
-                refreshDashboardData();
-                break;
-            case "Logout":
-                LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");
-                break;
-        }
-    }
-    
-    private void refreshDashboardData() {
+    private void updateData() {
         // Update financial summary
         updateFinancialSummary();
         
-        // Update recent activity
-        updateRecentActivity();
+        // Update transaction list
+        updateTransactionsList();
+        
+        // Update charts
+        updateCharts();
     }
     
     private void updateFinancialSummary() {
         // Calculate total balance (deposits - withdrawals)
         double totalBalance = calculateBalance();
-        balanceLabel.setText(currencyFormat.format(totalBalance));
+        updateValueLabel("Current Balance:", currencyFormat.format(totalBalance));
         
         // Update savings goal info
-        SavingsGoal currentSavingsGoal = savingsDao.getSavingsGoal();
+        SavingsGoal currentSavingsGoal = sDao.getSavingsGoal();
         if (currentSavingsGoal != null) {
             double currentAmount = currentSavingsGoal.getStartingAmount();
             double targetAmount = currentSavingsGoal.getTargetAmount();
-            savingsLabel.setText(currencyFormat.format(currentAmount) + " / " + 
-                              currencyFormat.format(targetAmount));
-            
-            // Change color based on progress
-            double progress = currentAmount / targetAmount;
-            if (progress >= 0.8) {
-                savingsLabel.setForeground(ACCENT_COLOR);
-            } else {
-                savingsLabel.setForeground(TEXT_COLOR);
-            }
+            String savingsText = currencyFormat.format(currentAmount) + " / " + 
+                              currencyFormat.format(targetAmount) + " (" + 
+                              currentSavingsGoal.getName() + ")";
+            updateValueLabel("Savings Goal:", savingsText);
         } else {
-            savingsLabel.setText("No active savings goal");
-            savingsLabel.setForeground(TEXT_COLOR);
+            updateValueLabel("Savings Goal:", "No active savings goal");
         }
         
         // Update budget info
-        BudgetGoal currentBudget = budgetDao.getBudgetGoal();
+        BudgetGoal currentBudget = bDao.getBudgetGoal();
         if (currentBudget != null) {
-            budgetLabel.setText(currentBudget.getCategory() + ": " + 
-                             currencyFormat.format(currentBudget.getBudgetAmount()));
+            String budgetText = currentBudget.getCategory() + ": " + 
+                             currencyFormat.format(currentBudget.getBudgetAmount());
+            updateValueLabel("Current Budget:", budgetText);
         } else {
-            budgetLabel.setText("No active budget");
+            updateValueLabel("Current Budget:", "No active budget");
+        }
+        
+        // Update latest transaction
+        Transaction latestTransaction = tDao.getTransaction();
+        if (latestTransaction != null) {
+            String transactionText = latestTransaction.getType() + " - " + 
+                                  latestTransaction.getCategory() + ": " +
+                                  currencyFormat.format(latestTransaction.getAmount());
+            updateValueLabel("Latest Transaction:", transactionText);
+        } else {
+            updateValueLabel("Latest Transaction:", "No recent transactions");
         }
     }
     
-    private void updateRecentActivity() {
-        // Get the activity list panel
-        JScrollPane scrollPane = (JScrollPane) recentActivityPanel.getComponent(1);
-        JViewport viewport = scrollPane.getViewport();
-        JPanel activityListPanel = (JPanel) viewport.getView();
-        
-        // Clear existing items
-        activityListPanel.removeAll();
+    private void updateValueLabel(String labelName, String value) {
+        // Find the panel with the matching label
+        for (Component c : summaryPanel.getComponents()) {
+            if (c instanceof JPanel) {
+                JPanel contentPanel = (JPanel) c;
+                for (Component panelComponent : contentPanel.getComponents()) {
+                    if (panelComponent instanceof JPanel) {
+                        JPanel rowPanel = (JPanel) panelComponent;
+                        for (Component rowComponent : rowPanel.getComponents()) {
+                            if (rowComponent instanceof JLabel && labelName.equals(((JLabel) rowComponent).getName())) {
+                                ((JLabel) rowComponent).setText(value);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void updateTransactionsList() {
+        // Get the transactions panel and clear it
+        JScrollPane scrollPane = (JScrollPane) transactionsPanel.getComponent(1);
+        JPanel listContainer = (JPanel) scrollPane.getViewport().getView();
+        listContainer.removeAll();
         
         // Get recent transactions
-        ArrayList<Transaction> recentTransactions = transactionDao.getTransactionList();
+        ArrayList<Transaction> transactions = tDao.getTransactionList();
         
-        if (recentTransactions.isEmpty()) {
-            JLabel noActivityLabel = new JLabel("No recent activity");
-            noActivityLabel.setFont(LABEL_FONT);
-            noActivityLabel.setForeground(new Color(150, 150, 150));
-            noActivityLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            activityListPanel.add(noActivityLabel);
+        if (transactions == null || transactions.isEmpty()) {
+            JLabel noTransactionsLabel = new JLabel("No transactions found");
+            noTransactionsLabel.setFont(LABEL_FONT);
+            noTransactionsLabel.setForeground(new Color(150, 150, 150));
+            noTransactionsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            listContainer.add(noTransactionsLabel);
         } else {
             // Show up to 5 most recent transactions
             int count = 0;
-            for (Transaction t : recentTransactions) {
+            for (Transaction transaction : transactions) {
                 if (count >= 5) break;
                 
-                boolean isDeposit = "Deposit".equals(t.getType());
-                JPanel activityItem = createActivityItem(
-                        t.getType(),
-                        t.getCategory(),
-                        currencyFormat.format(t.getAmount()),
-                        isDeposit
-                );
-                activityItem.setAlignmentX(Component.LEFT_ALIGNMENT);
-                activityListPanel.add(activityItem);
-                activityListPanel.add(Box.createVerticalStrut(10));
+                JPanel transactionItem = createTransactionItem(transaction);
+                transactionItem.setAlignmentX(Component.LEFT_ALIGNMENT);
+                listContainer.add(transactionItem);
+                listContainer.add(Box.createVerticalStrut(10));
                 count++;
             }
         }
         
-        // Refresh the UI
-        activityListPanel.revalidate();
-        activityListPanel.repaint();
+        listContainer.revalidate();
+        listContainer.repaint();
+    }
+    
+    private void updateCharts() {
+        updateBudgetChart();
+        updateSavingsChart();
+        updateTransactionChart();
+    }
+    
+    private void updateBudgetChart() {
+        // Get budget data from the database
+        ArrayList<BudgetGoal> budgetGoals = bDao.getBudgetGoalsByCategory();
+        ArrayList<Transaction> withdrawals = tDao.getWithdrawTransactions();
+        
+        if (budgetGoals == null || budgetGoals.isEmpty()) {
+            Platform.runLater(() -> {
+                budgetBarChart.getData().clear();
+                budgetBarChart.setTitle("No Budget Goals Available");
+            });
+            return;
+        }
+        
+        // Map for categorizing budget and spending data
+        Map<String, Double> budgetAmounts = new HashMap<>();
+        Map<String, Double> spentAmounts = new HashMap<>();
+        
+        // Process budget goals
+        for (BudgetGoal goal : budgetGoals) {
+            budgetAmounts.put(goal.getCategory(), goal.getBudgetAmount());
+        }
+        
+        // Process withdrawals
+        if (withdrawals != null && !withdrawals.isEmpty()) {
+            for (Transaction transaction : withdrawals) {
+                String category = transaction.getCategory();
+                if (budgetAmounts.containsKey(category)) {
+                    spentAmounts.merge(category, transaction.getAmount(), Double::sum);
+                }
+            }
+        }
+        
+        // Update the chart
+        Platform.runLater(() -> {
+            budgetBarChart.getData().clear();
+            
+            XYChart.Series<String, Number> spentSeries = new XYChart.Series<>();
+            spentSeries.setName("Spent");
+            
+            XYChart.Series<String, Number> remainingSeries = new XYChart.Series<>();
+            remainingSeries.setName("Remaining");
+            
+            for (Map.Entry<String, Double> entry : budgetAmounts.entrySet()) {
+                String category = entry.getKey();
+                double budgetAmount = entry.getValue();
+                double spentAmount = spentAmounts.getOrDefault(category, 0.0);
+                double remainingAmount = Math.max(0, budgetAmount - spentAmount);
+                
+                spentSeries.getData().add(new XYChart.Data<>(category, spentAmount));
+                remainingSeries.getData().add(new XYChart.Data<>(category, remainingAmount));
+            }
+            
+            budgetBarChart.getData().addAll(spentSeries, remainingSeries);
+        });
+    }
+    
+    private void updateSavingsChart() {
+        // Get savings goal data
+        SavingsGoal savingsGoal = sDao.getSavingsGoal();
+        
+        if (savingsGoal == null) {
+            Platform.runLater(() -> {
+                savingsPieChart.getData().clear();
+                savingsPieChart.setTitle("No Savings Goal Available");
+            });
+            return;
+        }
+        
+        // Calculate amounts
+        double savedAmount = savingsGoal.getStartingAmount();
+        double targetAmount = savingsGoal.getTargetAmount();
+        double remainingAmount = Math.max(0, targetAmount - savedAmount);
+        
+        // Update the chart
+        Platform.runLater(() -> {
+            savingsPieChart.getData().clear();
+            
+            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Saved", savedAmount),
+                new PieChart.Data("Remaining", remainingAmount)
+            );
+            
+            savingsPieChart.setData(pieChartData);
+            savingsPieChart.setTitle(savingsGoal.getName());
+        });
+    }
+    
+    private void updateTransactionChart() {
+        // Get transaction data
+        ArrayList<Transaction> withdrawals = tDao.getWithdrawTransactions();
+        
+        if (withdrawals == null || withdrawals.isEmpty()) {
+            Platform.runLater(() -> {
+                transactionPieChart.getData().clear();
+                transactionPieChart.setTitle("No Transaction Data Available");
+            });
+            return;
+        }
+        
+        // Map for categorizing spending
+        Map<String, Double> categoryTotals = new HashMap<>();
+        
+        // Process transactions
+        for (Transaction transaction : withdrawals) {
+            String category = transaction.getCategory();
+            categoryTotals.merge(category, transaction.getAmount(), Double::sum);
+        }
+        
+        // Update the chart
+        Platform.runLater(() -> {
+            transactionPieChart.getData().clear();
+            
+            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+            
+            for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                pieChartData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
+            }
+            
+            transactionPieChart.setData(pieChartData);
+            transactionPieChart.setTitle("Spending by Category");
+        });
     }
     
     private double calculateBalance() {
         double balance = 0.0;
         
-        ArrayList<Transaction> allTransactions = transactionDao.getTransactionList();
+        ArrayList<Transaction> allTransactions = tDao.getTransactionList();
         
-        for (Transaction t : allTransactions) {
-            if ("Deposit".equals(t.getType())) {
-                balance += t.getAmount();
-            } else if ("Withdrawal".equals(t.getType())) {
-                balance -= t.getAmount();
+        if (allTransactions != null) {
+            for (Transaction t : allTransactions) {
+                if ("Deposit".equals(t.getType())) {
+                    balance += t.getAmount();
+                } else if ("Withdrawal".equals(t.getType())) {
+                    balance -= t.getAmount();
+                }
+                // Transfer type doesn't affect overall balance
             }
-            // Transfer type doesn't affect overall balance
         }
         
         return balance;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == savingsButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Savings");
+        } else if (e.getSource() == budgetButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Budget");
+        } else if (e.getSource() == transactionButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Transaction");
+        } else if (e.getSource() == currencyExchangeButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "CurrencyExchange");
+        } else if (e.getSource() == logoutButton) {
+            LoginGUI.cardLayout.show(LoginGUI.mainPanel, "Login");
+        } else if (e.getSource() == refreshButton) {
+            updateData();
+        }
     }
 }
