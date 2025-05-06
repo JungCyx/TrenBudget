@@ -1,13 +1,13 @@
 package edu.csusm.DAO;
 
-import edu.csusm.Model.Transaction;
-import edu.csusm.Model.UserSession;
-
-import java.util.ArrayList;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import edu.csusm.Model.Transaction;
+import edu.csusm.Model.UserSession;
 
 public class TransactionDAO{
 
@@ -138,7 +138,7 @@ public class TransactionDAO{
         ArrayList<Transaction> transactionList = new ArrayList<>();
     
         // Query to fetch the last 50 withdrawal transactions
-        String sql = "SELECT * FROM usertransaction WHERE userId = ? AND type = 'Withdrawal' ORDER BY transactionId DESC LIMIT 50";
+        String sql = "SELECT * FROM usertransaction WHERE userId = ? AND type = 'Withdrawal' ORDER BY transactionId DESC LIMIT 3";
     
         try (Connection conn = connection.get_Connection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
     

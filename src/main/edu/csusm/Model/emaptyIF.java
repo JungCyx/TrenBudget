@@ -14,4 +14,6 @@ public interface emaptyIF{
     // a function that formats an string for email notification
     String emailContant();
 
+    boolean getNotificationsEnabled();
+
 }
