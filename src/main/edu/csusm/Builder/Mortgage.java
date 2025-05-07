@@ -10,6 +10,7 @@ public class Mortgage implements MortgageIF {
     private double downPayment;
     private double insurance;
     private double propertyTaxRate;
+    private int userId;
 
     public Mortgage(MortgageBuilder builder){
         this.principal = builder.principal;

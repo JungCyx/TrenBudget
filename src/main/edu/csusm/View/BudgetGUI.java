@@ -1,42 +1,37 @@
 package edu.csusm.View;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
+import edu.csusm.Builder.MortgageBuilder;
 import edu.csusm.Controller.UserController;
 import edu.csusm.DAO.BudgetGoalDAO;
+import edu.csusm.DAO.MortgageDAO;
 import edu.csusm.Model.BudgetGoal;
+import edu.csusm.Model.UserSession;
 import edu.csusm.Observer.ObservableBugetGoal;
 
 public class BudgetGUI extends JPanel {
+    private BudgetGoalDAO bDAO;
+    private MortgageDAO mDAO;
 
     private JComboBox<String> categoryField;
     private JTextField amountField;
     private JCheckBox notificationCheckBox;
     private JButton addButton;
     private JButton backButton;
+    private JButton createMortgageButton;
+    private JPanel mortgageBuilderPanel; // Will hold the attribute buttons once triggered
+    private MortgageBuilder mortgageBuilder = new MortgageBuilder();
+    private Map<String, JTextField> mortgageFields = new HashMap<>();
 
     private UserController controller;
-    private BudgetGoalDAO bDao;
-
     private JComboBox<Integer> startYearDropdown, endYearDropdown;
     private JComboBox<String> startMonthDropdown, endMonthDropdown;
     private JComboBox<Integer> startDayDropdown, endDayDropdown;
@@ -47,7 +42,7 @@ public class BudgetGUI extends JPanel {
         setBackground(Color.WHITE); // Set the background color to white
 
         controller = new UserController();
-        bDao = new BudgetGoalDAO();
+        bDAO = new BudgetGoalDAO();
 
         // Title Navbar
         JPanel titlePanel = new JPanel();
@@ -86,7 +81,7 @@ public class BudgetGUI extends JPanel {
         centerPanel.add(categoryLabel, gbc);
 
         categoryField = new JComboBox<>(new String[]{
-            "Mortgage", "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
+            "Rent", "Property Taxes", "Household Repairs", "HOA Fees",
             "Transportation", "Car Payment", "Car Warranty", "Gas", "Tires",
             "Car Maintenance", "Parking Fees", "Car Repairs", "DMV Fees",
             "Groceries", "Restaurants", "Pet Food", "Electricity", "Water",
@@ -207,9 +202,29 @@ public class BudgetGUI extends JPanel {
         gbcRemove.anchor = GridBagConstraints.CENTER;
         removeBudgetPanel.add(removeButton, gbcRemove);
 
-        // Buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        buttonPanel.setBackground(Color.WHITE); // Match background
+        mortgageBuilderPanel = new JPanel();
+        mortgageBuilderPanel.setBackground(new Color(38, 120, 190)); // Blue background
+        mortgageBuilderPanel.setPreferredSize(new Dimension(550, 400));
+        mortgageBuilderPanel.setLayout(new GridBagLayout());
+
+        createMortgageButton = new JButton("Create a New Mortgage");
+        createMortgageButton.setForeground(Color.WHITE);
+        createMortgageButton.setFont(new Font("Arial", Font.BOLD, 17));
+        createMortgageButton.setContentAreaFilled(false);
+        createMortgageButton.setBorderPainted(false);
+        createMortgageButton.setFocusPainted(false);
+
+        createMortgageButton.addActionListener(e -> showMortgageBuilderFields());
+
+        mortgageBuilderPanel.add(createMortgageButton); // Add to center
+// Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 20));
+// Position mortgage builder panel to the right of form
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridheight = 8; // Span multiple rows
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        centerPanel.add(mortgageBuilderPanel, gbc);
 
         backButton = new JButton("Back");
         backButton.addActionListener(e -> handleBackButton());
@@ -237,7 +252,7 @@ public class BudgetGUI extends JPanel {
 
     // Method to populate the dropdown with existing budgets
     public String[] getBudgetNames() {
-        List<BudgetGoal> allBudgetGoals = bDao.getAllBudgetGoals(); // Get the list of all budget goals
+        List<BudgetGoal> allBudgetGoals = bDAO.getAllBudgetGoals(); // Get the list of all budget goals
         String[] budgetNames = new String[allBudgetGoals.size()];
 
         // Extract the category names from the BudgetGoal objects
@@ -251,7 +266,7 @@ public class BudgetGUI extends JPanel {
     private void handleRemoveBudget(JComboBox<String> removeBudgetDropdown) {
         String selectedBudget = (String) removeBudgetDropdown.getSelectedItem();
         if (selectedBudget != null && !selectedBudget.isEmpty()) {
-            bDao.removeBudgetByName(selectedBudget);
+            bDAO.removeBudgetByName(selectedBudget);
             JOptionPane.showMessageDialog(this, "Budget " + selectedBudget + " has been removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "Please select a valid budget to remove.", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -337,7 +352,7 @@ public class BudgetGUI extends JPanel {
         //New code (factory)
         BudgetGoal newBudgetGoal = controller.mapBudgetGoalWithFactory(category,Double.parseDouble(amount),startD,EndD,notifications);
 
-        bDao.addBudgetIntoDatabase(newBudgetGoal);
+        bDAO.addBudgetIntoDatabase(newBudgetGoal);
 
         ObservableBugetGoal b = ObservableBugetGoal.getInstance();
         b.processBudgetGoal(newBudgetGoal);
@@ -359,6 +374,105 @@ public class BudgetGUI extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
         } 
 
+    }
+
+    private void showMortgageBuilderFields() {
+        String[] attributes = {
+                "Principal", "Interest Rate", "Term (Years)",
+                "Down Payment", "Insurance", "Property Tax Rate"
+        };
+
+        GridBagConstraints gbcAttr = new GridBagConstraints();
+        gbcAttr.insets = new Insets(10, 10, 10, 10);
+        gbcAttr.gridx = 0;
+
+        mortgageBuilderPanel.removeAll();
+        mortgageBuilderPanel.setBackground(new Color(245, 245, 245)); // light gray
+        mortgageBuilderPanel.setBorder(BorderFactory.createTitledBorder("Build Mortgage"));
+        mortgageBuilderPanel.setLayout(new GridBagLayout());
+
+        int row = 0;
+        for (String attr : attributes) {
+            JButton attrButton = new JButton("Add " + attr);
+            attrButton.setPreferredSize(new Dimension(200, 30));
+            final int currentRow = row++; // Capture the button's row
+
+            gbcAttr.gridx = 0;
+            gbcAttr.gridy = currentRow;
+            gbcAttr.gridwidth = 2;
+
+            attrButton.addActionListener(e -> {
+                mortgageBuilderPanel.remove(attrButton);
+
+                JLabel label = new JLabel(attr + ":");
+                JTextField field = new JTextField(12);
+                mortgageFields.put(attr, field);
+
+                GridBagConstraints gbcLabel = new GridBagConstraints();
+                gbcLabel.gridx = 0;
+                gbcLabel.gridy = currentRow;
+                gbcLabel.gridwidth = 1;
+                gbcLabel.insets = new Insets(5, 5, 5, 5);
+                gbcLabel.anchor = GridBagConstraints.EAST;
+
+                GridBagConstraints gbcField = new GridBagConstraints();
+                gbcField.gridx = 1;
+                gbcField.gridy = currentRow;
+                gbcField.gridwidth = 1;
+                gbcField.insets = new Insets(5, 5, 5, 5);
+                gbcField.anchor = GridBagConstraints.WEST;
+
+                mortgageBuilderPanel.add(label, gbcLabel);
+                mortgageBuilderPanel.add(field, gbcField);
+
+                mortgageBuilderPanel.revalidate();
+                mortgageBuilderPanel.repaint();
+            });
+            mortgageBuilderPanel.add(attrButton, gbcAttr);
+        }
+
+
+        JButton saveButton = new JButton("Save Mortgage");
+        JLabel confirmationLabel = new JLabel("");
+        confirmationLabel.setForeground(Color.WHITE);
+        confirmationLabel.setFont(new Font("Arial", Font.BOLD, 12));
+
+        saveButton.addActionListener(e -> {
+            try {
+                // Parse and assign values to builder
+                if (mortgageFields.containsKey("Principal"))
+                    mortgageBuilder.addPrincipal(Double.parseDouble(mortgageFields.get("Principal").getText()));
+
+                if (mortgageFields.containsKey("Interest Rate"))
+                    mortgageBuilder.addInterestRate(Double.parseDouble(mortgageFields.get("Interest Rate").getText()));
+
+                if (mortgageFields.containsKey("Term (Years)"))
+                    mortgageBuilder.addTermInYears(Integer.parseInt(mortgageFields.get("Term (Years)").getText()));
+
+                if (mortgageFields.containsKey("Down Payment"))
+                    mortgageBuilder.addDownPayment(Double.parseDouble(mortgageFields.get("Down Payment").getText()));
+
+                if (mortgageFields.containsKey("Insurance"))
+                    mortgageBuilder.addInsurance(Double.parseDouble(mortgageFields.get("Insurance").getText()));
+
+                if (mortgageFields.containsKey("Property Tax Rate"))
+                    mortgageBuilder.addPropertyTaxRate(Double.parseDouble(mortgageFields.get("Property Tax Rate").getText()));
+
+                mortgageBuilder.setUserId(UserSession.getInstance().getCurrentUser().getId());
+
+                // Save to DB
+                mDAO.createMortgage(mortgageBuilder);
+                confirmationLabel.setText("Mortgage saved ✅");
+            } catch (Exception ex) {
+                confirmationLabel.setText("❌ Error: " + ex.getMessage());
+            }
+        });
+
+// Save button and label layout
+        gbcAttr.gridy = row++;
+        mortgageBuilderPanel.add(saveButton, gbcAttr);
+        gbcAttr.gridy = row;
+        mortgageBuilderPanel.add(confirmationLabel, gbcAttr);
     }
 
 }
