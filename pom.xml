@@ -25,6 +25,13 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+ <!-- Currency -->
+        <dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version>
+</dependency>
+
 
         <!-- JavaFX Swing interop -->
         <dependency>

@@ -1,15 +1,15 @@
 package edu.csusm.DAO;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import edu.csusm.Model.SavingsGoal;
 import edu.csusm.Model.UserSession;
 
-import java.util.ArrayList;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
- public class SavingsGoalDAO{
+public class SavingsGoalDAO {
 
     public static SavingsGoal currentGoal; // this is instance of a savings goal which will be updating in the dashboard
     DAO connection = new DAO();
@@ -134,7 +134,39 @@ import java.sql.ResultSet;
         return currGoal;
     }
 
+    // New method to update an existing savings goal in the database
+    public void updateSavingsGoal(SavingsGoal goal) {
+        String sql = "UPDATE usergoals SET goalName = ?, targetAmount = ?, deadline = ?, startingAmount = ?, notificationsEnabled = ? " +
+                     "WHERE userId = ? AND goalName = ?";
     
+        int current_user_id = UserSession.getInstance().getCurrentUser().getId();
+        
+        try (Connection conn = connection.get_Connection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            
+            // Set parameters for the update query
+            stmt.setString(1, goal.getName());
+            stmt.setDouble(2, goal.getTargetAmount());
+            stmt.setString(3, goal.getDeadLine());
+            stmt.setDouble(4, goal.getStartingAmount());
+            stmt.setBoolean(5, goal.getNotificationsEnabled());
+            stmt.setInt(6, current_user_id);
+            stmt.setString(7, goal.getName()); // Using name as the identifier for existing goal
+            
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Savings goal updated successfully...");
+            } else {
+                System.out.println("No savings goal was updated. Goal might not exist.");
+            }
+            
+            conn.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Failed to update savings goal...");
+            e.printStackTrace();
+        }
+    }
 }
-
  
