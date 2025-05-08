@@ -126,9 +126,33 @@ public class DAO {
             System.out.println("Transaction Table created successfully...");
 
         } catch (SQLException e) {
-            System.out.println("Faild To Create Transaction Table...");
+            System.out.println("Failed To Create Transaction Table...");
             e.printStackTrace();
         };
     }
 
+    public void createMortgageTable(){
+        String sql = "CREATE TABLE IF NOT EXISTS mortgage ("
+                + "mortgageId SERIAL PRIMARY KEY, "
+                + "userId INT NOT NULL, "
+                + "principal DOUBLE PRECISION NOT NULL, "
+                + "interestRate DOUBLE PRECISION NOT NULL, "
+                + "termInYears INT NOT NULL, "
+                + "downPayment DOUBLE PRECISION, "
+                + "insurance DOUBLE PRECISION, "
+                + "propertyTaxRate DOUBLE PRECISION, "
+                + "FOREIGN KEY (userId) REFERENCES appUser(id) ON DELETE CASCADE"
+                + ");";
+        try {
+            Connection conn = get_Connection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.executeUpdate();
+            conn.close();
+            stmt.close();
+            System.out.println("Mortgage Table created successfully...");
+        } catch (SQLException e) {
+            System.out.println("Failed To Create Mortgage Table...");
+            e.printStackTrace();
+        }
+    }
 }

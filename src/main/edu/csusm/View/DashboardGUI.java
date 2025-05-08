@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import edu.csusm.DAO.BudgetGoalDAO;
+import edu.csusm.DAO.MortgageDAO;
 import edu.csusm.DAO.SavingsGoalDAO;
 import edu.csusm.DAO.TransactionDAO;
 import edu.csusm.Model.BudgetGoal;
@@ -44,11 +45,6 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private JButton transactionButton;
     private JButton currencyExchangeButton;
     
-    // Labels
-    private JLabel budgetLabel;
-    private JLabel savingLabel;
-    private JLabel transactionLabel; 
-    
     // Panels
     private JPanel summaryPanel;
     private JPanel transactionsPanel;
@@ -57,6 +53,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
     private final SavingsGoalDAO sDao;
     private final BudgetGoalDAO bDao;
     private final TransactionDAO tDao;
+    private final MortgageDAO mDAO;
     
     // Current data models
     private BudgetGoal currentBudget;
@@ -86,6 +83,7 @@ public class DashboardGUI extends JPanel implements ActionListener {
         sDao = new SavingsGoalDAO();
         bDao = new BudgetGoalDAO();
         tDao = new TransactionDAO();
+        mDAO = new MortgageDAO();
         currentUser = UserSession.getInstance().getCurrentUser();
         
         // Set up main panel

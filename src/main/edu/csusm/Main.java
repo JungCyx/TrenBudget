@@ -20,6 +20,7 @@ public class Main {
         connector.createSavingGoalTable(); // Creates a saving goal table in the DB
         connector.createBudgetGoalTable();
         connector.createTransactionTable();//creates a transaction table in DB
+        connector.createMortgageTable();//creates a mortgage table in DB
 
         Observable transactionObservable = ObservableTransaction.getInstance(); // create an obervable for transaction logic 
         Observable bugetGoalObservable = ObservableBugetGoal.getInstance();

@@ -3,19 +3,12 @@ package edu.csusm.View;
 import edu.csusm.Controller.UserController;
 import edu.csusm.DAO.SavingsGoalDAO;
 import edu.csusm.Model.SavingsGoal;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
+import edu.csusm.Model.UserModel;
 import edu.csusm.Observer.ObservableSavingGoal;
 
-import edu.csusm.Factory.SavingsFactory;
-import edu.csusm.Factory.SavingsGoalFactory;
-import edu.csusm.Model.UserModel;
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class SavingsGUI extends JPanel { 
 
