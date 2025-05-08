@@ -43,6 +43,7 @@ public class BudgetGUI extends JPanel {
 
         controller = new UserController();
         bDAO = new BudgetGoalDAO();
+        mDAO = new MortgageDAO();
 
         // Title Navbar
         JPanel titlePanel = new JPanel();
@@ -405,8 +406,27 @@ public class BudgetGUI extends JPanel {
                 mortgageBuilderPanel.remove(attrButton);
 
                 JLabel label = new JLabel(attr + ":");
-                JTextField field = new JTextField(12);
-                mortgageFields.put(attr, field);
+                JComponent inputComponent;
+                switch (attr) {
+                    case "Term (Years)" -> {
+                        JComboBox<Integer> termDropdown = new JComboBox<>(new Integer[]{5, 10, 15, 20, 25, 30});
+                        termDropdown.setPreferredSize(new Dimension(100, 25));
+                        inputComponent = termDropdown;
+                    }
+                    case "Interest Rate" -> {
+                        JComboBox<String> rateDropdown = new JComboBox<>(new String[]{
+                                "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "5.5", "6.0"
+                        });
+                        rateDropdown.setPreferredSize(new Dimension(100, 25));
+                        inputComponent = rateDropdown;
+                    }
+                    default -> inputComponent = new JTextField(12);
+                }
+                if (inputComponent instanceof JTextField textField)
+                    mortgageFields.put(attr, textField);
+                else {
+                    mortgageFields.put(attr, new JTextField()); // dummy to signal presence
+                }
 
                 GridBagConstraints gbcLabel = new GridBagConstraints();
                 gbcLabel.gridx = 0;
@@ -423,7 +443,7 @@ public class BudgetGUI extends JPanel {
                 gbcField.anchor = GridBagConstraints.WEST;
 
                 mortgageBuilderPanel.add(label, gbcLabel);
-                mortgageBuilderPanel.add(field, gbcField);
+                mortgageBuilderPanel.add(inputComponent, gbcField);
 
                 mortgageBuilderPanel.revalidate();
                 mortgageBuilderPanel.repaint();
@@ -434,20 +454,27 @@ public class BudgetGUI extends JPanel {
 
         JButton saveButton = new JButton("Save Mortgage");
         JLabel confirmationLabel = new JLabel("");
-        confirmationLabel.setForeground(Color.WHITE);
+        confirmationLabel.setForeground(Color.BLACK);
         confirmationLabel.setFont(new Font("Arial", Font.BOLD, 12));
 
         saveButton.addActionListener(e -> {
             try {
-                // Parse and assign values to builder
                 if (mortgageFields.containsKey("Principal"))
                     mortgageBuilder.addPrincipal(Double.parseDouble(mortgageFields.get("Principal").getText()));
 
-                if (mortgageFields.containsKey("Interest Rate"))
-                    mortgageBuilder.addInterestRate(Double.parseDouble(mortgageFields.get("Interest Rate").getText()));
+                if (mortgageFields.containsKey("Interest Rate")) {
+                    Component comp = findComponentByLabel("Interest Rate:");
+                    if (comp instanceof JComboBox<?> combo) {
+                        mortgageBuilder.addInterestRate(Double.parseDouble((String) combo.getSelectedItem()));
+                    }
+                }
 
-                if (mortgageFields.containsKey("Term (Years)"))
-                    mortgageBuilder.addTermInYears(Integer.parseInt(mortgageFields.get("Term (Years)").getText()));
+                if (mortgageFields.containsKey("Term (Years)")) {
+                    Component comp = findComponentByLabel("Term (Years):");
+                    if (comp instanceof JComboBox<?> combo) {
+                        mortgageBuilder.addTermInYears((int) combo.getSelectedItem());
+                    }
+                }
 
                 if (mortgageFields.containsKey("Down Payment"))
                     mortgageBuilder.addDownPayment(Double.parseDouble(mortgageFields.get("Down Payment").getText()));
@@ -462,9 +489,10 @@ public class BudgetGUI extends JPanel {
 
                 // Save to DB
                 mDAO.createMortgage(mortgageBuilder);
-                confirmationLabel.setText("Mortgage saved ✅");
+                confirmationLabel.setText("Mortgage saved.");
             } catch (Exception ex) {
-                confirmationLabel.setText("❌ Error: " + ex.getMessage());
+                confirmationLabel.setForeground(Color.RED);
+                confirmationLabel.setText("Error: " + ex.getMessage());
             }
         });
 
@@ -473,6 +501,18 @@ public class BudgetGUI extends JPanel {
         mortgageBuilderPanel.add(saveButton, gbcAttr);
         gbcAttr.gridy = row;
         mortgageBuilderPanel.add(confirmationLabel, gbcAttr);
+    }
+
+    private Component findComponentByLabel(String labelText) {
+        Component[] components = mortgageBuilderPanel.getComponents();
+        for (int i = 0; i < components.length - 1; i++) {
+            if (components[i] instanceof JLabel label &&
+                    label.getText().equals(labelText)) {
+                // Assume the next component is the field/dropdown
+                return components[i + 1];
+            }
+        }
+        return null;
     }
 
 }
