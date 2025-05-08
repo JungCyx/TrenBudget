@@ -77,6 +77,7 @@ public class MortgageDAO {
         return mortgage;
     }
 
+    //READ ALL
     public List<MortgageIF> getAllMortgages() {
         int currentUserId = UserSession.getInstance().getCurrentUser().getId();
         List<MortgageIF> mortgages = new ArrayList<>();
@@ -111,6 +112,7 @@ public class MortgageDAO {
         return mortgages;
     }
 
+    //DELETE
     public void deleteMortgageById(int mortgageId) {
         String sql = "DELETE FROM mortgage WHERE mortgageid = ?";
 
